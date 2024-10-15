@@ -3,6 +3,7 @@
 #define NULL (void *)0
 #define true 1
 #define false 0
+#define bool char
 
 #define uint8_t unsigned char
 

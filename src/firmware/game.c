@@ -32,7 +32,7 @@ void step(Game *game, int dt)
     {
         Dot *dot = level->leftDots[i];
 
-        char isDotActive = false;
+        bool isDotActive = false;
 
         for (int j = 0; j < game->numLeftActiveDots; j++)
         {
@@ -62,7 +62,7 @@ void step(Game *game, int dt)
     {
         Dot *dot = level->rightDots[i];
 
-        char isDotActive = false;
+        bool isDotActive = false;
 
         for (int j = 0; j < game->numRightActiveDots; j++)
         {
