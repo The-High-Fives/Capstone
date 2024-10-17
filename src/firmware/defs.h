@@ -56,4 +56,7 @@ typedef struct
 
 int calculateScore(int hitTime, int time);
 Dot **sortDotsByTime(Dot **dots, int numDots);
+bool hitLeft(Game *game, int x, int y);
+bool hitRight(Game *game, int x, int y);
+Dot *hitDot(Game *game, int x, int y);
 void step(Game *game, int dt);

@@ -17,6 +17,59 @@ int calculateScore(int hitTime, int time)
     return calcScore;
 }
 
+bool hitLeft(Game *game, int x, int y)
+{
+    Dot *dot = hitDot(game->leftActiveDots, game->numLeftActiveDots, x, y);
+
+    if (dot != NULL)
+    {
+        game->score += calculateScore(dot->hitTime, game->time);
+        return true;
+    }
+
+    return false;
+}
+
+bool hitRight(Game *game, int x, int y)
+{
+    Dot *dot = hitDot(game->rightActiveDots, game->numRightActiveDots, x, y);
+
+    if (dot != NULL)
+    {
+        game->score += calculateScore(dot->hitTime, game->time);
+        return true;
+    }
+
+    return false;
+}
+
+Dot *hitDot(Dot **dots, int numDots, int x, int y)
+{
+    Dot **sortedDots = sortDotsByTime(dots, numDots);
+
+    Dot *hit_dot = NULL;
+
+    for (int i = 0; i < numDots; i++)
+    {
+        Dot *dot = sortedDots[i];
+
+        if (dot->isHit)
+        {
+            continue;
+        }
+
+        int dx = x - dot->x;
+        int dy = y - dot->y;
+
+        if (dx * dx + dy * dy <= DOT_RADIUS * DOT_RADIUS)
+        {
+            dot->isHit = true;
+            hit_dot = dot;
+            break;
+        }
+    }
+}
+
 void step(Game *game, int dt)
 {
     if (game->activeLevel >= game->numLevels || game->activeLevel < 0)
