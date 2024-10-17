@@ -1,4 +1,79 @@
 #include "defs.h"
+#include "levels.h"
+
+void setupGame(Game *game)
+{
+    game->score = 0;
+    game->time = 0;
+    game->activeLevel = -1;
+    game->onStartScreen = true;
+    game->isGameOver = false;
+    game->quitGame = false;
+
+    game->numLevels = LEVEL_COUNT;
+    game->levels = createAllLevels();
+}
+
+void resetGame(Game *game)
+{
+    game->score = 0;
+    game->time = 0;
+    game->activeLevel = 0;
+    game->onStartScreen = false;
+    game->isGameOver = false;
+
+    game->numLeftActiveDots = 0;
+    game->numRightActiveDots = 0;
+
+    for (int i = 0; i < game->numLevels; i++)
+    {
+        Level *level = &game->levels[i];
+
+        for (int j = 0; j < level->numLeftDots; j++)
+        {
+            Dot *dot = level->leftDots[j];
+            dot->isHit = false;
+        }
+
+        for (int j = 0; j < level->numRightDots; j++)
+        {
+            Dot *dot = level->rightDots[j];
+            dot->isHit = false;
+        }
+    }
+}
+
+void startLevel(Game *game, int level)
+{
+    if (level < 0 || level >= game->numLevels)
+    {
+        return;
+    }
+
+    game->activeLevel = level;
+
+    Level *activeLevel = game->levels[game->activeLevel];
+    game->time = 0;
+    game->score = 0;
+    game->numLeftActiveDots = 0;
+    game->numRightActiveDots = 0;
+    game->leftActiveDots = malloc(sizeof(Dot *) * activeLevel->numLeftDots);
+    game->rightActiveDots = malloc(sizeof(Dot *) * activeLevel->numRightDots);
+}
+
+void finishLevel(Game *game)
+{
+    game->activeLevel = -1;
+    game->time = 0;
+    game->score = 0;
+    game->numLeftActiveDots = 0;
+    game->numRightActiveDots = 0;
+
+    free(game->leftActiveDots);
+    game->leftActiveDots = NULL;
+    free(game->rightActiveDots);
+    game->rightActiveDots = NULL;
+}
 
 int calculateScore(int hitTime, int time)
 {
@@ -139,6 +214,11 @@ void step(Game *game, int dt)
             }
             game->numRightActiveDots--;
         }
+    }
+
+    if (game->time > level->leftDots[level->numLeftDots - 1]->hitTime && game->time > level->rightDots[level->numRightDots - 1]->hitTime)
+    {
+        game->isGameOver = true;
     }
 }
 

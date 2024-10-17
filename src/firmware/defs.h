@@ -36,6 +36,7 @@ typedef struct
     int numRightDots;
 
     int levelNumber;
+    int songId;
 } Level;
 
 typedef struct
@@ -43,6 +44,9 @@ typedef struct
     int score;
     int time;
     int activeLevel;
+    bool onStartScreen;
+    bool isGameOver;
+    bool quitGame;
 
     Level **levels;
     int numLevels;
@@ -54,9 +58,11 @@ typedef struct
     int numRightActiveDots;
 } Game;
 
+void setupGame(Game *game);
+void resetGame(Game *game);
 int calculateScore(int hitTime, int time);
-Dot **sortDotsByTime(Dot **dots, int numDots);
 bool hitLeft(Game *game, int x, int y);
 bool hitRight(Game *game, int x, int y);
 Dot *hitDot(Game *game, int x, int y);
 void step(Game *game, int dt);
+Dot **sortDotsByTime(Dot **dots, int numDots);
