@@ -22,7 +22,7 @@
 
 // funct7 REG
 `define FUNC7_DEFAULT		7'b0000000
-`define FUNC7_SUB_ASR		7'h0100000
+`define FUNC7_SUB_SRA		7'h0100000
 
 // funct3 IMM
 `define FUNCT3_ADDI			3'b000
@@ -54,8 +54,20 @@
 `define FUNCT3_BLTU			3'b110
 `define FUNCT3_BGEU			3'b111
 
+package br_definitions;
+	typedef enum logic [2:0] {
+		BR_BEQ,
+		BR_BNE,
+		BR_NONE,	// DO NOT BRANCH
+		BR_BLT = 3'b100,
+		BR_BGE,
+		BR_BLTU,
+		BR_BGEU
+	} br_func_t;
+endpackage
+
 package alu_definitions;
-	typedef enum [3:0] {
+	typedef enum logic [3:0] {
 		ALU_ADD,
 		ALU_SUB,
 		ALU_XOR,
@@ -65,6 +77,22 @@ package alu_definitions;
 		ALU_SRL,
 		ALU_SRA,
 		ALU_SLT,
-		ALU_SLTU
+		ALU_SLTU,
 	} alu_ctrl_t;	
+endpackage
+
+package sext_definitions;
+	typedef enum logic [1:0] {
+		sext_I_type,	// sign extend immediate
+		sext_U_type,	// left shift by 12
+		sext_S_type
+	} sext_ctrl_t;
+endpackage
+
+package pc_defnitions;
+	typedef enum logic {
+		PC_INC,
+		PC_BR,
+		PC_JAL
+	} pc_source_t;
 endpackage
