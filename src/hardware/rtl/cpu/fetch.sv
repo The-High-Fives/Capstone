@@ -5,7 +5,7 @@ module fetch (
     input wire PC_enable,           // Enable signal for PC update
     input wire takeBranch,          // Signal to indicate if branch is taken
     input wire [31:0] branch_PC,    // Target address for branch/jump
-    input wire [31:0] instr_mem_data, // Instruction fetched from external memory
+    // input wire [31:0] instr_mem_data, // Instruction fetched from external memory
 
     // outputs
     output wire [31:0] PC_plus4_IFID_in, // PC + 4 value to calculate next PC
@@ -13,12 +13,12 @@ module fetch (
     output reg [31:0] PC_IFID_in,         // Current PC value
 );
 
-    // // Declare instruction memory and load contents from the code we wish to execute. 
-    // reg [31:0] instr_mem[0:8191];
+    // Declare instruction memory and load contents from the code we wish to execute. 
+    reg [31:0] instr_mem[0:8191];
 
-    // initial begin
-    //     $readmemh("instr_mem.hex",instr_mem);
-    // end
+    initial begin
+        $readmemh("instr_mem.hex",instr_mem);
+    end
 
     // Instantiate PC_and_Branch module for PC updates
     PC_and_Branch pc_and_branch (
@@ -38,8 +38,8 @@ module fetch (
         if (!rst_n) begin
             instruction_IFID_in <= 32'd0;
         end else begin
-            instruction_IFID_in <= instr_mem_data;
-          // instruction_IFID_in <= instr_mem[PC_IFID_in >> 2]; // divide by 4 to get location
+            // instruction_IFID_in <= instr_mem_data;
+            instruction_IFID_in <= instr_mem[PC_IFID_in >> 2]; // divide by 4 to get location
         end
     end
 
