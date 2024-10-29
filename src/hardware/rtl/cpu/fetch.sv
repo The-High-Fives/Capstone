@@ -25,7 +25,7 @@ module fetch (
         .clk(clk),
         .rst_n(rst_n),
         .PC_enable(PC_enable),
-        .branch(1'b0),                    // No dynamic branch prediction, simple branch/jump handling
+        .branch(1'b0),               
         .jumpAL(1'b0),
         .takeBranch(takeBranch),
         .branch_PC(branch_PC),
