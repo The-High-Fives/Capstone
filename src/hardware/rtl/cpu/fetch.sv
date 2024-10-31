@@ -1,3 +1,5 @@
+import pc_defnitions::*;
+
 module fetch (
     // inputs 
     input wire clk,
@@ -8,7 +10,6 @@ module fetch (
     // input wire [31:0] instr_mem_data, // Instruction fetched from external memory
 
     // outputs
-    output wire [31:0] PC_plus4_IFID_in, // PC + 4 value to calculate next PC
     output reg [31:0] instruction_IFID_in, // Fetched instruction for IF/ID stage
     output reg [31:0] PC_IFID_in,         // Current PC value
 );
@@ -29,7 +30,6 @@ module fetch (
         .jumpAL(1'b0),
         .takeBranch(takeBranch),
         .branch_PC(branch_PC),
-        .PC_plus_4(PC_plus4_IFID_in),
         .PC_IFID_in(PC_IFID_in)
     );
 
@@ -42,9 +42,6 @@ module fetch (
             instruction_IFID_in <= instr_mem[PC_IFID_in >> 2]; // divide by 4 to get location
         end
     end
-
-    // Increment the PC (PC + 4 for sequential execution)
-    assign PC_plus4_IFID_in = PC_IFID_in + 32'd4; // Increment PC by 4 for next instruction
 
 endmodule
 

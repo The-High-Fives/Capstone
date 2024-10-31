@@ -7,7 +7,6 @@ module PC_and_Branch (
     input wire jumpAL,           // Jump control signal (JAL or JALR)
     input wire takeBranch,       // Is the branch taken or not?
     input wire [31:0] branch_PC, // Target address for branch or jump
-    input wire [31:0] PC_plus_4, // PC + 4 from fetch stage
 
     // output
     output reg [31:0] PC_IFID_in  // Program counter output to fetch stage
