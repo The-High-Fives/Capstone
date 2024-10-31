@@ -85,6 +85,7 @@ module decode
             sext_U_type: sext_out = {instru[31:12], 12'h000};
             sext_S_type: sext_out = {{20{instru[31]}}, instru[31:25], instru[11:7]};
             sext_J_type: sext_out = {{12{instru[31]}}, instru[19:12], instru[20], instru[30:21], 1'b0};
+            sext_B_type: sext_out = {{20{instru[31]}}, instru[7], instru[30:25], instru[11:8], 1'b0};
         endcase
     end
 

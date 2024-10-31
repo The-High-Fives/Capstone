@@ -4,13 +4,15 @@ module memory (
 
     // Control signals from EX/MEM buffer
     input logic m_MemRead,         // Memory read enable
-    input logic m_MemWrite,        // Memory write enable
-    input logic m_MemToReg,        
-    input logic m_RegWrite,        
+    input logic m_MemWrite,        // Memory write enable 
+    input m_JAL,
+    input m_LUI,
 
     // Data signals from EX/MEM buffer
     input logic [31:0] m_alu_out,      
     input logic [31:0] m_mem_data, // Data to write to memory
+    input [31:0]       m_imm,
+    input logic [31:0] m_pc_inc,
     input logic [4:0] m_rd,          
 
     // Stall control
@@ -18,18 +20,18 @@ module memory (
 
     // Output signals to MEM/WB buffer
     output logic [31:0] read_data_MEMWB, // Data read from memory for WB stage
-    output logic [31:0] alu_out_MEMWB,   // Forward ALU result to WB stage
-    output logic [4:0] rd_MEMWB,         // Forward destination register to WB stage
-    output logic MemToReg_MEMWB,         // Forward MemToReg signal to WB stage
-    output logic RegWrite_MEMWB,         // Forward RegWrite signal to WB stage
+    output logic [31:0] reg_data_MEMWB       
 
     // Memory interface
-    output logic [31:0] memory_data_out, // Data to memory (write)
-    input  logic [31:0] memory_data_in,  // Data from memory (read)
-    output logic [14:0] memory_addr,     // Memory address
-    output logic memory_we,              // Memory write enable
-    output logic memory_re               // Memory read enable
+    // output logic [31:0] memory_data_out, // Data to memory (write)
+    // input  logic [31:0] memory_data_in,  // Data from memory (read)
+    // output logic [14:0] memory_addr,     // Memory address
+    // output logic memory_we,              // Memory write enable
+    // output logic memory_re               // Memory read enable
 );
+
+    assign reg_data = m_JAL ? m_pc_inc : 
+                      m_LUI ? m_imm : m_alu_out;
 
     // Bank selection (use bits [3:2] of address to select one of the four banks)
     logic [1:0] bank_select;
@@ -63,19 +65,13 @@ module memory (
         endcase
     end
 
-    // Forward control and data signals to MEM/WB buffer
-    assign alu_out_MEMWB = m_alu_out;
-    assign rd_MEMWB = m_rd;
-    assign MemToReg_MEMWB = m_MemToReg;
-    assign RegWrite_MEMWB = m_RegWrite;
-
     // Stall signal for memory reads (set if MemRead is high and data is being accessed)
     assign stall_mem = m_MemRead;
 
     // Memory interface signals (for compatibility with any external memory systems)
-    assign memory_data_out = m_mem_data;     // Data to write to memory
-    assign memory_addr = m_alu_out[16:2];    // Address for memory access (assuming 4-byte aligned)
-    assign memory_we = m_MemWrite;           // Write enable for memory
-    assign memory_re = m_MemRead;            // Read enable for memory
+    // assign memory_data_out = m_mem_data;     // Data to write to memory
+    // assign memory_addr = m_alu_out[16:2];    // Address for memory access (assuming 4-byte aligned)
+    // assign memory_we = m_MemWrite;           // Write enable for memory
+    // assign memory_re = m_MemRead;            // Read enable for memory
 
 endmodule
