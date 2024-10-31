@@ -1,22 +1,33 @@
+`include "definitions.svh"
+
 module cpu
 (
     input clk,
     input rst_n
 );
 
+// signal declarations
+wire flush;
 
+wire [31:0] PC_IFID_in, instruction_IFID_in;
 wire [31:0] id_instru;
 wire [31:0] id_pc, ex_pc;
 wire [31:0] id_rs1_data, ex_rs1_data;
 wire [31:0] id_rs2_data, ex_rs2_data;
 wire [31:0] id_sext_out, ex_sext_out;
+wire [31:0] ex_alu_out, m_alu_out;
+wire [31:0] ex_pc_inc_out, m_pc_inc_out;
+wire [31:0] ex_mem_data, m_mem_data;
+wire [31:0] read_data_MEMWB, wb_read_data;
+wire [31:0] reg_data_MEMWB, wb_reg_data;
 wire [4:0] id_rs1, ex_rs1;
-wire [4:0] id_rs2, ex_rs2;
-wire [4:0] id_rd, ex_rd;
+wire [4:0] id_rs2, ex_rs2. m_rs2;
+wire [4:0] id_rd, ex_rd, m_rd, wb_rd;
 alu_ctrl_t id_ALU_ctrl, ex_ALU_ctrl;
 br_func_t id_br_func, ex_br_func;
 pc_source_t id_pc_source, ex_pc_source;
 
+wire [31:0] ex_br_jal_addr;
 // fowarding signals
 wire [31:0] ex_m_data, ex_w_data;
 
@@ -29,12 +40,21 @@ fetch u_fetch (
     .rst_n                  (rst_n),
     .PC_enable              (PC_enable),
     .takeBranch             (takeBranch),
-    .branch_PC              (branch_PC),
+    .branch_PC              (ex_br_jal_addr),
     .instr_mem_data         (instr_mem_data),
     // outputs
-    .PC_plus4_IFID_in       (PC_plus4_IFID_in),
     .instruction_IFID_in    (instruction_IFID_in),
     .PC_IFID_in             (PC_IFID_in),
+);
+
+if_id_buffer u_if_id_buffer (
+    .clk               (clk),
+    .rst_n             (rst_n),
+    .flush             (if_id_flush),
+    .instruction_IF    (instruction_IFID_in),
+    .pc_in             (PC_IFID_in),
+    .instruction_ID    (id_instru),
+    .pc_out            (id_pc)
 );
 
 decode u_decode (
@@ -45,7 +65,7 @@ decode u_decode (
 
     // writeback
     .writedata      (writedata),
-    .write_rd       (write_rd),
+    .write_rd       (wb_rd),
     .wb_RegWrite    (wb_RegWrite)
 
     // outputs
@@ -64,7 +84,7 @@ decode u_decode (
     .id_JAL_addr    (id_JAL_addr),
     .id_ALU_ctrl    (id_ALU_ctrl),
     .id_br_func     (id_br_func),
-    .id_pc_source    (id_pc_source),
+    .id_pc_source   (id_pc_source),
     .id_rs1         (id_rs1),
     .id_rs2         (id_rs2),
     .id_rd          (id_rd)
@@ -126,6 +146,7 @@ execute u_execute (
     .ex_ALU_ctrl       (ex_ALU_ctrl),
     .ex_JAL_addr       (ex_JAL_addr),
     .ex_pc_source      (ex_pc_source),
+    .ex_br_func        (ex_br_func),
     .ex_forward_rs1    (ex_forward_rs1),
     .ex_forward_rs2    (ex_forward_rs2),
     // datapath
@@ -138,10 +159,76 @@ execute u_execute (
     // outputs
     .ex_alu_out        (ex_alu_out),
     .ex_pc_inc_out     (ex_pc_inc_out),
-    .ex_br_addr        (ex_br_addr),
-    .ex_jal_addr       (ex_jal_addr),
-    .pc_source         (pc_source),
-    .flush             (flush),
-    .stall             (stall)
+    .ex_mem_data       (ex_mem_data), 
+    .ex_br_jal_addr    (ex_br_jal_addr),
+    .takeBranch        (takeBranch)
 );
+
+assign flush = takeBranch;
+
+ex_m_buffer u_ex_m_buffer (
+    // control signals
+    // writeback
+    .ex_MemToReg      (ex_MemToReg),
+    .ex_RegWrite      (ex_RegWrite),
+    .m_MemToReg       (m_MemToReg),
+    .m_RegWrite       (m_RegWrite),
+    // memory
+    .ex_MemWrite      (ex_MemWrite),
+    .ex_MemRead       (ex_MemRead),
+    .ex_JAL           (ex_JAL),
+    .ex_LUI           (ex_LUI),
+    .m_MemWrite       (m_MemWrite),
+    .m_MemRead        (m_MemRead),
+    .m_JAL            (m_JAL),
+    .m_LUI            (m_LUI),
+    .ex_rs2           (ex_rs2),
+    .ex_rd            (ex_rd),
+    .m_rs2            (m_rs2),
+    .m_rd             (m_rd),
+    // datapath
+    .ex_alu_out       (ex_alu_out),
+    .ex_mem_data      (ex_mem_data),
+    .ex_sext_out      (ex_sext_out),
+    .ex_pc_inc_out    (ex_pc_inc_out),
+    .m_alu_out        (m_alu_out),
+    .m_mem_data       (m_mem_data),
+    .m_sext_out       (m_sext_out),
+    .m_pc_inc_out     (m_pc_inc_out),
+);
+
+memory u_memory (
+    .clk                (clk),
+    .rst_n              (rst_n),
+    .m_MemRead          (m_MemRead),
+    .m_MemWrite         (m_MemWrite),
+    .m_JAL              (m_JAL),
+    .m_LUI              (m_LUI),
+    .m_alu_out          (m_alu_out),
+    .m_mem_data         (m_mem_data),
+    .m_imm              (m_sext_out),
+    .m_pc_inc           (m_pc_inc),
+    .m_rd               (m_rd),
+    .stall_mem          (stall_mem), // TODO
+    .read_data_MEMWB    (read_data_MEMWB),
+    .reg_data_MEMWB     (reg_data_MEMWB)
+);
+
+mem_wb_buffer u_mem_wb_buffer (
+    .clk             (clk),
+    .rst_n           (rst_n),
+    .m_MemToReg      (m_MemToReg),
+    .m_RegWrite      (m_RegWrite),
+    .m_read_data     (read_data_MEMWB),
+    .m_reg_data      (reg_data_MEMWB),
+    .m_rd            (m_rd),
+    .wb_read_data    (wb_read_data),
+    .wb_reg_data     (wb_reg_data),
+    .wb_rd           (wb_rd),
+    .wb_RegWrite     (wb_RegWrite),
+    .wb_MemToReg     (wb_MemToReg)
+);
+
+assign writedata = wb_MemToReg ? wb_read_data : wb_reg_data;
+
 endmodule
