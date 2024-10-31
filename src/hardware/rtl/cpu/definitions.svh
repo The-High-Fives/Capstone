@@ -85,7 +85,9 @@ package sext_definitions;
 	typedef enum logic [1:0] {
 		sext_I_type,	// sign extend immediate
 		sext_U_type,	// left shift by 12
-		sext_S_type
+		sext_S_type,
+		sext_J_type,
+		sext_B_type		// calculate imm for branch
 	} sext_ctrl_t;
 endpackage
 
