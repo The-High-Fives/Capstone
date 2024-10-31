@@ -2,6 +2,7 @@ module id_ex_buffer
 (
     input clk,
     input rst_n,
+    input flush,
     input stall,
 
     // control 
@@ -73,25 +74,48 @@ module id_ex_buffer
             ex_pc_source <= PC_INC;
         end
         else if (!stall) begin
-            ex_rs1 <= id_rs1;
-            ex_rs2 <= id_rs2;
-            ex_rd <= id_rd;
-            ex_MemToReg <= id_MemToReg;
-            ex_RegWrite <= id_RegWrite;
-            ex_MemWrite <= id_MemWrite;
-            ex_MemRead <= id_MemRead;
-            ex_JAL <= id_JAL;
-            ex_LUI <= id_LUI;
-            ex_ALU_ctrl <= id_ALU_ctrl;
-            ex_ALU_pc <= id_ALU_pc;
-            ex_ALU_imm <= id_ALU_imm;
-            ex_br_func <= id_br_func;
-            ex_JAL_addr <= id_JAL_addr;
-            ex_pc <= id_pc;
-            ex_rs1_data <= id_rs1_data;
-            ex_rs2_data <= id_rs2_data;
-            ex_sext_out <= id_sext_out;
-            ex_pc_source <= id_pc_source;
+            if (flush) begin
+                ex_rs1 <= 0;
+                ex_rs2 <= 0;
+                ex_rd <= 0;
+                //ex_MemToReg <= id_MemToReg;
+                ex_RegWrite <= 0;
+                ex_MemWrite <= 0;
+                ex_MemRead <= 0;
+                ex_JAL <= 0;
+                ex_LUI <= 0;
+                ex_ALU_ctrl <= ALU_ADD;
+                ex_ALU_pc <= 0;
+                ex_ALU_imm <= 0;
+                ex_br_func <= BR_NONE;
+                ex_JAL_addr <= 0;
+                // ex_pc <= id_pc;
+                // ex_rs1_data <= id_rs1_data;
+                // ex_rs2_data <= id_rs2_data;
+                // ex_sext_out <= id_sext_out;
+                // ex_pc_source <= id_pc_source;
+            end
+            else begin
+                ex_rs1 <= id_rs1;
+                ex_rs2 <= id_rs2;
+                ex_rd <= id_rd;
+                ex_MemToReg <= id_MemToReg;
+                ex_RegWrite <= id_RegWrite;
+                ex_MemWrite <= id_MemWrite;
+                ex_MemRead <= id_MemRead;
+                ex_JAL <= id_JAL;
+                ex_LUI <= id_LUI;
+                ex_ALU_ctrl <= id_ALU_ctrl;
+                ex_ALU_pc <= id_ALU_pc;
+                ex_ALU_imm <= id_ALU_imm;
+                ex_br_func <= id_br_func;
+                ex_JAL_addr <= id_JAL_addr;
+                ex_pc <= id_pc;
+                ex_rs1_data <= id_rs1_data;
+                ex_rs2_data <= id_rs2_data;
+                ex_sext_out <= id_sext_out;
+                ex_pc_source <= id_pc_source;
+            end
         end
     end
 endmodule

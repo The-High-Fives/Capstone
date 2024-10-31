@@ -2,8 +2,6 @@
 
 module execute
 (
-    input clk,
-    input rst_n,
     // control signals
     input ex_ALU_imm,
     input ex_ALU_pc,

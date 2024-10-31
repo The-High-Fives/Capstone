@@ -34,6 +34,17 @@ wire [31:0] ex_m_data, ex_w_data;
 wire [31:0] writedata;
 wire [4:0] write_rd;
 
+wire load_use_hazard; // stall for load data hazard
+wire stall_mem; // stall until memory write or read completes
+wire stall_if, stall_id, stall_ex, stall_m;
+wire if_id_flush;
+wire id_ex_flush;
+
+assign stall_if = load_use_hazard | stall_mem;
+assign stall_id = load_use_hazard | stall_mem;
+assign stall_ex = load_use_hazard | stall_mem;
+assign stall_m = stall_mem;
+
 fetch u_fetch (
     // inputs
     .clk                    (clk),
@@ -50,6 +61,7 @@ fetch u_fetch (
 if_id_buffer u_if_id_buffer (
     .clk               (clk),
     .rst_n             (rst_n),
+    .stall             (stall_if),
     .flush             (if_id_flush),
     .instruction_IF    (instruction_IFID_in),
     .pc_in             (PC_IFID_in),
@@ -93,6 +105,8 @@ decode u_decode (
 id_ex_buffer u_id_ex_buffer (
     .clk            (clk),
     .rst_n          (rst_n),
+    .stall          (stall_id),
+    .flush          (id_ex_flush),
     // control 
     .id_rs1         (id_rs1),
     .id_rs2         (id_rs2),
@@ -138,8 +152,6 @@ id_ex_buffer u_id_ex_buffer (
 );
 
 execute u_execute (
-    .clk               (clk),
-    .rst_n             (rst_n),
     // control signals
     .ex_ALU_pc         (ex_ALU_pc),
     .ex_ALU_imm        (ex_ALU_imm),
@@ -154,8 +166,8 @@ execute u_execute (
     .ex_rs2_data       (ex_rs2_data),
     .ex_imm            (ex_sext_out),
     .ex_pc             (ex_pc),
-    .ex_m_data         (ex_m_data),
-    .ex_w_data         (ex_w_data),
+    .ex_m_data         (reg_data_MEMWB),
+    .ex_w_data         (writedata),
     // outputs
     .ex_alu_out        (ex_alu_out),
     .ex_pc_inc_out     (ex_pc_inc_out),
@@ -167,6 +179,9 @@ execute u_execute (
 assign flush = takeBranch;
 
 ex_m_buffer u_ex_m_buffer (
+    .clk             (clk),
+    .rst_n           (rst_n),
+    .stall           (stall_ex),
     // control signals
     // writeback
     .ex_MemToReg      (ex_MemToReg),
@@ -206,10 +221,12 @@ memory u_memory (
     .m_LUI              (m_LUI),
     .m_alu_out          (m_alu_out),
     .m_mem_data         (m_mem_data),
+    .wb_data            (writedata),
+    .wb_forward         (wb_forward),
     .m_imm              (m_sext_out),
     .m_pc_inc           (m_pc_inc),
     .m_rd               (m_rd),
-    .stall_mem          (stall_mem), // TODO
+    .stall_mem          (stall_mem),
     .read_data_MEMWB    (read_data_MEMWB),
     .reg_data_MEMWB     (reg_data_MEMWB)
 );
@@ -217,6 +234,7 @@ memory u_memory (
 mem_wb_buffer u_mem_wb_buffer (
     .clk             (clk),
     .rst_n           (rst_n),
+    .stall           (stall_m),
     .m_MemToReg      (m_MemToReg),
     .m_RegWrite      (m_RegWrite),
     .m_read_data     (read_data_MEMWB),
@@ -228,6 +246,29 @@ mem_wb_buffer u_mem_wb_buffer (
     .wb_RegWrite     (wb_RegWrite),
     .wb_MemToReg     (wb_MemToReg)
 );
+
+forwardToEX u_forwardToEX (
+    .ex_rs1              (ex_rs1),
+    .ex_rs2              (ex_rs2),
+    .m_rd                (m_rd),
+    .wb_rd               (wb_rd),
+    .we_EXMEM            (m_RegWrite),
+    .we_MEMWB            (wb_RegWrite),
+    .MemRead_EXMEM       (m_MemRead),
+
+    .ALU_1_forward_EX    (ex_forward_rs1),
+    .ALU_2_forward_EX    (ex_forward_rs2),
+    .load_use_hazard     (load_use_hazard)
+);
+
+forwardToMem u_forwardToMem (
+    .m_rs2                 (m_rs2),
+    .wb_rd                 (wb_rd),
+    .we_MEMWB              (wb_RegWrite),
+    .memWrite_EXMEM        (m_MemWrite),
+    .RegData2_forward_M    (wb_forward)
+);
+
 
 assign writedata = wb_MemToReg ? wb_read_data : wb_reg_data;
 

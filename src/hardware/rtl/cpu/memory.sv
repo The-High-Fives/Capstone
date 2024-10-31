@@ -11,6 +11,8 @@ module memory (
     // Data signals from EX/MEM buffer
     input logic [31:0] m_alu_out,      
     input logic [31:0] m_mem_data, // Data to write to memory
+    input [31:0] wb_data, // Data forwarded from writeback
+    input wb_forward, // selects data source for memory writes
     input [31:0]       m_imm,
     input logic [31:0] m_pc_inc,
     input logic [4:0] m_rd,          
@@ -33,6 +35,8 @@ module memory (
     assign reg_data = m_JAL ? m_pc_inc : 
                       m_LUI ? m_imm : m_alu_out;
 
+    assign write_data = wb_forward ? wb_data : m_mem_data;
+
     // Bank selection (use bits [3:2] of address to select one of the four banks)
     logic [1:0] bank_select;
     assign bank_select = m_alu_out[3:2]; // Use bits [3:2] for bank selection
@@ -43,16 +47,16 @@ module memory (
     // Instantiate four banks of dmem32 for the memory
     // Use bits [17:2] as address within the bank
     dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b00)),
-                        .we(m_MemWrite && (bank_select == 2'b00)), .wdata(m_mem_data), .rdata(bank_rdata[0]));
+                        .we(m_MemWrite && (bank_select == 2'b00)), .wdata(write_data), .rdata(bank_rdata[0]));
 
     dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b01)),
-                        .we(m_MemWrite && (bank_select == 2'b01)), .wdata(m_mem_data), .rdata(bank_rdata[1]));
+                        .we(m_MemWrite && (bank_select == 2'b01)), .wdata(write_data), .rdata(bank_rdata[1]));
 
     dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b10)),
-                        .we(m_MemWrite && (bank_select == 2'b10)), .wdata(m_mem_data), .rdata(bank_rdata[2]));
+                        .we(m_MemWrite && (bank_select == 2'b10)), .wdata(write_data), .rdata(bank_rdata[2]));
 
     dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b11)),
-                        .we(m_MemWrite && (bank_select == 2'b11)), .wdata(m_mem_data), .rdata(bank_rdata[3]));
+                        .we(m_MemWrite && (bank_select == 2'b11)), .wdata(write_data), .rdata(bank_rdata[3]));
 
     // Memory read data multiplexing based on selected bank
     always_comb begin
@@ -66,7 +70,8 @@ module memory (
     end
 
     // Stall signal for memory reads (set if MemRead is high and data is being accessed)
-    assign stall_mem = m_MemRead;
+    // assign stall_mem = m_MemRead;
+    assign stall_mem = 0;
 
     // Memory interface signals (for compatibility with any external memory systems)
     // assign memory_data_out = m_mem_data;     // Data to write to memory
