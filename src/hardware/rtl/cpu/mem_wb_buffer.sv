@@ -1,6 +1,7 @@
 module mem_wb_buffer (
     input logic clk,
     input logic rst_n,
+    input stall,
 
     // Control signals from MEM stage
     input logic m_MemToReg,       
@@ -27,7 +28,7 @@ module mem_wb_buffer (
             wb_RegWrite <= 1'b0;
             wb_MemToReg <= 1'b0
         end 
-        else begin
+        else if (!stall) begin
             // Select either memory or ALU result based on MemToReg control signal
             wb_read_data <= m_read_data;
             wb_reg_data <= m_reg_data;

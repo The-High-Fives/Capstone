@@ -2,6 +2,7 @@ module id_ex_buffer
 (
     input clk,
     input rst_n,
+    input stall,
 
     // control 
     input [4:0] id_rs1,
@@ -71,7 +72,7 @@ module id_ex_buffer
             ex_sext_out <= 0;
             ex_pc_source <= PC_INC;
         end
-        else begin
+        else if (!stall) begin
             ex_rs1 <= id_rs1;
             ex_rs2 <= id_rs2;
             ex_rd <= id_rd;

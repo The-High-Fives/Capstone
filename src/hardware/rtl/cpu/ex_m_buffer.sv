@@ -1,5 +1,9 @@
 module ex_m_buffer
 (
+    input clk,
+    input rst_n,
+    input stall,
+    
     // control signals
     // writeback
     input ex_MemToReg,
@@ -46,7 +50,7 @@ module ex_m_buffer
             m_alu_out <= 0;
             m_mem_data <= 0;
         end
-        else begin
+        else if (!stall) begin
             m_MemToReg <= ex_MemToReg;
             m_RegWrite <= ex_RegWrite;
             m_JAL = ex_JAL;

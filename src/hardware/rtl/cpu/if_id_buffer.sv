@@ -1,7 +1,7 @@
 module if_id_buffer (
     input wire clk,                  
     input wire rst_n,              
-    input wire flush, // Flush signal to clear the instruction (branch stuff)
+    input wire stall,
     
     // Inputs from Fetch stage
     input wire [31:0] instruction_IF, // Instruction fetched in IF stage
@@ -16,12 +16,7 @@ module if_id_buffer (
         if (!rst_n) begin
             instruction_ID <= 32'b0;
             pc_out <= 32'b0;
-        end 
-        else if (flush) begin
-            instruction_ID <= 32'b0;
-            pc_out <= 32'b0;
-        end 
-        else begin
+        end else if (!stall) begin
             instruction_ID <= instruction_IF;
             pc_out <= pc_in;
         end
