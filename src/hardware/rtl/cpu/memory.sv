@@ -72,10 +72,4 @@ module memory (
     // assign stall_mem = m_MemRead;
     assign stall_mem = 0;
 
-    // Memory interface signals (for compatibility with any external memory systems)
-    // assign memory_data_out = m_mem_data;     // Data to write to memory
-    // assign memory_addr = m_alu_out[16:2];    // Address for memory access (assuming 4-byte aligned)
-    // assign memory_we = m_MemWrite;           // Write enable for memory
-    // assign memory_re = m_MemRead;            // Read enable for memory
-
 endmodule

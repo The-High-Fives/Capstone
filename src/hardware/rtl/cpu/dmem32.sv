@@ -5,7 +5,7 @@ module dmem32 (
     input logic [14:0] addr,  // 15-bit address for 32KB (128KB memory)
     input logic re,           // Read enable
     input logic we,           // Write enable
-    input logic [31:0] wdata, // 32-bit data to be written into memory
+    input logic [7:0] wdata, // 32-bit data to be written into memory
 
     // outputs
     output logic [31:0] rdata, // 32-bit data to be read from memory
