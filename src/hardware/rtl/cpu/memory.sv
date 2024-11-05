@@ -1,4 +1,4 @@
-import mem_definitions::*
+import mem_definitions::*;
 
 module memory (
     input logic clk,
@@ -9,6 +9,7 @@ module memory (
     input logic m_MemWrite,        // Memory write enable 
     input m_JAL,
     input m_LUI,
+    input  mem_mask_t m_mem_type,
 
     // Data signals from EX/MEM buffer
     input logic [31:0] m_alu_out,      
@@ -41,26 +42,25 @@ module memory (
     logic [1:0] bank_select;
     assign bank_select = m_alu_out[1:0]; // can get rid of the variable tbh
 
-    mem_mask_t mem_type;
-
     // Output data from each memory bank
-    logic [31:0] bank_rdata[0:3];
+    logic [7:0] bank_rdata[0:3];
     logic [7:0] bank_wdata[0:3];
 
     logic we0, we1, we2, we3;
     logic re0, re1, re2, re3;
+    logic [31:0] memDataOut;
 
     // Instantiate four banks of dmem32 for the memory
     dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[31:17]), .re(re0), .we(we0), 
                         .wdata(bank_wdata[0]), .rdata(bank_rdata[0]));
 
-    dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[32:17]), .re(re1), .we(we1), 
+    dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[31:17]), .re(re1), .we(we1), 
                         .wdata(bank_wdata[1]), .rdata(bank_rdata[1]));
 
-    dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[32:17]), .re(re2), .we(we2), 
+    dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[31:17]), .re(re2), .we(we2), 
                         .wdata(bank_wdata[2]), .rdata(bank_rdata[2]));
 
-    dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[32:17]), .re(re3), .we(we3), 
+    dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[31:17]), .re(re3), .we(we3), 
                         .wdata(bank_wdata[3]), .rdata(bank_rdata[3]));
 
     // Memory read data multiplexing based on selected bank
@@ -79,7 +79,7 @@ module memory (
         bank_wdata[3] = 8'h0;
         memDataOut = 0;
 
-        case (mem_type)
+        case (m_mem_type)
             // SB and LB (sign-extended)
             MEM_BYTE: begin
                 case (bank_select)

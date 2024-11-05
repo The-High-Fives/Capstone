@@ -54,6 +54,8 @@ assign stall_m = stall_mem;
 assign if_id_flush = takeBranch;
 assign id_ex_flush = takeBranch;
 
+assign PC_enable = ~stall_if;
+
 fetch u_fetch (
     // inputs
     .clk                    (clk),
@@ -235,6 +237,7 @@ memory u_memory (
     .m_MemWrite         (m_MemWrite),
     .m_JAL              (m_JAL),
     .m_LUI              (m_LUI),
+    .m_mem_type         (m_Mmask),
     .m_alu_out          (m_alu_out),
     .m_mem_data         (m_mem_data),
     .wb_data            (writedata),

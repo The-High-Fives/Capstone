@@ -5,14 +5,14 @@ module dmem32 (
     input logic [14:0] addr,  // 15-bit address for 32KB (128KB memory)
     input logic re,           // Read enable
     input logic we,           // Write enable
-    input logic [31:0] wdata, // 32-bit data to be written into memory
+    input logic [7:0] wdata, // 32-bit data to be written into memory
 
     // outputs
-    output logic [31:0] rdata // 32-bit data to be read from memory
+    output logic [7:0] rdata // 32-bit data to be read from memory
 );
 
     // 32KB memory, each location stores a 32-bit word (4 bytes)
-    reg [31:0] mem[0:32767]; // 128K = 32768 32-bit memory location 
+    reg [7:0] mem [0:32767]; // 128K = 32768 32-bit memory location 
 
     // Read operation
     always_ff @(posedge clk) begin // rst_n
@@ -28,7 +28,7 @@ module dmem32 (
 
     // Reading memory
     initial begin
-        $readmemh("something.hex", mem);
+        $readmemh("ADD.hex", mem);
     end
 
 endmodule
