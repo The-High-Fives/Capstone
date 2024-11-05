@@ -3,6 +3,7 @@ module ex_m_buffer
     input clk,
     input rst_n,
     input stall,
+    input flush, // insert NOP on load-use data hazard
     
     // control signals
     // writeback
@@ -51,16 +52,28 @@ module ex_m_buffer
             m_mem_data <= 0;
         end
         else if (!stall) begin
-            m_MemToReg <= ex_MemToReg;
-            m_RegWrite <= ex_RegWrite;
-            m_JAL = ex_JAL;
-            m_LUI = ex_LUI;
-            m_MemWrite <= ex_MemWrite;
-            m_MemRead <= ex_MemRead;
-            m_rs2 <= ex_rs2;
-            m_rd <= ex_rd;
-            m_alu_out <= ex_alu_out;
-            m_mem_data <= ex_mem_data;
+            if (flush) begin
+                m_MemToReg <= 0;
+                m_RegWrite <= 0;
+                m_JAL <= 0;
+                m_LUI <= 0;
+                m_MemWrite <= 0;
+                m_MemRead <= 0;
+                m_rs2 <= 0;
+                m_rd <= 0;
+            end
+            else begin
+                m_MemToReg <= ex_MemToReg;
+                m_RegWrite <= ex_RegWrite;
+                m_JAL <= ex_JAL;
+                m_LUI <= ex_LUI;
+                m_MemWrite <= ex_MemWrite;
+                m_MemRead <= ex_MemRead;
+                m_rs2 <= ex_rs2;
+                m_rd <= ex_rd;
+                m_alu_out <= ex_alu_out;
+                m_mem_data <= ex_mem_data;
+            end
         end
     end
 

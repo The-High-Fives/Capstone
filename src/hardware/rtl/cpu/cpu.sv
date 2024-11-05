@@ -42,8 +42,11 @@ wire id_ex_flush;
 
 assign stall_if = load_use_hazard | stall_mem;
 assign stall_id = load_use_hazard | stall_mem;
-assign stall_ex = load_use_hazard | stall_mem;
+assign stall_ex = stall_mem;
 assign stall_m = stall_mem;
+
+assign if_id_flush = takeBranch;
+assign id_ex_flush = takeBranch;
 
 fetch u_fetch (
     // inputs
@@ -182,6 +185,7 @@ ex_m_buffer u_ex_m_buffer (
     .clk             (clk),
     .rst_n           (rst_n),
     .stall           (stall_ex),
+    .flush           (load_use_hazard),
     // control signals
     // writeback
     .ex_MemToReg      (ex_MemToReg),
