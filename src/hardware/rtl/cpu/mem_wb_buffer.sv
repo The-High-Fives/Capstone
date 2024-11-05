@@ -20,9 +20,11 @@ module mem_wb_buffer (
     output logic wb_MemToReg
 );
 
+    assign wb_read_data = m_read_data;
+
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            wb_read_data <= 32'd0;
+            // wb_read_data <= 32'd0;
             wb_reg_data <= 32'd0;
             wb_rd <= 5'd0;
             wb_RegWrite <= 1'b0;
@@ -30,7 +32,7 @@ module mem_wb_buffer (
         end 
         else if (!stall) begin
             // Select either memory or ALU result based on MemToReg control signal
-            wb_read_data <= m_read_data;
+            // wb_read_data <= m_read_data;
             wb_reg_data <= m_reg_data;
             wb_rd <= m_rd;
             wb_RegWrite <= m_RegWrite;
