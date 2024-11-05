@@ -34,29 +34,27 @@ module memory (
     wire [31:0] write_data;
 
     assign reg_data = m_JAL ? m_pc_inc : 
-                      m_LUI ? m_imm : m_alu_out;
+                      (m_LUI ? m_imm : m_alu_out);
 
     assign write_data = wb_forward ? wb_data : m_mem_data;
 
-    // Bank selection (use bits [3:2] of address to select one of the four banks)
     logic [1:0] bank_select;
-    assign bank_select = m_alu_out[3:2]; // Use bits [3:2] for bank selection
+    assign bank_select = m_alu_out[1:0];
 
     // Output data from each memory bank
     logic [31:0] bank_rdata[0:3];
 
     // Instantiate four banks of dmem32 for the memory
-    // Use bits [17:2] as address within the bank
-    dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b00)),
+    dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[31:17]), .re(m_MemRead && (bank_select == 2'b00)),
                         .we(m_MemWrite && (bank_select == 2'b00)), .wdata(write_data), .rdata(bank_rdata[0]));
 
-    dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b01)),
+    dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[32:17]), .re(m_MemRead && (bank_select == 2'b01)),
                         .we(m_MemWrite && (bank_select == 2'b01)), .wdata(write_data), .rdata(bank_rdata[1]));
 
-    dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b10)),
+    dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[32:17]), .re(m_MemRead && (bank_select == 2'b10)),
                         .we(m_MemWrite && (bank_select == 2'b10)), .wdata(write_data), .rdata(bank_rdata[2]));
 
-    dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[17:2]), .re(m_MemRead && (bank_select == 2'b11)),
+    dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[32:17]), .re(m_MemRead && (bank_select == 2'b11)),
                         .we(m_MemWrite && (bank_select == 2'b11)), .wdata(write_data), .rdata(bank_rdata[3]));
 
     // Memory read data multiplexing based on selected bank
