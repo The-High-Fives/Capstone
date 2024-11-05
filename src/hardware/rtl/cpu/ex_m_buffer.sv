@@ -1,3 +1,5 @@
+import mem_definitions::*;
+
 module ex_m_buffer
 (
     input clk,
@@ -17,10 +19,12 @@ module ex_m_buffer
     input ex_MemRead,
     input ex_JAL,
     input ex_LUI,
+    input mem_mask_t ex_Mmask,
     output logic m_MemWrite,
     output logic m_MemRead,
     output logic m_JAL,
     output logic m_LUI,
+    output mem_mask_t m_Mmask,
 
     input [4:0] ex_rs2,
     input [4:0] ex_rd,

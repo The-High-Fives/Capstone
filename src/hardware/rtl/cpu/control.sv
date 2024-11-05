@@ -3,6 +3,7 @@ import alu_definitions::*;
 import br_definitions::*;
 import sext_definitions::*;
 import pc_defnitions::*;
+import mem_definitions::*;
 
 module control
 (
@@ -18,6 +19,7 @@ module control
     output logic MemRead,   // enables memory read
     output logic JAL,       // selects JAL source for writeback
     output logic LUI,       // selects LUI source for writeback
+    output mem_mask_t Mmask,// select memory access type
     // execute
     output alu_ctrl_t ALU_ctrl, // alu function
     output logic ALU_pc,    // 0: register source for alu_op1, 1: PC into alu_op1
@@ -41,6 +43,7 @@ module control
         RegWrite = 1'b0;
         JAL = 1'bx;
         LUI = 1'bx;
+        Mmask = MEM_WORD;
 
         MemWrite = 1'b0;
         MemRead = 1'b0;
@@ -101,6 +104,13 @@ module control
                 ALU_pc = 1'b0;
                 ALU_imm = 1'b1;
                 ALU_ctrl = ALU_ADD;
+                case (funct3) 
+                    FUNCT3_LB: Mmask = MEM_BYTE;
+                    FUNCT3_LH: Mmask = MEM_HALF;
+                    FUNCT3_LW: Mmask = MEM_WORD;
+                    FUNCT3_LBU: Mmask = MEM_UBYTE;
+                    FUNCT3_LHU: Mmask = MEM_UHALF;
+                endcase
             end
 
             OPCODE_STORE: begin
@@ -109,6 +119,11 @@ module control
                 ALU_imm = 1'b1;
                 ALU_ctrl = ALU_ADD;
                 sext_op = sext_S_type;
+                case (funct3) 
+                    FUNCT3_SB: Mmask = MEM_BYTE;
+                    FUNCT3_SH: Mmask = MEM_HALF;
+                    FUNCT3_SW: Mmask = MEM_WORD;
+                endcase
             end
 
             OPCODE_BRANCH: begin

@@ -3,6 +3,7 @@ import alu_definitions::*;
 import br_definitions::*;
 import sext_definitions::*;
 import pc_defnitions::*;
+import mem_definitions::*;
 
 module cpu
 (
@@ -29,6 +30,7 @@ wire [1:0] ex_forward_rs1, ex_forward_rs2;
 alu_ctrl_t id_ALU_ctrl, ex_ALU_ctrl;
 br_func_t id_br_func, ex_br_func;
 pc_source_t id_pc_source, ex_pc_source;
+mem_mask_t id_Mmask, ex_Mmask, m_Mmask;
 
 wire [31:0] ex_br_jal_addr;
 // fowarding signals
@@ -98,6 +100,7 @@ decode u_decode (
     .id_LUI         (id_LUI),
     .id_MemWrite    (id_MemWrite),
     .id_MemRead     (id_MemRead),
+    .id_Mmask       (id_Mmask),
     .id_ALU_pc      (id_ALU_pc),
     .id_ALU_imm     (id_ALU_imm),
     .id_JAL_addr    (id_JAL_addr),
@@ -129,10 +132,12 @@ id_ex_buffer u_id_ex_buffer (
     // memory
     .id_MemWrite    (id_MemWrite),
     .id_MemRead     (id_MemRead),
+    .id_Mmask       (id_Mmask),
     .id_JAL         (id_JAL),
     .id_LUI         (id_LUI),
     .ex_MemWrite    (ex_MemWrite),
     .ex_MemRead     (ex_MemRead),
+    .ex_Mmask       (ex_Mmask),
     .ex_JAL         (ex_JAL),
     .ex_LUI         (ex_LUI),
     // execute
@@ -202,10 +207,12 @@ ex_m_buffer u_ex_m_buffer (
     .ex_MemRead       (ex_MemRead),
     .ex_JAL           (ex_JAL),
     .ex_LUI           (ex_LUI),
+    .ex_Mmask         (ex_Mmask),
     .m_MemWrite       (m_MemWrite),
     .m_MemRead        (m_MemRead),
     .m_JAL            (m_JAL),
     .m_LUI            (m_LUI),
+    .m_Mmask          (m_Mmask),
     .ex_rs2           (ex_rs2),
     .ex_rd            (ex_rd),
     .m_rs2            (m_rs2),

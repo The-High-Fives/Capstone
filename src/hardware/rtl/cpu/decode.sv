@@ -3,6 +3,7 @@ import alu_definitions::*;
 import br_definitions::*;
 import sext_definitions::*;
 import pc_defnitions::*;
+import mem_definitions::*;
 
 module decode
 (
@@ -28,6 +29,7 @@ module decode
     output id_LUI,
     output id_MemWrite,
     output id_MemRead,
+    output mem_mask_t id_Mmask,
     output id_ALU_pc,
     output id_ALU_imm,
     output id_JAL_addr,
@@ -73,6 +75,7 @@ module decode
         .LUI         (id_LUI),
         .MemWrite    (id_MemWrite),
         .MemRead     (id_MemRead),
+        .Mmask       (id_Mmask),
 
         .ALU_ctrl    (id_ALU_ctrl),
         .ALU_pc      (id_ALU_pc),

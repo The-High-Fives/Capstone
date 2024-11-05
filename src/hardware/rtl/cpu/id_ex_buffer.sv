@@ -1,6 +1,7 @@
 import alu_definitions::*;
 import br_definitions::*;
 import pc_defnitions::*;
+import mem_definitions::*;
 
 module id_ex_buffer 
 (
@@ -26,10 +27,12 @@ module id_ex_buffer
     input id_MemRead,
     input id_JAL,
     input id_LUI,
+    input mem_mask_t id_Mmask,
     output logic ex_MemWrite,
     output logic ex_MemRead,
     output logic ex_JAL,
     output logic ex_LUI,
+    output mem_mask_t ex_Mmask,
     // execute
     input alu_ctrl_t id_ALU_ctrl,
     input id_ALU_pc,
