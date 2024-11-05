@@ -8,7 +8,7 @@ module dmem32 (
     input logic [31:0] wdata, // 32-bit data to be written into memory
 
     // outputs
-    output logic [31:0] rdata, // 32-bit data to be read from memory
+    output logic [31:0] rdata // 32-bit data to be read from memory
 );
 
     // 32KB memory, each location stores a 32-bit word (4 bytes)

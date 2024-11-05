@@ -1,4 +1,8 @@
 `include "definitions.svh"
+import alu_definitions::*;
+import br_definitions::*;
+import sext_definitions::*;
+import pc_defnitions::*;
 
 module cpu
 (
@@ -7,22 +11,21 @@ module cpu
 );
 
 // signal declarations
-wire flush;
-
 wire [31:0] PC_IFID_in, instruction_IFID_in;
 wire [31:0] id_instru;
 wire [31:0] id_pc, ex_pc;
 wire [31:0] id_rs1_data, ex_rs1_data;
 wire [31:0] id_rs2_data, ex_rs2_data;
-wire [31:0] id_sext_out, ex_sext_out;
+wire [31:0] id_sext_out, ex_sext_out, m_sext_out;
 wire [31:0] ex_alu_out, m_alu_out;
 wire [31:0] ex_pc_inc_out, m_pc_inc_out;
 wire [31:0] ex_mem_data, m_mem_data;
 wire [31:0] read_data_MEMWB, wb_read_data;
 wire [31:0] reg_data_MEMWB, wb_reg_data;
 wire [4:0] id_rs1, ex_rs1;
-wire [4:0] id_rs2, ex_rs2. m_rs2;
+wire [4:0] id_rs2, ex_rs2, m_rs2;
 wire [4:0] id_rd, ex_rd, m_rd, wb_rd;
+wire [1:0] ex_forward_rs1, ex_forward_rs2;
 alu_ctrl_t id_ALU_ctrl, ex_ALU_ctrl;
 br_func_t id_br_func, ex_br_func;
 pc_source_t id_pc_source, ex_pc_source;
@@ -39,6 +42,7 @@ wire stall_mem; // stall until memory write or read completes
 wire stall_if, stall_id, stall_ex, stall_m;
 wire if_id_flush;
 wire id_ex_flush;
+wire takeBranch;
 
 assign stall_if = load_use_hazard | stall_mem;
 assign stall_id = load_use_hazard | stall_mem;
@@ -55,10 +59,10 @@ fetch u_fetch (
     .PC_enable              (PC_enable),
     .takeBranch             (takeBranch),
     .branch_PC              (ex_br_jal_addr),
-    .instr_mem_data         (instr_mem_data),
+    // .instr_mem_data         (instr_mem_data),
     // outputs
     .instruction_IFID_in    (instruction_IFID_in),
-    .PC_IFID_in             (PC_IFID_in),
+    .PC_IFID_in             (PC_IFID_in)
 );
 
 if_id_buffer u_if_id_buffer (
@@ -81,12 +85,12 @@ decode u_decode (
     // writeback
     .writedata      (writedata),
     .write_rd       (wb_rd),
-    .wb_RegWrite    (wb_RegWrite)
+    .wb_RegWrite    (wb_RegWrite),
 
     // outputs
     .rs1_data       (id_rs1_data),
     .rs2_data       (id_rs2_data),
-    .sext_out       (sext_out),
+    .sext_out       (id_sext_out),
     // control signals
     .id_MemToReg    (id_MemToReg),
     .id_RegWrite    (id_RegWrite),
@@ -116,6 +120,7 @@ id_ex_buffer u_id_ex_buffer (
     .id_rd          (id_rd),
     .ex_rs1         (ex_rs1),
     .ex_rs2         (ex_rs2),
+    .ex_rd          (ex_rd),
     // writeback
     .id_MemToReg    (id_MemToReg),
     .id_RegWrite    (id_RegWrite),
@@ -142,7 +147,7 @@ id_ex_buffer u_id_ex_buffer (
     .ex_ALU_imm     (ex_ALU_imm),
     .ex_br_func     (ex_br_func),
     .ex_JAL_addr    (ex_JAL_addr),
-    .ex_pc_source   (ex_pc_source)
+    .ex_pc_source   (ex_pc_source),
     // datapath
     .id_pc          (id_pc),
     .id_rs1_data    (id_rs1_data),
@@ -213,7 +218,7 @@ ex_m_buffer u_ex_m_buffer (
     .m_alu_out        (m_alu_out),
     .m_mem_data       (m_mem_data),
     .m_sext_out       (m_sext_out),
-    .m_pc_inc_out     (m_pc_inc_out),
+    .m_pc_inc_out     (m_pc_inc_out)
 );
 
 memory u_memory (
@@ -228,7 +233,7 @@ memory u_memory (
     .wb_data            (writedata),
     .wb_forward         (wb_forward),
     .m_imm              (m_sext_out),
-    .m_pc_inc           (m_pc_inc),
+    .m_pc_inc           (m_pc_inc_out),
     .m_rd               (m_rd),
     .stall_mem          (stall_mem),
     .read_data_MEMWB    (read_data_MEMWB),

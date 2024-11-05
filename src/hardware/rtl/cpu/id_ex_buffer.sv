@@ -1,3 +1,7 @@
+import alu_definitions::*;
+import br_definitions::*;
+import pc_defnitions::*;
+
 module id_ex_buffer 
 (
     input clk,
@@ -11,7 +15,7 @@ module id_ex_buffer
     input [4:0] id_rd,
     output logic [4:0] ex_rs1,
     output logic [4:0] ex_rs2,
-    output logic [4:0] ex_rd
+    output logic [4:0] ex_rd,
     // writeback
     input id_MemToReg,
     input id_RegWrite,
@@ -32,7 +36,7 @@ module id_ex_buffer
     input id_ALU_imm,
     input br_func_t id_br_func,
     input id_JAL_addr,
-    input pc_source_t id_pc_source
+    input pc_source_t id_pc_source,
     output alu_ctrl_t ex_ALU_ctrl,
     output logic ex_ALU_pc,
     output logic ex_ALU_imm,
@@ -65,7 +69,7 @@ module id_ex_buffer
             ex_ALU_ctrl <= ALU_ADD;
             ex_ALU_pc <= 0;
             ex_ALU_imm <= 0;
-            ex_br_func <= 0;
+            ex_br_func <= BR_NONE;
             ex_JAL_addr <= 0;
             ex_pc <= 0;
             ex_rs1_data <= 0;

@@ -17,14 +17,11 @@ module PC_and_Branch (
 
     // Determine next PC value based on control signals
     always @(*) begin
-        if (branch && takeBranch) begin
+        if (takeBranch) begin
             next_PC = branch_PC; // Take branch
         end 
-        else if (jumpAL) begin
-            next_PC = branch_PC; // Jump instruction
-        end 
         else begin
-            next_PC = PC_plus_4; // Default: Increment PC by 4
+            next_PC = PC_IFID_in + 4; // Default: Increment PC by 4
         end
     end
 

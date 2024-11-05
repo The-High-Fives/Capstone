@@ -33,9 +33,9 @@ module ex_m_buffer
     input [31:0] ex_sext_out,
     input [31:0] ex_pc_inc_out,
     output logic [31:0] m_alu_out,
-    output logic [31:0] m_mem_data
+    output logic [31:0] m_mem_data,
     output logic [31:0] m_sext_out,
-    output logic [31:0] m_pc_inc_out,
+    output logic [31:0] m_pc_inc_out
 );
 
     always_ff @(posedge clk, negedge rst_n) begin

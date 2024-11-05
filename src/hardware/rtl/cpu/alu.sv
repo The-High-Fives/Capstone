@@ -1,10 +1,11 @@
 import alu_definitions::*;
 
-module alu(alu_op1, alu_op2, alu_ctrl, alu_result);
-	input [31:0] alu_op1;
-	input [31:0] alu_op2;
-	input alu_ctrl_t [3:0] alu_ctrl;
-	output logic [31:0] alu_result;
+module alu(
+	input [31:0] alu_op1,
+	input [31:0] alu_op2,
+	input alu_ctrl_t alu_ctrl,
+	output logic [31:0] alu_result
+);
 
 	always_comb begin
 		alu_result = 0;

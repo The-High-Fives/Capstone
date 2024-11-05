@@ -1,4 +1,8 @@
 `include "definitions.svh"
+import alu_definitions::*;
+import br_definitions::*;
+import sext_definitions::*;
+import pc_defnitions::*;
 
 module control
 (
@@ -25,6 +29,8 @@ module control
     // fetch
     output pc_source_t pc_source
 );
+
+    `include "definitions.svh"
 
     always_comb begin
         // defaults
@@ -140,7 +146,7 @@ module control
                 RegWrite = 1'b1;
                 JAL = 1'b0;
                 LUI = 1'b1;
-                sext_op = sext_U_type
+                sext_op = sext_U_type;
             end
             
             OPCODE_AUIPC: begin
@@ -150,7 +156,7 @@ module control
                 LUI = 1'b0;
                 ALU_pc = 1'b1;
                 ALU_imm = 1'b1;
-                sext_op = sext_U_type 
+                sext_op = sext_U_type;
             end
 
             // OPCODE_EXCEPTION: begin

@@ -12,8 +12,8 @@ module if_id_buffer (
     output reg [31:0] instruction_ID,  // Instruction passed to ID stage
     output reg [31:0] pc_out // Program counter passed to ID stage
 );
-    // TODO add flush
-    always @(posedge clk or negedge reset_n) begin
+
+    always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             instruction_ID <= 32'b0;
             pc_out <= 32'b0;

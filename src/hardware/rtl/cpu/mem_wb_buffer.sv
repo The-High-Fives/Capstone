@@ -28,7 +28,7 @@ module mem_wb_buffer (
             wb_reg_data <= 32'd0;
             wb_rd <= 5'd0;
             wb_RegWrite <= 1'b0;
-            wb_MemToReg <= 1'b0
+            wb_MemToReg <= 1'b0;
         end 
         else if (!stall) begin
             // Select either memory or ALU result based on MemToReg control signal

@@ -1,4 +1,8 @@
 `include "definitions.svh"
+import alu_definitions::*;
+import br_definitions::*;
+import sext_definitions::*;
+import pc_defnitions::*;
 
 module decode
 (
@@ -38,6 +42,7 @@ module decode
 
     logic [31:0] reg_file [31:0];
     logic [4:0] rs1, rs2;
+    sext_ctrl_t sext_op;
 
     // register file 
     always_ff @(posedge clk, negedge rst_n) begin
@@ -76,7 +81,7 @@ module decode
         .JAL_addr    (id_JAL_addr),
 
         .sext_op     (sext_op),
-        .pc_source   (id_pc_source),
+        .pc_source   (id_pc_source)
     );
 
     always_comb begin
@@ -88,8 +93,6 @@ module decode
             sext_B_type: sext_out = {{20{instru[31]}}, instru[7], instru[30:25], instru[11:8], 1'b0};
         endcase
     end
-
-    // stall
 
     // rf bypassing
     assign rs1_data = (wb_RegWrite && (rs1 == write_rd)) ? writedata : reg_file[rs1];

@@ -11,14 +11,14 @@ module fetch (
 
     // outputs
     output reg [31:0] instruction_IFID_in, // Fetched instruction for IF/ID stage
-    output reg [31:0] PC_IFID_in,         // Current PC value
+    output reg [31:0] PC_IFID_in         // Current PC value
 );
 
     // Declare instruction memory and load contents from the code we wish to execute. 
     reg [31:0] instr_mem[0:8191];
 
     initial begin
-        $readmemh("instr_mem.hex",instr_mem);
+        $readmemh("ADD.hex",instr_mem);
     end
 
     // Instantiate PC_and_Branch module for PC updates

@@ -1,4 +1,7 @@
 `include "definitions.svh"
+import alu_definitions::*;
+import br_definitions::*;
+import pc_defnitions::*;
 
 module execute
 (
@@ -25,8 +28,8 @@ module execute
     // outputs
     output [31:0] ex_alu_out,
     output [31:0] ex_pc_inc_out,
-    output [31:0] ex_mem_data
-    output [31:0] ex_br_jal_addr,
+    output [31:0] ex_mem_data,
+    output logic [31:0] ex_br_jal_addr,
     output logic takeBranch
 );
 
@@ -34,6 +37,7 @@ module execute
     logic [31:0] alu_op1, alu_op2, alu_result;
     logic alu_src; 
     logic br_taken; // 1 if branch function is true
+    wire [31:0] ex_br_addr, ex_jal_addr;
 
     // forwarding
     always_comb begin
@@ -47,7 +51,7 @@ module execute
         unique case (ex_forward_rs2)
             2'b00: rs2_data = ex_m_data;
             2'b01: rs2_data = ex_w_data;
-            2'b10: rs2_data = ex_rs2_data
+            2'b10: rs2_data = ex_rs2_data;
         endcase
     end
 
@@ -71,7 +75,7 @@ module execute
             BR_BLT: br_taken = ($signed(rs1_data) < $signed(rs2_data));
             BR_BGE: br_taken = ($signed(rs1_data) >= $signed(rs2_data));
             BR_BLTU: br_taken = (rs1_data <= rs2_data);
-            BR_BGEU: br_taken = (rs1_data >== rs2_data);
+            BR_BGEU: br_taken = (rs1_data >= rs2_data);
         endcase
     end
 
@@ -94,10 +98,10 @@ module execute
     end
 
     // branch address
-    assign ex_br_addr = pc + ex_imm;
+    assign ex_br_addr = ex_pc + ex_imm;
 
     // jal address
-    assign ex_jal_addr = (ex_JAL_addr ? pc : rs1_data) + ex_imm;
+    assign ex_jal_addr = (ex_JAL_addr ? ex_pc : rs1_data) + ex_imm;
     
     assign ex_mem_data = rs2_data;
     assign ex_pc_inc_out = ex_pc + 4;

@@ -31,6 +31,7 @@ module memory (
     // output logic memory_we,              // Memory write enable
     // output logic memory_re               // Memory read enable
 );
+    wire [31:0] write_data;
 
     assign reg_data = m_JAL ? m_pc_inc : 
                       m_LUI ? m_imm : m_alu_out;
