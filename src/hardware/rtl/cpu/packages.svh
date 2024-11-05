@@ -42,3 +42,13 @@ package pc_defnitions;
 		PC_JAL
 	} pc_source_t;
 endpackage
+
+package mem_definitions;
+	typedef enum logic [2:0] {
+		MEM_BYTE,
+		MEM_HALF,
+		MEM_WORD,
+		MEM_UBYTE,
+		MEM_UHALF
+	} mem_mask_t;
+endpackage
