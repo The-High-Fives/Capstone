@@ -18,7 +18,7 @@ module fetch (
     reg [31:0] instr_mem[0:8191];
 
     initial begin
-        $readmemh("ADD.hex",instr_mem);
+        $readmemh("sub.hex",instr_mem);
     end
 
     // Instantiate PC_and_Branch module for PC updates

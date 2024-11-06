@@ -97,6 +97,10 @@ module decode
         endcase
     end
 
+    assign id_rs1 = instru[19:15];
+    assign id_rs2 = instru[24:20];
+    assign id_rd = instru[11:7];
+
     // rf bypassing
     assign rs1_data = (wb_RegWrite && (rs1 == write_rd)) ? writedata : reg_file[rs1];
     assign rs2_data = (wb_RegWrite && (rs2 == write_rd)) ? writedata : reg_file[rs2];

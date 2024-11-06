@@ -35,7 +35,6 @@ module memory (
     // output logic memory_re               // Memory read enable
 );
 
-    // assign reg_data = m_JAL ? m_pc_inc : (m_LUI ? m_imm : m_alu_out);
     wire [31:0] write_data;
     assign write_data = wb_forward ? wb_data : m_mem_data; // also check on this
 
@@ -49,6 +48,8 @@ module memory (
     logic we0, we1, we2, we3;
     logic re0, re1, re2, re3;
     logic [31:0] memDataOut;
+
+    assign reg_data_MEMWB = m_JAL ? m_pc_inc : (m_LUI ? m_imm : m_alu_out);
 
     // Instantiate four banks of dmem32 for the memory
     dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[31:17]), .re(re0), .we(we0), 

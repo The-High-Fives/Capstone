@@ -25,7 +25,7 @@ wire [31:0] read_data_MEMWB, wb_read_data;
 wire [31:0] reg_data_MEMWB, wb_reg_data;
 wire [4:0] id_rs1, ex_rs1;
 wire [4:0] id_rs2, ex_rs2, m_rs2;
-wire [4:0] id_rd, ex_rd, m_rd, wb_rd;
+wire [4:0] id_rd, ex_rd, m_rd;
 wire [1:0] ex_forward_rs1, ex_forward_rs2;
 alu_ctrl_t id_ALU_ctrl, ex_ALU_ctrl;
 br_func_t id_br_func, ex_br_func;
@@ -88,7 +88,7 @@ decode u_decode (
 
     // writeback
     .writedata      (writedata),
-    .write_rd       (wb_rd),
+    .write_rd       (write_rd),
     .wb_RegWrite    (wb_RegWrite),
 
     // outputs
@@ -261,7 +261,7 @@ mem_wb_buffer u_mem_wb_buffer (
     .m_rd            (m_rd),
     .wb_read_data    (wb_read_data),
     .wb_reg_data     (wb_reg_data),
-    .wb_rd           (wb_rd),
+    .wb_rd           (write_rd),
     .wb_RegWrite     (wb_RegWrite),
     .wb_MemToReg     (wb_MemToReg)
 );
@@ -270,7 +270,7 @@ forwardToEX u_forwardToEX (
     .ex_rs1              (ex_rs1),
     .ex_rs2              (ex_rs2),
     .m_rd                (m_rd),
-    .wb_rd               (wb_rd),
+    .wb_rd               (write_rd),
     .we_EXMEM            (m_RegWrite),
     .we_MEMWB            (wb_RegWrite),
     .MemRead_EXMEM       (m_MemRead),
@@ -282,7 +282,7 @@ forwardToEX u_forwardToEX (
 
 forwardToMem u_forwardToMem (
     .m_rs2                 (m_rs2),
-    .wb_rd                 (wb_rd),
+    .wb_rd                 (write_rd),
     .we_MEMWB              (wb_RegWrite),
     .memWrite_EXMEM        (m_MemWrite),
     .RegData2_forward_M    (wb_forward)
