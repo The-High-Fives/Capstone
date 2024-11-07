@@ -54,6 +54,8 @@ module ex_m_buffer
             m_rd <= 0;
             m_alu_out <= 0;
             m_mem_data <= 0;
+            m_sext_out <= 0;
+            m_pc_inc_out <= 0;
         end
         else if (!stall) begin
             if (flush) begin
@@ -77,6 +79,8 @@ module ex_m_buffer
                 m_rd <= ex_rd;
                 m_alu_out <= ex_alu_out;
                 m_mem_data <= ex_mem_data;
+                m_sext_out <= ex_sext_out;
+                m_pc_inc_out <= ex_pc_inc_out;
             end
         end
     end
