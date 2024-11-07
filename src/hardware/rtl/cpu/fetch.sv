@@ -7,6 +7,8 @@ module fetch (
     input wire PC_enable,           // Enable signal for PC update
     input wire takeBranch,          // Signal to indicate if branch is taken
     input wire [31:0] branch_PC,    // Target address for branch/jump
+    input flush,                    // inserts NOP
+    input stall,                    // stalls instruction read
     // input wire [31:0] instr_mem_data, // Instruction fetched from external memory
 
     // outputs
@@ -18,7 +20,7 @@ module fetch (
     reg [31:0] instr_mem[0:8191];
 
     initial begin
-        $readmemh("sub.hex",instr_mem);
+        $readmemh("andi.hex",instr_mem);
     end
 
     // Instantiate PC_and_Branch module for PC updates
@@ -37,9 +39,13 @@ module fetch (
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) begin
             instruction_IFID_in <= 32'd0;
-        end else begin
+        end else if (!stall) begin
             // instruction_IFID_in <= instr_mem_data;
-            instruction_IFID_in <= instr_mem[PC_IFID_in >> 2]; // divide by 4 to get location
+            if (flush) begin
+                instruction_IFID_in <= 32'b00000000000000000000000000110011; // ADD 0+0 => 0
+            end else begin
+                instruction_IFID_in <= instr_mem[PC_IFID_in >> 2]; // divide by 4 to get location
+            end
         end
     end
 
