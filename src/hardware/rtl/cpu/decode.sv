@@ -46,6 +46,8 @@ module decode
     logic [4:0] rs1, rs2;
     sext_ctrl_t sext_op;
 
+    assign RegWrite = (write_rd == 0) ? 1'b0 :  wb_RegWrite;
+
     // register file 
     always_ff @(posedge clk, negedge rst_n) begin
         if (!rst_n) begin
@@ -53,7 +55,7 @@ module decode
                 reg_file[i] <= 0;
             end
         end
-        else if (wb_RegWrite) begin
+        else if (RegWrite) begin
             reg_file[write_rd] <= writedata;
         end
     end
