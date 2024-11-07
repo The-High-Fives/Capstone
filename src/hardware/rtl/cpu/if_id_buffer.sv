@@ -12,18 +12,13 @@ module if_id_buffer (
     output reg [31:0] instruction_ID,  // Instruction passed to ID stage
     output reg [31:0] pc_out // Program counter passed to ID stage
 );
+    assign instruction_ID = instruction_IF;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            instruction_ID <= 32'b0;
             pc_out <= 32'b0;
         end else if (!stall) begin
-            if (flush) begin
-                instruction_ID <= 32'b00000000000000000000000000110011; // ADD 0+0 => 0
-            end else begin
-                instruction_ID <= instruction_IF;
-                pc_out <= pc_in;
-            end
+            pc_out <= pc_in;
         end
     end
 endmodule

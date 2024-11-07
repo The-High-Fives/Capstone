@@ -63,6 +63,8 @@ fetch u_fetch (
     .PC_enable              (PC_enable),
     .takeBranch             (takeBranch),
     .branch_PC              (ex_br_jal_addr),
+    .stall                  (stall_if),
+    .flush                  (if_id_flush),
     // .instr_mem_data         (instr_mem_data),
     // outputs
     .instruction_IFID_in    (instruction_IFID_in),
