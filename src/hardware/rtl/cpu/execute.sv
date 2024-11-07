@@ -100,7 +100,7 @@ module execute
     assign ex_br_addr = ex_pc + ex_imm;
 
     // jal address
-    assign ex_jal_addr = (ex_JAL_addr ? ex_pc : rs1_data) + ex_imm;
+    assign ex_jal_addr = (ex_JAL_addr ? rs1_data : ex_pc) + ex_imm;
     
     assign ex_mem_data = rs2_data;
     assign ex_pc_inc_out = ex_pc + 4;
