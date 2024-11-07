@@ -34,7 +34,7 @@ module execute
 );
 
     logic [31:0] rs1_data, rs2_data;
-    logic [31:0] alu_op1, alu_op2, alu_result;
+    logic [31:0] alu_op1, alu_op2;
     logic alu_src; 
     logic br_taken; // 1 if branch function is true
     wire [31:0] ex_br_addr, ex_jal_addr;
