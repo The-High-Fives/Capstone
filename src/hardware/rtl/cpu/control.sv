@@ -41,7 +41,7 @@ module control
 
         MemToReg = 1'bx;
         RegWrite = 1'b0;
-        JAL = 1'bx;
+        JAL = 1'b0;
         LUI = 1'bx;
         Mmask = MEM_WORD;
 
@@ -128,6 +128,7 @@ module control
 
             OPCODE_BRANCH: begin
                 pc_source = PC_BR;
+                sext_op = sext_B_type;
                 case (funct3)
                     FUNCT3_BEQ: br_func = BR_BEQ;
                     FUNCT3_BNE: br_func = BR_BNE;
@@ -140,6 +141,7 @@ module control
 
             OPCODE_JAL: begin
                 pc_source = PC_JAL;
+                sext_op = sext_J_type;
                 JAL_addr = 0;
                 MemToReg = 1'b0;
                 RegWrite = 1'b1;
