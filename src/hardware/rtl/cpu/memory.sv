@@ -39,7 +39,7 @@ module memory (
     assign write_data = wb_forward ? wb_data : m_mem_data; // also check on this
 
     logic [1:0] bank_select;
-    assign bank_select = m_alu_out[1:0]; // can get rid of the variable tbh
+    assign bank_select = m_alu_out[1:0]; // selects banks for read and write enable
 
     // Output data from each memory bank
     logic [7:0] bank_rdata[0:3];
@@ -65,6 +65,8 @@ module memory (
                         .wdata(bank_wdata[3]), .rdata(bank_rdata[3]));
 
     // Memory read data multiplexing based on selected bank
+    assign memDataOut = {bank_rdata[3], bank_rdata[2], bank_rdata[1], bank_rdata[0]};
+
     always_comb begin
         we0 = 0;
         we1 = 0;
@@ -78,9 +80,8 @@ module memory (
         bank_wdata[1] = 8'h0;
         bank_wdata[2] = 8'h0;
         bank_wdata[3] = 8'h0;
-        memDataOut = 0;
 
-        case (m_mem_type)
+        unique case (m_mem_type)
             // SB and LB (sign-extended)
             MEM_BYTE: begin
                 case (bank_select)
@@ -88,28 +89,24 @@ module memory (
                         we0 = m_MemWrite; // 1
                         re0 = m_MemRead; // 1
                         bank_wdata[0] = write_data[7:0]; // Least significant byte stored
-                        memDataOut = {{24{bank_rdata[0][7]}}, bank_rdata[0]}; // Load (sign extended)
                     end
 
                     2'b01: begin 
                         we1 = m_MemWrite; 
                         re1 = m_MemRead; 
                         bank_wdata[1] = write_data[7:0];
-                        memDataOut = {{24{bank_rdata[1][7]}}, bank_rdata[1]}; 
                     end
 
                     2'b10: begin 
                         we2 = m_MemWrite; 
                         re2 = m_MemRead; 
                         bank_wdata[2] = write_data[7:0];
-                        memDataOut = {{24{bank_rdata[2][7]}}, bank_rdata[2]}; 
                     end
 
                     2'b11: begin 
                         we3 = m_MemWrite; 
                         re3 = m_MemRead; 
                         bank_wdata[3] = write_data[7:0];
-                        memDataOut = {{24{bank_rdata[3][7]}}, bank_rdata[3]}; 
                     end
                 endcase
             end
@@ -125,8 +122,6 @@ module memory (
 
                     bank_wdata[0] = write_data[7:0];
                     bank_wdata[1] = write_data[15:8];
-
-                    memDataOut = {{16{bank_rdata[1][7]}}, bank_rdata[1], bank_rdata[0]};
                 end 
                 else begin
                     // Upper halfword: banks 2 and 3
@@ -137,8 +132,6 @@ module memory (
 
                     bank_wdata[2] = write_data[7:0];
                     bank_wdata[3] = write_data[15:8];
-
-                    memDataOut = {{16{bank_rdata[3][7]}}, bank_rdata[3], bank_rdata[2]};
                 end
             end
 
@@ -158,8 +151,6 @@ module memory (
                 bank_wdata[1] = write_data[15:8];
                 bank_wdata[2] = write_data[23:16];
                 bank_wdata[3] = write_data[31:24];
-
-                memDataOut = {bank_rdata[3], bank_rdata[2], bank_rdata[1], bank_rdata[0]};
             end
 
             // For LBU (zero-extended)
@@ -167,19 +158,15 @@ module memory (
                 case (bank_select)
                     2'b00: begin 
                         re0 = m_MemRead; 
-                        memDataOut = {24'h0, bank_rdata[0]}; 
                     end
                     2'b01: begin 
                         re1 = m_MemRead; 
-                        memDataOut = {24'h0, bank_rdata[1]};
                     end
                     2'b10: begin 
                         re2 = m_MemRead; 
-                        memDataOut = {24'h0, bank_rdata[2]}; 
                     end
                     2'b11: begin 
                         re3 = m_MemRead; 
-                        memDataOut = {24'h0, bank_rdata[3]}; 
                     end
                 endcase
             end
@@ -189,16 +176,12 @@ module memory (
                 if (bank_select[1] == 0) begin
                     re0 = m_MemRead; 
                     re1 = m_MemRead;
-                    memDataOut = {16'h0, bank_rdata[1], bank_rdata[0]};
                 end 
                 else begin
                     re2 = m_MemRead; 
                     re3 = m_MemRead;
-                    memDataOut = {16'h0, bank_rdata[3], bank_rdata[2]};
                 end
             end
-
-            default: memDataOut = 32'h0;
         endcase
     end
 

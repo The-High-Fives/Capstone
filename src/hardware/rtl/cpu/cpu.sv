@@ -30,13 +30,14 @@ wire [1:0] ex_forward_rs1, ex_forward_rs2;
 alu_ctrl_t id_ALU_ctrl, ex_ALU_ctrl;
 br_func_t id_br_func, ex_br_func;
 pc_source_t id_pc_source, ex_pc_source;
-mem_mask_t id_Mmask, ex_Mmask, m_Mmask;
-
+mem_mask_t id_Mmask, ex_Mmask, m_Mmask, wb_Mmask;
+wire [1:0] m_bank_select, wb_bank_select;
 wire [31:0] ex_br_jal_addr;
 // fowarding signals
 wire [31:0] ex_m_data, ex_w_data;
 
 wire [31:0] writedata;
+logic [31:0] wb_ldata;   // data to writeback after load
 wire [4:0] write_rd;
 
 wire load_use_hazard; // stall for load data hazard
@@ -55,6 +56,8 @@ assign if_id_flush = takeBranch;
 assign id_ex_flush = takeBranch;
 
 assign PC_enable = ~stall_if;
+
+assign m_bank_select = m_alu_out[1:0];
 
 fetch u_fetch (
     // inputs
@@ -193,8 +196,6 @@ execute u_execute (
     .takeBranch        (takeBranch)
 );
 
-assign flush = takeBranch;
-
 ex_m_buffer u_ex_m_buffer (
     .clk             (clk),
     .rst_n           (rst_n),
@@ -261,11 +262,15 @@ mem_wb_buffer u_mem_wb_buffer (
     .m_read_data     (read_data_MEMWB),
     .m_reg_data      (reg_data_MEMWB),
     .m_rd            (m_rd),
+    .m_Mmask         (m_Mmask),
+    .m_bank_select   (m_bank_select),
     .wb_read_data    (wb_read_data),
     .wb_reg_data     (wb_reg_data),
     .wb_rd           (write_rd),
     .wb_RegWrite     (wb_RegWrite),
-    .wb_MemToReg     (wb_MemToReg)
+    .wb_MemToReg     (wb_MemToReg),
+    .wb_Mmask        (wb_Mmask),
+    .wb_bank_select  (wb_bank_select)
 );
 
 forwardToEX u_forwardToEX (
@@ -290,7 +295,77 @@ forwardToMem u_forwardToMem (
     .RegData2_forward_M    (wb_forward)
 );
 
+// writeback
+always_comb begin
+    wb_ldata = 32'h00000000;
 
-assign writedata = wb_MemToReg ? wb_read_data : wb_reg_data;
+    unique case (wb_Mmask)
+        // LB (signed)
+        MEM_BYTE: begin
+            case (wb_bank_select)
+                2'b00: begin 
+                    wb_ldata = {{24{wb_read_data[7]}}, wb_read_data[7:0]};
+                end
+
+                2'b01: begin 
+                    wb_ldata = {{24{wb_read_data[15]}}, wb_read_data[15:8]}; 
+                end
+
+                2'b10: begin 
+                    wb_ldata = {{24{wb_read_data[23]}}, wb_read_data[23:16]}; 
+                end
+
+                2'b11: begin 
+                    wb_ldata = {{24{wb_read_data[31]}}, wb_read_data[31:24]}; 
+                end
+            endcase
+        end
+
+        // LH (signed)
+        MEM_HALF: begin
+            if (wb_bank_select[1]) begin // upper 16 bits
+                wb_ldata = {{16{wb_read_data[31]}}, wb_read_data[31:16]};
+            end 
+            else begin  // lower 16 bits
+                wb_ldata = {{16{wb_read_data[15]}}, wb_read_data[15:0]};
+            end
+        end
+
+        // LW
+        MEM_WORD: begin
+            wb_ldata = wb_read_data;
+        end
+
+        // LBU (zero-extended)
+        MEM_UBYTE: begin
+            case (wb_bank_select)
+                2'b00: begin 
+                    wb_ldata = {24'h0, wb_read_data[7:0]}; 
+                end
+                2'b01: begin 
+                    wb_ldata = {24'h0, wb_read_data[15:8]};
+                end
+                2'b10: begin 
+                    wb_ldata = {24'h0, wb_read_data[23:16]}; 
+                end
+                2'b11: begin 
+                    wb_ldata = {24'h0, wb_read_data[31:24]}; 
+                end
+            endcase
+        end
+
+        // LHU (zero-extended)
+        MEM_UHALF: begin
+            if (wb_bank_select[1]) begin // upper 16 bits
+                wb_ldata = {16'h0, wb_read_data[31:16]};
+            end 
+            else begin  // lower 16 bits
+                wb_ldata = {16'h0, wb_read_data[15:0]};
+            end
+        end
+    endcase
+end
+
+assign writedata = wb_MemToReg ? wb_ldata : wb_reg_data;
 
 endmodule
