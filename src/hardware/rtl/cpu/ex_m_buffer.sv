@@ -56,6 +56,7 @@ module ex_m_buffer
             m_mem_data <= 0;
             m_sext_out <= 0;
             m_pc_inc_out <= 0;
+            m_Mmask <= MEM_WORD;
         end
         else if (!stall) begin
             if (flush) begin
@@ -81,6 +82,7 @@ module ex_m_buffer
                 m_mem_data <= ex_mem_data;
                 m_sext_out <= ex_sext_out;
                 m_pc_inc_out <= ex_pc_inc_out;
+                m_Mmask <= ex_Mmask;
             end
         end
     end

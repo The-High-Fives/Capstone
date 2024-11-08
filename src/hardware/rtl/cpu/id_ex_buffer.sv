@@ -79,6 +79,7 @@ module id_ex_buffer
             ex_rs2_data <= 0;
             ex_sext_out <= 0;
             ex_pc_source <= PC_INC;
+            ex_Mmask <= MEM_WORD;
         end
         else if (!stall) begin
             if (flush) begin
@@ -101,6 +102,7 @@ module id_ex_buffer
                 // ex_rs2_data <= id_rs2_data;
                 // ex_sext_out <= id_sext_out;
                 // ex_pc_source <= id_pc_source;
+                // ex_Mmask <= id_Mmask;
             end
             else begin
                 ex_rs1 <= id_rs1;
@@ -122,6 +124,7 @@ module id_ex_buffer
                 ex_rs2_data <= id_rs2_data;
                 ex_sext_out <= id_sext_out;
                 ex_pc_source <= id_pc_source;
+                ex_Mmask <= id_Mmask;
             end
         end
     end
