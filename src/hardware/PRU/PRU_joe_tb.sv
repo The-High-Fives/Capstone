@@ -13,7 +13,7 @@ module PRU_tb;
     logic subtract;
     logic busy;
     logic done;
-    logic [1:0] color_map [0:49][0:49];
+    logic [1:0] color_map [2499:0];  // 50 * 50 = 2500
 
     // Instantiate the PRU module
     PRU uut (
@@ -54,16 +54,13 @@ module PRU_tb;
         subtract = 0;
 
         // Apply reset
-		repeat (1) @(posedge clk);
-
-        rst_n = 1;     
+        repeat (1) @(posedge clk);
+        rst_n = 1;
 
         // Draw a rectangle
         repeat (1) @(posedge clk);
-
         start = 1;                // Begin drawing rectangle
         repeat (10000) @(posedge clk);
-
         start = 0;                // Release start after one cycle
         repeat (1000) @(posedge clk);
 
@@ -78,14 +75,10 @@ module PRU_tb;
         col = 30;                 // Center column for circle
         height_radius = 10;       // Set radius for circle
         repeat (1000) @(posedge clk);
-
         start = 1;                // Begin drawing circle
         repeat (1000) @(posedge clk);
-
         start = 0;                // Release start after one cycle
-        
-		repeat (1000) @(posedge clk);
-
+        repeat (1000) @(posedge clk);
 
         // Display color_map (partial, around the circle center) to check circle
         $display("Color map after circle (around circle center):");
@@ -95,12 +88,14 @@ module PRU_tb;
         #10 $finish;
     end
 
-    // Task to display a section of the color_map array
+    // Task to display a section of the color_map array as 2D
     task display_color_map(input int x_start, input int y_start, input int x_end, input int y_end);
         integer x, y;
-        for (x = x_start; x < x_end; x = x + 1) begin
-            for (y = y_start; y < y_end; y = y + 1) begin
-                $write("%0d ", color_map[x][y]);
+        integer index;
+        for (y = y_start; y < y_end; y = y + 1) begin
+            for (x = x_start; x < x_end; x = x + 1) begin
+                index = y * 50 + x;
+                $write("%0d ", color_map[index]);
             end
             $display("");
         end
