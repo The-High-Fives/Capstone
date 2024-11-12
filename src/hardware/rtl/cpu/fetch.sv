@@ -20,7 +20,7 @@ module fetch (
     reg [31:0] instr_mem[0:8191];
 
     initial begin
-        $readmemh("andi.hex",instr_mem);
+        $readmemh("ls_test.hex",instr_mem);
     end
 
     // Instantiate PC_and_Branch module for PC updates

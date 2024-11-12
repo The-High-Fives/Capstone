@@ -49,8 +49,8 @@ module control
         MemRead = 1'b0;
 
         ALU_ctrl = ALU_ADD;
-        ALU_pc = 1'bx;
-        ALU_imm = 1'bx;
+        ALU_pc = 1'b0;
+        ALU_imm = 1'b0;
 
         sext_op = sext_I_type;
 

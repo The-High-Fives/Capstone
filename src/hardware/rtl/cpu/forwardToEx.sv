@@ -1,3 +1,4 @@
+import br_definitions::*; 
 // ALU operations
 module forwardToEX (
     // Inputs in current instruction read registers in EX stage
@@ -9,7 +10,10 @@ module forwardToEX (
     input wire we_EXMEM, // write enable saying data is valid and can be forwarded
     input wire we_MEMWB,
     input wire MemRead_EXMEM, // indicates load in EX/MEM stage
-    
+    input ex_ALU_pc,
+    input ex_ALU_imm,
+    input br_func_t ex_br_func,
+
     // Output data
     output wire [1:0] ALU_1_forward_EX, // ALU input 1
     output wire [1:0] ALU_2_forward_EX, // ALU input 2
@@ -43,6 +47,6 @@ module forwardToEX (
 
     // If the EX stage depends on a value being loaded in MEM, stall
     // check if load is happening (MemRead_EXMEM), rd matched the rs in ID/EX
-    assign load_use_hazard = (MemRead_EXMEM && ((rd_EXMEM == rs1_IDEX) || (rd_EXMEM == rs2_IDEX)) && (rd_EXMEM != 0));
-
+    assign load_use_hazard = (MemRead_EXMEM && (((rd_EXMEM == rs1_IDEX) & ~(ex_ALU_pc & (ex_br_func == BR_NONE)) 
+                                || ((rd_EXMEM == rs2_IDEX) & ~ex_ALU_imm)) && (rd_EXMEM != 0)));
 endmodule

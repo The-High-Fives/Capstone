@@ -281,6 +281,9 @@ forwardToEX u_forwardToEX (
     .we_EXMEM            (m_RegWrite),
     .we_MEMWB            (wb_RegWrite),
     .MemRead_EXMEM       (m_MemRead),
+    .ex_ALU_pc           (ex_ALU_pc),
+    .ex_ALU_imm          (ex_ALU_imm),
+    .ex_br_func          (ex_br_func),
 
     .ALU_1_forward_EX    (ex_forward_rs1),
     .ALU_2_forward_EX    (ex_forward_rs2),
