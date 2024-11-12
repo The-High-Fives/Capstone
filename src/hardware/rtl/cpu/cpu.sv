@@ -1,4 +1,4 @@
-`include "definitions.svh"
+`include "definitions.sv"
 import alu_definitions::*;
 import br_definitions::*;
 import sext_definitions::*;

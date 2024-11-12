@@ -1,3 +1,5 @@
+`ifndef __DEFINITIONS__
+`define __DEFINITIONS__
 // opcodes
 localparam OPCODE_REG			=7'b0110011;
 localparam OPCODE_IMM			=7'b0010011;
@@ -53,6 +55,7 @@ localparam FUNCT3_BLT			=3'b100;
 localparam FUNCT3_BGE			=3'b101;
 localparam FUNCT3_BLTU			=3'b110;
 localparam FUNCT3_BGEU			=3'b111;
+`endif
 
 // opcodes
 // `define OPCODE_REG			7'b0110011
