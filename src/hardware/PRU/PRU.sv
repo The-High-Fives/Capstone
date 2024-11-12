@@ -12,7 +12,7 @@ module PRU (
 	input logic subtract,
     output logic busy,                   // Busy signal
     output logic done,                   // Done signal
-    output logic [1:0] color_map [0:49][0:49]  // Color map output
+    output logic [1:0] color_map [307199:0]  // Color map output 640 * 480 = 307200
 );
 
     // Define FSM States
@@ -22,9 +22,10 @@ module PRU (
 
     state_t state, next_state;
     integer r, c;                        // Current row and column counters
+	integer pixel_calculator;			 // Calculates position in 1D color_map array given row and column 
     logic pixel_in_circle;               // Flag to check if pixel is within circle bounds
     logic rect_done, circle_done;        // Flags for rectangle and circle completion
-
+	
     // Set busy signal when the drawing process is active
     
 	assign busy = (state != IDLE && state != COMPLETE);
@@ -33,6 +34,7 @@ module PRU (
     // Combinational logic for state transitions and pixel calculations
     always_comb begin
         next_state = state;
+		pixel_calculator = (c + (480 * r)); // calculates 1D location of 2D (row,column)x
         pixel_in_circle = ((r - row) * (r - row) + (c - col) * (c - col) <= height_radius * height_radius);
         rect_done = (r >= row + height_radius-1) && (c >= col + width-1);
         circle_done = (r >= row + height_radius - 1) && (c >= col + height_radius - 1);
@@ -44,7 +46,7 @@ module PRU (
                 end
             end
             RESET_MAP: begin        
-				if (r == 49 && c == 49) begin
+				if (r == 639 && c == 479) begin
                     next_state = IDLE;
                 end     
             end
@@ -85,12 +87,12 @@ module PRU (
 
                 RESET_MAP: begin
                     // Reset color_map to 0s sequentially
-                    color_map[r][c] <= 2'b00;
-                    if (c < 49) begin
+                    color_map[pixel_calculator] <= 2'b00;
+                    if (c < 479) begin
                         c <= c + 1;
                     end else begin
                         c <= 0;
-                        if (r < 49) begin
+                        if (r < 639) begin
                             r <= r + 1;
                         end else begin
 							c <= 0;
@@ -107,8 +109,8 @@ module PRU (
                     
                     // Draw rectangle sequentially within bounds
                     if (r >= row && r < row + height_radius && c >= col && c < col + width) begin
-                        if (r < 50 && c < 50) begin  // Bounds check
-                            color_map[r][c] <= color;
+                        if (r < 640 && c < 480) begin  // Bounds check
+                            color_map[pixel_calculator] <= color;
                         end
                     end
                     // Update column and row counters
@@ -126,8 +128,8 @@ module PRU (
                     if (c < col - height_radius) c <= col - height_radius;
                     
                     // Draw circle sequentially, checking if each pixel is within radius
-                    if (r < 50 && c < 50 && pixel_in_circle) begin
-                        color_map[r][c] <= color;
+                    if (r < 640 && c < 480 && pixel_in_circle) begin
+                        color_map[pixel_calculator] <= color;
                     end
 
                     // Update column and row counters
