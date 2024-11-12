@@ -32,7 +32,7 @@ module control
     output pc_source_t pc_source
 );
 
-    `include "definitions.svh"
+    `include "definitions.sv"
 
     always_comb begin
         // defaults
