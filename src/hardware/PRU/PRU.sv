@@ -6,13 +6,19 @@ module PRU (
     input logic [8:0] col,               // Starting col for rectangle, center col for circle
     input logic [9:0] width,             // Width of the rectangle
     input logic [8:0] height_radius,     // Height of rectangle or radius of circle
-	input logic [31:0] bitmap_addr,
+	input logic [31:0] pru_addr,
+    input logic [31:0] pru_data,
     input logic [1:0] shape_select,      // Shape selection: 00 for rectangle, 01 for circle
     input logic start,                   // Start signal
 	input logic subtract,
     output logic busy,                   // Busy signal
     output logic done,                   // Done signal
-    output logic [1:0] color_map [307199:0]  // Color map output 640 * 480 = 307200
+    input logic color_load,
+    input logic VGA_CTRL_CLK,
+    input logic VGA_Read,
+    output logic [9:0] pru_red,
+    output logic [9:0] pru_green,
+    output logic [9:0] pru_blue
 );
 
     // Define FSM States
@@ -25,28 +31,32 @@ module PRU (
 	integer pixel_calculator;			 // Calculates position in 1D color_map array given row and column 
     logic pixel_in_circle;               // Flag to check if pixel is within circle bounds
     logic rect_done, circle_done;        // Flags for rectangle and circle completion
-	
+	logic iwe;
     // Set busy signal when the drawing process is active
     
+    //Writing to VGA Interface
+    logic [18:0] pixel_counter, prev_pixel_count;
+    logic [30:0] color_buffer [3:0];
+    logic [1:0] current_pixel, ird_data;
+
+    //logic [9:0] pru_red, pru_green, pru_blue;
+    logic fifo_full,fifo_empty,screen_reset;
+
 	assign busy = (state != IDLE && state != COMPLETE);
 
 
     // Combinational logic for state transitions and pixel calculations
     always_comb begin
         next_state = state;
-		pixel_calculator = (c + (480 * r)); // calculates 1D location of 2D (row,column)x
+		pixel_calculator = (c + (50 * r)); // calculates 1D location of 2D (row,column)x
         pixel_in_circle = ((r - row) * (r - row) + (c - col) * (c - col) <= height_radius * height_radius);
         rect_done = (r >= row + height_radius-1) && (c >= col + width-1);
         circle_done = (r >= row + height_radius - 1) && (c >= col + height_radius - 1);
 
         case (state)
-            IDLE: begin
-                if (start) begin
-                    next_state = (shape_select == 2'b00) ? DRAW_RECT : DRAW_CIRCLE;
-                end
-            end
+
             RESET_MAP: begin        
-				if (r == 639 && c == 479) begin
+				if (r == 49 && c == 49) begin
                     next_state = IDLE;
                 end     
             end
@@ -63,13 +73,19 @@ module PRU (
             COMPLETE: begin
                 if (!start) next_state = IDLE;
             end
+            default: begin //IDLE
+                if (start) begin
+                    next_state = (shape_select == 2'b00) ? DRAW_RECT : DRAW_CIRCLE;
+                end
+            end
         endcase
     end
 
     // Sequential logic for FSM, color_map update, and counters
     always_ff @(posedge clk or negedge rst_n) begin
+        iwe <= 0;
         if (!rst_n) begin
-            state <= RESET_MAP;
+            state <= IDLE;
             r <= 0;
             c <= 0;
             done <= 0;
@@ -78,28 +94,20 @@ module PRU (
             state <= next_state;
 
             case (state)
-                IDLE: begin
-                    // Reset counters and done flag in IDLE state
-                    r <= 0;
-                    c <= 0;
-                    done <= 0;
-                end
-
                 RESET_MAP: begin
                     // Reset color_map to 0s sequentially
-                    color_map[pixel_calculator] <= 2'b00;
-                    if (c < 479) begin
+                    //color_map[pixel_calculator] <= 2'b00;// TODO this is needs another think through
+                    if (c < 49) begin
                         c <= c + 1;
                     end else begin
                         c <= 0;
-                        if (r < 639) begin
+                        if (r < 49) begin
                             r <= r + 1;
                         end else begin
 							c <= 0;
 							r <= 0;
 						end
                     end
-					
                 end
 
                 DRAW_RECT: begin
@@ -109,8 +117,8 @@ module PRU (
                     
                     // Draw rectangle sequentially within bounds
                     if (r >= row && r < row + height_radius && c >= col && c < col + width) begin
-                        if (r < 640 && c < 480) begin  // Bounds check
-                            color_map[pixel_calculator] <= color;
+                        if (r < 50 && c < 50) begin  // Bounds check
+                            iwe <= 1;
                         end
                     end
                     // Update column and row counters
@@ -128,8 +136,8 @@ module PRU (
                     if (c < col - height_radius) c <= col - height_radius;
                     
                     // Draw circle sequentially, checking if each pixel is within radius
-                    if (r < 640 && c < 480 && pixel_in_circle) begin
-                        color_map[pixel_calculator] <= color;
+                    if (r < 50 && c < 50 && pixel_in_circle) begin
+                        iwe <= 1;
                     end
 
                     // Update column and row counters
@@ -141,11 +149,116 @@ module PRU (
                     end
                 end
 
-                COMPLETE: begin
+                COMPLETE: begin //This is complete
                     done <= 1;  // Signal that drawing is complete
+                end
+
+                default: begin //IDLE
+                    // Reset counters and done flag in IDLE state
+                    r <= 0;
+                    c <= 0;
+                    done <= 0;
                 end
             endcase
         end
     end
 
+assign screen_reset = pixel_counter == 19'h4b000;
+assign different_pixel = pixel_counter != prev_pixel_count;
+
+(* ramstyle = "m10k" *)
+
+Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calculator),.we(iwe),.wrt_data(color),.rd_data(ird_data));
+
+
+async_fifo 
+#(
+     .width(2),.depth(1024))
+PRU_Fifo_Buffer
+(
+     .i_wclk(clk)
+    ,.i_rclk(!VGA_CTRL_CLK)
+    ,.i_wr(!fifo_full)
+    ,.i_rd(VGA_Read)
+    ,.i_wdata(ird_data)
+    ,.i_wrst_n(~rst_n)
+    ,.i_rrst_n(~rst_n)
+
+    ,.o_rdata(current_pixel)
+    ,.o_empty(fifo_empty)
+    ,.o_full(fifo_full)
+);
+//Color Register
+always_ff @ (posedge clk, negedge rst_n) begin
+    if (!rst_n) begin
+        color_buffer[0] <= '0;
+        color_buffer[1] <= '0;
+        color_buffer[2] <= '0;
+        color_buffer[3] <= '0;
+    end
+    else if (color_load) begin
+        if (pru_addr == 32'h4000)
+            color_buffer[0] = pru_data[30:0];
+        else if (pru_addr == 32'h4004)
+            color_buffer[1] = pru_data[30:0];
+        else if (pru_addr == 32'h4008)
+            color_buffer[2] = pru_data[30:0];
+        else
+            color_buffer[3] = pru_data[30:0];
+    end
+end
+
+//Image Buffer and pru_color outputs
+always_ff @ (posedge clk, negedge rst_n) begin
+	if (!rst_n) begin
+        pru_red = 10'h15f;
+        pru_green = 10'h200;
+        pru_blue = 10'h200;	
+	end
+	else begin
+		case (current_pixel)
+			2'b01: begin
+				pru_red = 10'h3ff;
+				pru_green = 10'h000;
+				pru_blue = 10'h000;
+			end
+			2'b10: begin
+				pru_red = 10'h000;
+				pru_green = 10'h3ff;
+				pru_blue = 10'h000;
+			end
+			2'b11: begin
+				pru_red = 10'h200;
+				pru_green = 10'h000;
+				pru_blue = 10'h3ff;
+			end
+			default: begin //BACKGROUND
+				pru_red = 10'h30f;
+				pru_green = 10'h30f;
+				pru_blue = 10'h30f;
+			end
+		endcase
+	end
+end
+	
+always_ff @ (posedge ~VGA_CTRL_CLK, negedge rst_n) begin
+    if (!rst_n) begin
+		prev_pixel_count = 0;
+	end
+	else 
+		prev_pixel_count <= pixel_counter; 
+end
+
+//VGA Counter
+always_ff @ (posedge ~VGA_CTRL_CLK, negedge rst_n, posedge screen_reset) begin 
+    if (!rst_n) begin //add back vga read edge
+        pixel_counter <= '0;
+    end
+    else if (screen_reset) begin
+        pixel_counter <= '0;
+    end
+     //Note: VGA_Read and fifo_full sensitivity is the opposite of what their respective enable signals are. This is on purpose, and so that a pixel isn't skipped
+    else if (VGA_Read && ~fifo_full)
+        pixel_counter <= pixel_counter + 1; //VGA READ IS boofed
+end
 endmodule
