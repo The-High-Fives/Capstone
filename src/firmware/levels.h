@@ -4,7 +4,7 @@
 
 #define LEVEL_COUNT 3
 
-Level **createAllLevels();
-Level *createLevel1();
-Level *createLevel2();
-Level *createLevel3();
+void createAllLevels(Game *game);
+void createLevel1(Level *level);
+void createLevel2(Level *level);
+void createLevel3(Level *level);
