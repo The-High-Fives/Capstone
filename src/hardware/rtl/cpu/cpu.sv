@@ -265,7 +265,7 @@ memory u_memory (
     .b_data_o           (b_data_o), 
     .b_read_o           (b_read_o),
     .b_write_o          (b_write_o),
-    .b_ack_i            (b_ack_i), 
+    .b_ack_i            (b_ack_i)
 );
 
 mem_wb_buffer u_mem_wb_buffer (
