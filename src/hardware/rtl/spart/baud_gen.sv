@@ -18,7 +18,7 @@ module baud_gen
     // division buffer
     always_ff @(posedge clk, negedge rst_n) begin
         if (!rst_n)
-            divisor_buffer <= 16'd162;
+            divisor_buffer <= 16'h00A2;
         else if (!iorw && iocs)
             if (addr == 2'b11)
                 divisor_buffer[15:8] <= bus_data;
