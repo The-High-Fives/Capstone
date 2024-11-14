@@ -2,7 +2,10 @@
 
 int main()
 {
-    Game *game = malloc(sizeof(Game));
+    Game g;
+    Game *game = &g;
+    Dot leftDots[MAX_LEFT_DOTS];
+    Dot rightDots[MAX_RIGHT_DOTS];
 
     if (game == NULL)
     {
@@ -51,7 +54,6 @@ int main()
         }
     }
 
-    free(game);
     game = NULL;
 
     return 0;

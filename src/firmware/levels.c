@@ -1,63 +1,28 @@
 #include "defs.h"
 #include "levels.h"
 
-Level **createAllLevels()
+void createAllLevels(Game *game)
 {
-    Level **levels = malloc(sizeof(Level *) * LEVEL_COUNT);
-
-    if (levels == NULL)
-    {
-        return NULL;
-    }
-
-    levels[0] = createLevel1();
-    levels[1] = createLevel2();
-    levels[2] = createLevel3();
-
-    return levels;
+    game->numLevels = LEVEL_COUNT;
+    createLevel1(&game->levels[0]);
+    createLevel2(&game->levels[1]);
+    createLevel3(&game->levels[2]);
 }
 
-Level *createLevel1()
+void createLevel1(Level *level)
 {
-    Level *level = malloc(sizeof(Level));
-
-    if (level == NULL)
-    {
-        return NULL;
-    }
-
     level->levelNumber = 1;
     level->songId = 1;
-
-    return level;
 }
 
-Level *createLevel2()
+void createLevel2(Level *level)
 {
-    Level *level = malloc(sizeof(Level));
-
-    if (level == NULL)
-    {
-        return NULL;
-    }
-
-    level->levelNumber = 1;
-    level->songId = 1;
-
-    return level;
+    level->levelNumber = 2;
+    level->songId = 2;
 }
 
-Level *createLevel3()
+void createLevel3(Level *level)
 {
-    Level *level = malloc(sizeof(Level));
-
-    if (level == NULL)
-    {
-        return NULL;
-    }
-
-    level->levelNumber = 1;
-    level->songId = 1;
-
-    return level;
+    level->levelNumber = 3;
+    level->songId = 3;
 }

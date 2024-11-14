@@ -7,6 +7,11 @@
 
 #define uint8_t unsigned char
 
+#define MAX_DOTS 50
+#define MAX_LEFT_DOTS 50
+#define MAX_RIGHT_DOTS 50
+#define MAX_LEVELS 3
+
 const int DOT_RADIUS = 20;
 
 typedef struct
@@ -29,10 +34,10 @@ typedef struct
 
 typedef struct
 {
-    Dot **leftDots;
+    Dot leftDots[MAX_LEFT_DOTS];
     int numLeftDots;
 
-    Dot **rightDots;
+    Dot rightDots[MAX_RIGHT_DOTS];
     int numRightDots;
 
     int levelNumber;
@@ -48,13 +53,13 @@ typedef struct
     bool isGameOver;
     bool quitGame;
 
-    Level **levels;
+    Level levels[MAX_LEVELS];
     int numLevels;
 
-    Dot **leftActiveDots;
+    Dot leftActiveDots[MAX_LEFT_DOTS];
     int numLeftActiveDots;
 
-    Dot **rightActiveDots;
+    Dot rightActiveDots[MAX_RIGHT_DOTS];
     int numRightActiveDots;
 } Game;
 
@@ -63,6 +68,7 @@ void resetGame(Game *game);
 int calculateScore(int hitTime, int time);
 bool hitLeft(Game *game, int x, int y);
 bool hitRight(Game *game, int x, int y);
-Dot *hitDot(Game *game, int x, int y);
+Dot *hitDot(Dot *dots, int numDots, int x, int y);
 void step(Game *game, int dt);
-Dot **sortDotsByTime(Dot **dots, int numDots);
+void sortDotsByTime(Dot *dots, int numDots);
+void finishLevel(Game *game);

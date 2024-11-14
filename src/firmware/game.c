@@ -11,7 +11,7 @@ void setupGame(Game *game)
     game->quitGame = false;
 
     game->numLevels = LEVEL_COUNT;
-    game->levels = createAllLevels();
+    // game->levels = createAllLevels();
 }
 
 void resetGame(Game *game)
@@ -31,13 +31,13 @@ void resetGame(Game *game)
 
         for (int j = 0; j < level->numLeftDots; j++)
         {
-            Dot *dot = level->leftDots[j];
+            Dot *dot = &level->leftDots[j];
             dot->isHit = false;
         }
 
         for (int j = 0; j < level->numRightDots; j++)
         {
-            Dot *dot = level->rightDots[j];
+            Dot *dot = &level->rightDots[j];
             dot->isHit = false;
         }
     }
@@ -52,13 +52,11 @@ void startLevel(Game *game, int level)
 
     game->activeLevel = level;
 
-    Level *activeLevel = game->levels[game->activeLevel];
+    Level *activeLevel = &game->levels[game->activeLevel];
     game->time = 0;
     game->score = 0;
     game->numLeftActiveDots = 0;
     game->numRightActiveDots = 0;
-    game->leftActiveDots = malloc(sizeof(Dot *) * activeLevel->numLeftDots);
-    game->rightActiveDots = malloc(sizeof(Dot *) * activeLevel->numRightDots);
 }
 
 void finishLevel(Game *game)
@@ -68,11 +66,6 @@ void finishLevel(Game *game)
     game->score = 0;
     game->numLeftActiveDots = 0;
     game->numRightActiveDots = 0;
-
-    free(game->leftActiveDots);
-    game->leftActiveDots = NULL;
-    free(game->rightActiveDots);
-    game->rightActiveDots = NULL;
 }
 
 int calculateScore(int hitTime, int time)
@@ -118,15 +111,15 @@ bool hitRight(Game *game, int x, int y)
     return false;
 }
 
-Dot *hitDot(Dot **dots, int numDots, int x, int y)
+Dot *hitDot(Dot *dots, int numDots, int x, int y)
 {
-    Dot **sortedDots = sortDotsByTime(dots, numDots);
+    sortDotsByTime(dots, numDots);
 
     Dot *hit_dot = NULL;
 
     for (int i = 0; i < numDots; i++)
     {
-        Dot *dot = sortedDots[i];
+        Dot *dot = &dots[i];
 
         if (dot->isHit)
         {
@@ -158,13 +151,13 @@ void step(Game *game, int dt)
 
     for (int i = 0; i < level->numLeftDots; i++)
     {
-        Dot *dot = level->leftDots[i];
+        Dot *dot = &level->leftDots[i];
 
         bool isDotActive = false;
 
         for (int j = 0; j < game->numLeftActiveDots; j++)
         {
-            if (game->leftActiveDots[j] == dot)
+            if (&game->leftActiveDots[j] == dot)
             {
                 isDotActive = true;
                 break;
@@ -173,7 +166,7 @@ void step(Game *game, int dt)
 
         if (dot->appearTime <= game->time && dot->hitTime > game->time && !dot->isHit && !isDotActive)
         {
-            game->leftActiveDots[game->numLeftActiveDots] = dot;
+            game->leftActiveDots[game->numLeftActiveDots] = *dot;
             game->numLeftActiveDots++;
         }
         else if ((dot->hitTime <= game->time || dot->isHit) && isDotActive)
@@ -188,13 +181,13 @@ void step(Game *game, int dt)
 
     for (int i = 0; i < level->numRightDots; i++)
     {
-        Dot *dot = level->rightDots[i];
+        Dot *dot = &level->rightDots[i];
 
         bool isDotActive = false;
 
         for (int j = 0; j < game->numRightActiveDots; j++)
         {
-            if (game->rightActiveDots[j] == dot)
+            if (&game->rightActiveDots[j] == dot)
             {
                 isDotActive = true;
                 break;
@@ -203,7 +196,7 @@ void step(Game *game, int dt)
 
         if (dot->appearTime <= game->time && dot->hitTime > game->time && !dot->isHit)
         {
-            game->rightActiveDots[game->numRightActiveDots] = dot;
+            game->rightActiveDots[game->numRightActiveDots] = *dot;
             game->numRightActiveDots++;
         }
         else if ((dot->hitTime <= game->time || dot->isHit) && isDotActive)
@@ -216,27 +209,26 @@ void step(Game *game, int dt)
         }
     }
 
-    if (game->time > level->leftDots[level->numLeftDots - 1]->hitTime && game->time > level->rightDots[level->numRightDots - 1]->hitTime)
+    if (game->time > level->leftDots[level->numLeftDots - 1].hitTime && game->time > level->rightDots[level->numRightDots - 1].hitTime)
     {
         game->isGameOver = true;
     }
 }
 
-Dot **sortDotsByTime(Dot **dots, int numDots)
+void sortDotsByTime(Dot *dots, int numDots)
 {
     if (numDots <= 1)
     {
-        return dots;
+        return;
     }
 
-    Dot **leftSortedDots = sortDotsByTime(dots, numDots / 2);
-    Dot **rightSortedDots = sortDotsByTime(dots + numDots / 2, numDots - numDots / 2);
+    sortDotsByTime(dots, numDots / 2);
+    sortDotsByTime(dots + numDots / 2, numDots - numDots / 2);
 
-    Dot **sortedDots = malloc(sizeof(Dot *) * numDots);
-    if (sortedDots == NULL)
-    {
-        return dots;
-    }
+    Dot *leftSortedDots = dots;
+    Dot *rightSortedDots = dots + numDots / 2;
+
+    Dot sortedDots[MAX_DOTS];
 
     int leftIndex = 0;
     int rightIndex = 0;
@@ -246,7 +238,7 @@ Dot **sortDotsByTime(Dot **dots, int numDots)
 
     while (leftIndex < leftSize && rightIndex < rightSize)
     {
-        if (leftSortedDots[leftIndex]->hitTime < rightSortedDots[rightIndex]->hitTime)
+        if (leftSortedDots[leftIndex].hitTime < rightSortedDots[rightIndex].hitTime)
         {
             sortedDots[sortedIndex++] = leftSortedDots[leftIndex++];
         }
@@ -270,8 +262,4 @@ Dot **sortDotsByTime(Dot **dots, int numDots)
     {
         dots[i] = sortedDots[i];
     }
-
-    free(sortedDots);
-
-    return dots;
 }
