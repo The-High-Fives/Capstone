@@ -19,7 +19,7 @@ module if_id_buffer (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             pc_out <= 32'b0;
-            flush_buffer <= 0;
+            flush_buffer <= 1;
         end else if (!stall) begin
             flush_buffer <= flush;
             pc_out <= pc_in;

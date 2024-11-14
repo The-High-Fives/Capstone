@@ -1,7 +1,8 @@
 // max size of 32768 memory locations
 module dmem32
 #(
-    parameter depth = 16384 // 128K = 32768 32-bit memory location, 64K = 16384 32-bit memory location 
+    parameter depth = 16384, // 128K = 32768 32-bit memory location, 64K = 16384 32-bit memory location 
+    parameter FILENAME = "add.hex"
 )
 (
     // inputs
@@ -32,8 +33,8 @@ module dmem32
     end
 
     // Reading memory
-    initial begin
-        $readmemh("ADD.hex", mem);
-    end
+    // initial begin
+    //     $readmemh(FILENAME, mem);
+    // end
 
 endmodule

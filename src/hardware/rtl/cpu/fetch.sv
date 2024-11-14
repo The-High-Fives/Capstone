@@ -20,16 +20,16 @@ module fetch (
     reg [31:0] instr_mem[0:8191];
     wire [7:0] bank_rdata[0:3];
 
-    dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("ls_test0.hex")) dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[0]));
 
-    dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("ls_test1.hex")) dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[1]));
 
-    dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("ls_test2.hex")) dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[2]));
 
-    dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("ls_test3.hex")) dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[16:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[3]));
 
     // Instantiate PC_and_Branch module for PC updates
@@ -45,21 +45,5 @@ module fetch (
     );
 
     assign instruction_IFID_in = {bank_rdata[3], bank_rdata[2], bank_rdata[1], bank_rdata[0]};
-
-    // TODO need to move flush select and add additional FF to the buffer
-    // Fetch instruction from memory
-    // always @(posedge clk, negedge rst_n) begin
-    //     if (!rst_n) begin
-    //         instruction_IFID_in <= 32'd0;
-    //     end else if (!stall) begin
-    //         // instruction_IFID_in <= instr_mem_data;
-    //         if (flush) begin
-    //             instruction_IFID_in <= 32'b00000000000000000000000000110011; // ADD 0+0 => 0
-    //         end else begin
-    //             instruction_IFID_in <= instr_mem[PC_IFID_in >> 2]; // divide by 4 to get location
-    //         end
-    //     end
-    // end
-
 endmodule
 

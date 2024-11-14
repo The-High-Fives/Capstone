@@ -97,11 +97,11 @@ module id_ex_buffer
                 ex_ALU_imm <= 0;
                 ex_br_func <= BR_NONE;
                 ex_JAL_addr <= 0;
+                ex_pc_source <= PC_INC;
                 // ex_pc <= id_pc;
                 // ex_rs1_data <= id_rs1_data;
                 // ex_rs2_data <= id_rs2_data;
                 // ex_sext_out <= id_sext_out;
-                // ex_pc_source <= id_pc_source;
                 // ex_Mmask <= id_Mmask;
             end
             else begin
