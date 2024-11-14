@@ -7,17 +7,17 @@ input [18:0] wr_addr;
 
 output reg [1:0] rd_data;
 
-reg [1:0] imagebuffer [2499:0];
+reg [1:0] test_imagebuffer [307199:0];
 
 always @ (posedge clk) begin
     if (we)
-        imagebuffer[wr_addr] <= wrt_data;
-    rd_data <= imagebuffer[re_addr];
+        test_imagebuffer[wr_addr] <= wrt_data;
+    rd_data <= test_imagebuffer[re_addr];
 end
         
 
 initial begin
-    $readmemb("buffer_16_38400.mem", imagebuffer);
+    $readmemb("buffer_2_173.mem", test_imagebuffer);
 end
 
 endmodule
