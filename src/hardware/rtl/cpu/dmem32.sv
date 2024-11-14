@@ -1,4 +1,8 @@
-module dmem32 (
+module dmem32
+#(
+    parameter depth = 16383 // 128K = 32768 32-bit memory location, 64K = 16384 32-bit memory location 
+)
+(
     // inputs
     input logic clk,
     input logic rst_n, 
@@ -11,8 +15,8 @@ module dmem32 (
     output logic [7:0] rdata // 32-bit data to be read from memory
 );
 
-    // 32KB memory, each location stores a 32-bit word (4 bytes)
-    reg [7:0] mem [0:32767]; // 128K = 32768 32-bit memory location 
+    // memory, each location stores a 32-bit word (4 bytes), each bank store 1 byte
+    reg [7:0] mem [0:depth];
 
     // Read operation
     always_ff @(posedge clk) begin // rst_n
