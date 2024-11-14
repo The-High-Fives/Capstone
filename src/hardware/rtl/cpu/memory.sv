@@ -18,27 +18,29 @@ module memory (
     input wb_forward, // selects data source for memory writes
     input [31:0]       m_imm,
     input logic [31:0] m_pc_inc,
-    input logic [4:0] m_rd,          
+    input logic [4:0] m_rd,
+    
+    // Data signals from bus
+    output [31:0] b_addr_o, // bus r/w address
+    input [31:0] b_data_i,  // bus data input
+    output [31:0] b_data_o, // bus data output
+    output b_read_o,        // bus read
+    output b_write_o,       // bus write
+    input b_ack_i,          // bus acknowledgement signal
 
     // Stall control
-    output logic stall_mem,           // Stall signal for memory read delay
+    output logic stall_mem,           // Stall signal for memory read delay, stalls entire pipeline
 
     // Output signals to MEM/WB buffer
     output logic [31:0] read_data_MEMWB, // Data read from memory for WB stage
     output logic [31:0] reg_data_MEMWB       
-
-    // Memory interface
-    // output logic [31:0] memory_data_out, // Data to memory (write)
-    // input  logic [31:0] memory_data_in,  // Data from memory (read)
-    // output logic [14:0] memory_addr,     // Memory address
-    // output logic memory_we,              // Memory write enable
-    // output logic memory_re               // Memory read enable
 );
+    localparam IO_MEM_SPACE = 24'h000000; // top 24 bits of IO address space
 
     wire [31:0] write_data;
-    assign write_data = wb_forward ? wb_data : m_mem_data; // also check on this
-
     logic [1:0] bank_select;
+
+    assign write_data = wb_forward ? wb_data : m_mem_data;
     assign bank_select = m_alu_out[1:0]; // selects banks for read and write enable
 
     // Output data from each memory bank
@@ -185,10 +187,13 @@ module memory (
         endcase
     end
 
-    assign read_data_MEMWB = memDataOut;
+    // bus controller
+    assign bus_transaction = (m_alu_out[31:8] == IO_MEM_SPACE); // checks if address is in IO space
+    assign b_addr_o = m_alu_out;
+    assign b_data_o = write_data;
+    assign b_read_o = bus_transaction ? m_MemRead : 1'b0;
+    assign b_write_o = bus_transaction ? m_MemWrite : 1'b0;
+    assign stall_mem = (b_read_o | b_write_o) & ~b_ack_i;
 
-    // Stall signal for memory reads (CHECK ON THIS)
-    // assign stall_mem = m_MemRead;
-    assign stall_mem = 0;
-
+    assign read_data_MEMWB = bus_transaction ? b_data_i : memDataOut;
 endmodule

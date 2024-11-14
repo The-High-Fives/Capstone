@@ -8,7 +8,15 @@ import mem_definitions::*;
 module cpu
 (
     input clk,
-    input rst_n
+    input rst_n,
+
+    // bus master interface
+    output [31:0] b_addr_o, // bus r/w address
+    input [31:0] b_data_i,  // bus data input
+    output [31:0] b_data_o, // bus data output
+    output b_read_o,        // bus read
+    output b_write_o,       // bus write
+    input b_ack_i           // bus acknowledgement signal
 );
 
 // signal declarations
@@ -250,7 +258,14 @@ memory u_memory (
     .m_rd               (m_rd),
     .stall_mem          (stall_mem),
     .read_data_MEMWB    (read_data_MEMWB),
-    .reg_data_MEMWB     (reg_data_MEMWB)
+    .reg_data_MEMWB     (reg_data_MEMWB),
+    // Bus signals
+    .b_addr_o           (b_addr_o),
+    .b_data_i           (b_data_i), 
+    .b_data_o           (b_data_o), 
+    .b_read_o           (b_read_o),
+    .b_write_o          (b_write_o),
+    .b_ack_i            (b_ack_i), 
 );
 
 mem_wb_buffer u_mem_wb_buffer (
