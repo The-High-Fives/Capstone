@@ -48,7 +48,7 @@ module PRU (
     // Combinational logic for state transitions and pixel calculations
     always_comb begin
         next_state = state;
-		pixel_calculator = (c + (50 * r)); // calculates 1D location of 2D (row,column)x
+		pixel_calculator = (c + (480 * r)); // calculates 1D location of 2D (row,column)x
         pixel_in_circle = ((r - row) * (r - row) + (c - col) * (c - col) <= height_radius * height_radius);
         rect_done = (r >= row + height_radius-1) && (c >= col + width-1);
         circle_done = (r >= row + height_radius - 1) && (c >= col + height_radius - 1);
@@ -56,7 +56,7 @@ module PRU (
         case (state)
 
             RESET_MAP: begin        
-				if (r == 49 && c == 49) begin
+				if (r == 639 && c == 479) begin
                     next_state = IDLE;
                 end     
             end
@@ -83,7 +83,6 @@ module PRU (
 
     // Sequential logic for FSM, color_map update, and counters
     always_ff @(posedge clk or negedge rst_n) begin
-        iwe <= 0;
         if (!rst_n) begin
             state <= IDLE;
             r <= 0;
@@ -97,11 +96,11 @@ module PRU (
                 RESET_MAP: begin
                     // Reset color_map to 0s sequentially
                     //color_map[pixel_calculator] <= 2'b00;// TODO this is needs another think through
-                    if (c < 49) begin
+                    if (c < 479) begin
                         c <= c + 1;
                     end else begin
                         c <= 0;
-                        if (r < 49) begin
+                        if (r < 639) begin
                             r <= r + 1;
                         end else begin
 							c <= 0;
@@ -117,8 +116,11 @@ module PRU (
                     
                     // Draw rectangle sequentially within bounds
                     if (r >= row && r < row + height_radius && c >= col && c < col + width) begin
-                        if (r < 50 && c < 50) begin  // Bounds check
+                        if (r < 640 && c < 480) begin  // Bounds check
                             iwe <= 1;
+                        end
+                        else begin
+                            iwe <= 0;
                         end
                     end
                     // Update column and row counters
@@ -136,10 +138,12 @@ module PRU (
                     if (c < col - height_radius) c <= col - height_radius;
                     
                     // Draw circle sequentially, checking if each pixel is within radius
-                    if (r < 50 && c < 50 && pixel_in_circle) begin
+                    if (r < 640 && c < 480 && pixel_in_circle) begin
                         iwe <= 1;
                     end
-
+                    else begin
+                        iwe <= 0;
+                    end
                     // Update column and row counters
                     if (c < col + height_radius + height_radius - 1) begin
                         c <= c + 1;
@@ -213,7 +217,7 @@ always_ff @ (posedge clk, negedge rst_n) begin
 	if (!rst_n) begin
         pru_red = 10'h15f;
         pru_green = 10'h200;
-        pru_blue = 10'h200;	
+        pru_blue = 10'h3ff;	
 	end
 	else begin
 		case (current_pixel)
