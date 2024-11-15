@@ -162,6 +162,7 @@ module PRU (
                     r <= 0;
                     c <= 0;
                     done <= 0;
+                    iwe <=0;
                 end
             endcase
         end
@@ -177,7 +178,7 @@ Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calcul
 
 async_fifo 
 #(
-     .width(2),.depth(1024))
+     .width(2),.depth(128))
 PRU_Fifo_Buffer
 (
      .i_wclk(clk)

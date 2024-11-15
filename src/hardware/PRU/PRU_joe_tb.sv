@@ -45,11 +45,12 @@ module PRU_tb;
     // Clock generation
     initial begin
         clk = 0;
-        VGA_CTRL_CLK = 0;
         forever #5 clk = ~clk;  // 10ns clock period
+    end
+    initial begin
+        VGA_CTRL_CLK = 0;
         forever #10 VGA_CTRL_CLK = ~VGA_CTRL_CLK;  // 10ns clock period
     end
-
     // Test sequence
     initial begin
         // Initialize signals
@@ -92,7 +93,8 @@ module PRU_tb;
         repeat (1000) @(posedge clk);
         start = 0;                // Release start after one cycle
         repeat (10000) @(posedge clk);
-
+        VGA_Read = 1;
+        repeat (300000) @(posedge clk);
         // Display color_map (partial, around the circle center) to check circle
         $display("Color map after circle (around circle center):");
         display_color_map(0, 0, 50, 50);
