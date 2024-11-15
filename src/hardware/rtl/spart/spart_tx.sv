@@ -3,10 +3,8 @@ module spart_tx
     input clk,
     input rst_n,
     input enable,   // 16x baud freq
-    input [1:0] addr,
-    input [7:0] tx_data, // internal databus
-    input iorw,    // write when low
-    input iocs,
+    input tx_write,
+    inout [7:0] tx_data, // internal databus
     output logic TBR, // transmit buffer ready
     output TX
 );
@@ -58,7 +56,7 @@ module spart_tx
 
             default: begin // IDLE state
                 TBR = 1'b1;
-                if (!iorw & (addr == 2'b00) && iocs) begin
+                if (tx_write) begin
                     init = 1'b1;
                     next_state = WAIT;
                 end

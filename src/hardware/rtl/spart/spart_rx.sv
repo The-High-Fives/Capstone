@@ -3,12 +3,10 @@ module spart_rx
     input clk,
     input rst_n,
     input enable,   // 16x baud freq
-    input [1:0] addr,
-    input iorw,
-    input IOCS,
-    input RX,
+    input rx_read,
+    inout [7:0] rx_data, // interal databus
     output logic RDA, // receive data available
-    inout [7:0] rx_data // interal databus
+    input RX
 );
 
     typedef enum logic [1:0] {IDLE, START, RECEIVE, STOP} state_t;
@@ -109,11 +107,11 @@ module spart_rx
             RDA <= 1'b0;
         else if (rx_data_valid)
             RDA <= 1'b1;  // data is ready after STOP state
-        else if (iorw & IOCS & (addr == 2'b00))  // clear RDA when read occurs
+        else if (rx_read)  // clear RDA when read occurs
             RDA <= 1'b0;
     end
 
     // Assigning received data to rx_data when read
-    assign rx_data = (IOCS && iorw && (addr == 2'b00)) ? rx_shift_reg : 8'hzz;
+    assign rx_data = rx_read ? rx_shift_reg : 8'hzz;
 
 endmodule
