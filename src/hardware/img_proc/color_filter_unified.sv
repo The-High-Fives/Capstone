@@ -33,14 +33,15 @@ module color_filter_unified
 //     end
 // end
 
-localparam threshold = 12'h7FF;
+localparam threshold = 12'h700;
 function logic red_filter (logic [11:0] red, blue, green);
-    return (red > threshold && blue < 12'h3FF && green < 12'h3FF);
+    return (red > threshold && blue < 12'h4FF && green < 12'h4FF);
 endfunction
 
 always_comb begin
     if (red_filter(iRed, iBlue, iGreen)) begin
-        oRed = iRed;
+        // oRed = iRed;
+        oRed = 11'h7FF;
         oGreen = iGreen;
         oBlue = iBlue;
     end else begin
