@@ -7,7 +7,10 @@ module spart(
     input [31:0] addr_i,
     input [31:0] data_i,
     inout [31:0] data_o,
-    inout ack_o
+    inout ack_o,
+
+    output txd,
+    input rxd
 );
     wire [7:0] databus_in;
 
@@ -21,6 +24,6 @@ module spart(
     baud_gen iBAUD_GEN(.clk(clk), .rst_n(rst_n), .enable(enable));
 
     // bus interface
-    spart_bus_intf iBUS_INTF(.tbr(tbr), .rda(rda), .databus_in(databus_in), .rx_read(rx_read), .tx_read(tx_read), .write_i(write_i),
+    spart_bus_intf iBUS_INTF(.tbr(tbr), .rda(rda), .databus_in(databus_in), .rx_read(rx_read), .tx_write(tx_write), .write_i(write_i),
                                 .read_i(read_i), .addr_i(addr_i), .data_i(data_i), .data_o(data_o), .ack_o(ack_o));
 endmodule

@@ -2,7 +2,7 @@ module baud_gen
 (
     input clk,
     input rst_n,
-    output enable, // 16x selected baud rate
+    output enable // 16x selected baud rate
 );
 
     logic [15:0] counter;   // down counter
