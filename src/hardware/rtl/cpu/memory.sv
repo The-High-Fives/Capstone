@@ -4,6 +4,8 @@ module memory (
     input logic clk,
     input logic rst_n,
 
+    input bl_stall,
+
     // Control signals from EX/MEM buffer
     input logic m_MemRead,         // Memory read enable
     input logic m_MemWrite,        // Memory write enable 
@@ -21,11 +23,11 @@ module memory (
     input logic [4:0] m_rd,
     
     // Data signals from bus
-    output [31:0] b_addr_o, // bus r/w address
+    inout [31:0] b_addr_o, // bus r/w address
     input [31:0] b_data_i,  // bus data input
-    output [31:0] b_data_o, // bus data output
-    output b_read_o,        // bus read
-    output b_write_o,       // bus write
+    inout [31:0] b_data_o, // bus data output
+    inout b_read_o,        // bus read
+    inout b_write_o,       // bus write
     input b_ack_i,          // bus acknowledgement signal
 
     // Stall control
@@ -191,10 +193,10 @@ module memory (
 
     // bus controller
     assign bus_transaction = (m_alu_out[31:8] == IO_MEM_SPACE); // checks if address is in IO space
-    assign b_addr_o = m_alu_out;
-    assign b_data_o = write_data;
-    assign b_read_o = bus_transaction ? m_MemRead : 1'b0;
-    assign b_write_o = bus_transaction ? m_MemWrite : 1'b0;
+    assign b_addr_o = bl_stall ? 32'hzzzzzzzz : m_alu_out;
+    assign b_data_o = bl_stall ? 32'hzzzzzzzz : write_data;
+    assign b_read_o = bl_stall ? 1'bz : (bus_transaction ? m_MemRead : 1'b0);
+    assign b_write_o = bl_stall ? 1'bz : (bus_transaction ? m_MemWrite : 1'b0);
     assign stall_mem = (b_read_o | b_write_o) & ~b_ack_i;
 
     assign read_data_MEMWB = bus_transaction ? b_data_i : memDataOut;
