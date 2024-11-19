@@ -14,14 +14,14 @@ module spart_bus_intf(
     inout [31:0] data_o,
     inout ack_o
 );
-    localparam addr_offset = 6'h07; // 0x1C
+    localparam addr_offset = 30'h00000007; // 0x1C
 
     wire cs; // device 'cs' enable based on address
     wire [7:0] status_reg;
     assign status_reg = {6'b000000, tbr, rda};
 
     // Control the bidirectional databus
-    assign cs = (addr_i[7:2] == addr_offset);
+    assign cs = (addr_i[31:2] == addr_offset);
 
     assign databus_in = write_i ? data_i[7:0] : 8'hzz;
 

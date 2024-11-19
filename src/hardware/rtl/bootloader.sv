@@ -77,7 +77,7 @@ end
 // instruction count
 always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n)
-        instr_buffer <= 0;
+        instr_count <= 0;
     else if (wr_ic) begin
         case (byte_count)
             2'b00: instr_count[7:0] <= rx_data;
@@ -91,7 +91,7 @@ end
 // instruction buffer
 always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n)
-        instr_count <= 0;
+        instr_buffer <= 0;
     else if (wr_buff) begin
         case (byte_count)
             2'b00: instr_buffer[7:0] <= rx_data;
