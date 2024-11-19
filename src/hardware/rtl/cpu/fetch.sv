@@ -20,16 +20,16 @@ module fetch (
     reg [31:0] instr_mem[0:8191];
     wire [7:0] bank_rdata[0:3];
 
-    dmem32 #(.FILENAME("ls_test0.hex")) dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("init0.hex")) dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[0]));
 
-    dmem32 #(.FILENAME("ls_test1.hex")) dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("init1.hex")) dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[1]));
 
-    dmem32 #(.FILENAME("ls_test2.hex")) dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("init2.hex")) dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[2]));
 
-    dmem32 #(.FILENAME("ls_test3.hex")) dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
+    dmem32 #(.FILENAME("init3.hex")) dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(PC_IFID_in[15:2]), .re(~stall), .we(1'b0), 
     .wdata(8'h00), .rdata(bank_rdata[3]));
 
     // Instantiate PC_and_Branch module for PC updates
