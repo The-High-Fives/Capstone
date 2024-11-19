@@ -401,7 +401,7 @@ Sdram_Control	   u7	(	//	HOST Side
 //D5M I2C control
 I2C_CCD_Config 	u8	(	//	Host Side
 							.iCLK(CLOCK2_50),
-							.iRST_N(DLY_RST_2),
+							.iRST_N(~DLY_RST_2),
 							.iEXPOSURE_ADJ(KEY[1]),
 							.iEXPOSURE_DEC_p(SW[0]),
 							.iZOOM_MODE_SW(SW[9]),
@@ -422,6 +422,7 @@ I2C_CCD_Config 	u8	(	//	Host Side
 // end
 	// VGA_converter temp (.clk(CLOCK_50), .rst_n(DLY_RST_2), .VGA_CTRL_CLK(VGA_CTRL_CLK), .pru_addr(ipru_addr), .pru_data(idata), .VGA_Read(Read), 
 	// 	.color_load(i_color_load),
+
     reg [1:0] color;
     reg [9:0] row;
     reg [8:0] col;
@@ -438,31 +439,127 @@ I2C_CCD_Config 	u8	(	//	Host Side
     reg done;
 
 
+
+      //   color = 2'b01;            // Arbitrary color value for rectangle
+      //   row = 10;                 // Starting row for rectangle
+      //   col = 10;                 // Starting column for rectangle
+      //   width = 15;               // Width of rectangle
+      //   height_radius = 15;       // Height for rectangle
+      //   bitmap_addr = 32'h0;      // Not used in this example
+      //   shape_select = 2'b00;     // Start with rectangle
+      //   start = 0;
+      //   subtract = 0;
+      //   VGA_Read = 0;
+      //   i_color_load = 0;
+
+always @ (posedge CLOCK_50) begin
+   if (SW[4]) begin
+        start <= 1'b1;
+   end
+   else if (SW[2]) begin
+        color <= 2'b01;            // Arbitrary color value for rectangle
+        row <= 10'h080;                 // Starting row for rectangle
+        col <= 9'h080;                 // Starting column for rectangle
+        width <= 10'h0FF;               // Width of rectangle
+        height_radius <= 9'h0FF;       // Height for rectangle
+        bitmap_addr <= 32'h0;      // Not used in this example
+        shape_select <= 2'b00;     // Start with rectangle
+        subtract <= 0;
+        i_color_load <= 0;
+        start <= 1'b0;
+   end
+   else if (SW[3]) begin
+        color <= 2'b10;            // Arbitrary color value for rectangle
+        row <= 350;                 // Starting row for rectangle
+        col <= 150;                 // Starting column for rectangle
+        width <= 50;               // Width of rectangle
+        height_radius <= 50;       // Height for rectangle
+        bitmap_addr <= 32'h0;      // Not used in this example
+        shape_select <= 2'b01;     // Start with rectangle
+        subtract <= 0;
+        i_color_load <= 0;
+        start <= 1'b0;
+   end
+   // else begin
+   //      color <= 2'b00;            // Arbitrary color value for rectangle
+   //      row <= 10'h080;                 // Starting row for rectangle
+   //      col <= 9'h080;                 // Starting column for rectangle
+   //      width <= 10'h040;               // Width of rectangle
+   //      height_radius <= 9'h040;       // Height for rectangle
+   //      bitmap_addr <= 32'h0;      // Not used in this example
+   //      shape_select <= 2'b00;     // Start with rectangle
+   //      subtract <= 0;
+   //      i_color_load <= 0;
+   //      start <= 1'b0;
+   // end
+end
+
+   PRU dut (
+      .clk(CLOCK_50),
+      .rst_n(DLY_RST_1),
+      .color(color),
+      .row(row),
+      .col(col),
+      .width(width),
+      .height_radius(height_radius),
+      .pru_addr(pru_addr),
+      .pru_data(pru_data),
+      .shape_select(shape_select),
+      .start(start),
+      .subtract(subtract),
+      .busy(busy),
+      .done(done),
+      .color_load(i_color_load),
+      .VGA_CTRL_CLK(VGA_CTRL_CLK),
+      .VGA_Read(Read),                 
+      .pru_red(PRU_RED),
+      .pru_green(PRU_GREEN),
+      .pru_blue(PRU_BLUE)
+   );
+// always @ (posedge CLOCK_50, negedge DLY_RST_2, posedge SW[3]) begin
+//    if (!DLY_RST_2) begin
+//         color <= 2'b01;            // Arbitrary color value for rectangle
+//         row <= 0;                 // Starting row for rectangle
+//         col <= 0;                 // Starting column for rectangle
+//         width <= 0;               // Width of rectangle
+//         height_radius <= 0;       // Height for rectangle
+//         bitmap_addr <= 32'h0;      // Not used in this example
+//         shape_select <= 2'b00;     // Start with rectangle
+//         start <= 0;
+//         subtract <= 0;
+//         i_color_load <= 0;
+//    end
+//    else if (SW[3]) begin
+//         color <= 2'b01;            // Arbitrary color value for rectangle
+//         row <= 350;                 // Starting row for rectangle
+//         col <= 150;                 // Starting column for rectangle
+//         width <= 50;               // Width of rectangle
+//         height_radius <= 50;       // Height for rectangle
+//         bitmap_addr <= 32'h0;      // Not used in this example
+//         shape_select <= 2'b01;     // Start with rectangle
+//         start <= 0;
+//         subtract <= 0;
+//         i_color_load <= 0;
+//         start <= 1'b1;
+//    end
+   // else begin
+   //      color <= 2'b00;            // Arbitrary color value for rectangle
+   //      row <= 0;                 // Starting row for rectangle
+   //      col <= 0;                 // Starting column for rectangle
+   //      width <= 0;               // Width of rectangle
+   //      height_radius <= 0;       // Height for rectangle
+   //      bitmap_addr <= 32'h0;      // Not used in this example
+   //      shape_select <= 2'b01;     // Start with rectangle
+   //      start <= 0;
+   //      subtract <= 0;
+   //      i_color_load <= 0;
+   //      start <= 1'b1;
+   // end
+//end
 //    logic [1:0] color_map [2499:0];  // 50 * 50 = 2500
 
     // Instantiate the PRU module
-    PRU dut (
-        .clk(CLOCK_50),
-        .rst_n(DLY_RST_2),
-        .color(color),
-        .row(row),
-        .col(col),
-        .width(width),
-        .height_radius(height_radius),
-        .pru_addr(pru_addr),
-        .pru_data(pru_data),
-        .shape_select(shape_select),
-        .start(start),
-        .subtract(subtract),
-        .busy(busy),
-        .done(done),
-        .color_load(i_color_load),
-        .VGA_CTRL_CLK(VGA_CTRL_CLK),
-        .VGA_Read(Read),                 
-        .pru_red(PRU_RED),
-        .pru_green(PRU_GREEN),
-        .pru_blue(PRU_BLUE)
-    );
+
 
 VGA_Controller	  u1	(	//	Host Side
 							.oRequest(Read),
