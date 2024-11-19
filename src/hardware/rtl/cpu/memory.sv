@@ -37,6 +37,7 @@ module memory (
 );
     localparam IO_MEM_SPACE = 24'h000000; // top 24 bits of IO address space
 
+    wire bus_transaction;
     wire [31:0] write_data;
     logic [1:0] bank_select;
 
@@ -82,109 +83,110 @@ module memory (
         bank_wdata[1] = 8'h0;
         bank_wdata[2] = 8'h0;
         bank_wdata[3] = 8'h0;
+        if (!bus_transaction) begin
+            unique case (m_mem_type)
+                // SB and LB (sign-extended)
+                MEM_BYTE: begin
+                    case (bank_select)
+                        2'b00: begin 
+                            we0 = m_MemWrite; // 1
+                            re0 = m_MemRead; // 1
+                            bank_wdata[0] = write_data[7:0]; // Least significant byte stored
+                        end
 
-        unique case (m_mem_type)
-            // SB and LB (sign-extended)
-            MEM_BYTE: begin
-                case (bank_select)
-                    2'b00: begin 
-                        we0 = m_MemWrite; // 1
-                        re0 = m_MemRead; // 1
-                        bank_wdata[0] = write_data[7:0]; // Least significant byte stored
-                    end
+                        2'b01: begin 
+                            we1 = m_MemWrite; 
+                            re1 = m_MemRead; 
+                            bank_wdata[1] = write_data[7:0];
+                        end
 
-                    2'b01: begin 
+                        2'b10: begin 
+                            we2 = m_MemWrite; 
+                            re2 = m_MemRead; 
+                            bank_wdata[2] = write_data[7:0];
+                        end
+
+                        2'b11: begin 
+                            we3 = m_MemWrite; 
+                            re3 = m_MemRead; 
+                            bank_wdata[3] = write_data[7:0];
+                        end
+                    endcase
+                end
+
+                // For SH and LH (sign-extended)
+                MEM_HALF: begin
+                    if (!bank_select[1]) begin
+                        // Lower halfword: banks 0 and 1
+                        we0 = m_MemWrite; 
                         we1 = m_MemWrite; 
-                        re1 = m_MemRead; 
-                        bank_wdata[1] = write_data[7:0];
-                    end
+                        re0 = m_MemRead; 
+                        re1 = m_MemRead;
 
-                    2'b10: begin 
+                        bank_wdata[0] = write_data[7:0];
+                        bank_wdata[1] = write_data[15:8];
+                    end 
+                    else begin
+                        // Upper halfword: banks 2 and 3
                         we2 = m_MemWrite; 
-                        re2 = m_MemRead; 
-                        bank_wdata[2] = write_data[7:0];
-                    end
-
-                    2'b11: begin 
                         we3 = m_MemWrite; 
-                        re3 = m_MemRead; 
-                        bank_wdata[3] = write_data[7:0];
-                    end
-                endcase
-            end
+                        re2 = m_MemRead; 
+                        re3 = m_MemRead;
 
-            // For SH and LH (sign-extended)
-            MEM_HALF: begin
-                if (!bank_select[1]) begin
-                    // Lower halfword: banks 0 and 1
-                    we0 = m_MemWrite; 
-                    we1 = m_MemWrite; 
-                    re0 = m_MemRead; 
+                        bank_wdata[2] = write_data[7:0];
+                        bank_wdata[3] = write_data[15:8];
+                    end
+                end
+
+                // Fro SW and LW
+                MEM_WORD: begin
+                    // All banks
+                    we0 = m_MemWrite;
+                    we1 = m_MemWrite;
+                    we2 = m_MemWrite;
+                    we3 = m_MemWrite;
+                    re0 = m_MemRead;
                     re1 = m_MemRead;
+                    re2 = m_MemRead;
+                    re3 = m_MemRead;
 
                     bank_wdata[0] = write_data[7:0];
                     bank_wdata[1] = write_data[15:8];
-                end 
-                else begin
-                    // Upper halfword: banks 2 and 3
-                    we2 = m_MemWrite; 
-                    we3 = m_MemWrite; 
-                    re2 = m_MemRead; 
-                    re3 = m_MemRead;
-
-                    bank_wdata[2] = write_data[7:0];
-                    bank_wdata[3] = write_data[15:8];
+                    bank_wdata[2] = write_data[23:16];
+                    bank_wdata[3] = write_data[31:24];
                 end
-            end
 
-            // Fro SW and LW
-            MEM_WORD: begin
-                // All banks
-                we0 = m_MemWrite;
-                we1 = m_MemWrite;
-                we2 = m_MemWrite;
-                we3 = m_MemWrite;
-                re0 = m_MemRead;
-                re1 = m_MemRead;
-                re2 = m_MemRead;
-                re3 = m_MemRead;
+                // For LBU (zero-extended)
+                MEM_UBYTE: begin
+                    case (bank_select)
+                        2'b00: begin 
+                            re0 = m_MemRead; 
+                        end
+                        2'b01: begin 
+                            re1 = m_MemRead; 
+                        end
+                        2'b10: begin 
+                            re2 = m_MemRead; 
+                        end
+                        2'b11: begin 
+                            re3 = m_MemRead; 
+                        end
+                    endcase
+                end
 
-                bank_wdata[0] = write_data[7:0];
-                bank_wdata[1] = write_data[15:8];
-                bank_wdata[2] = write_data[23:16];
-                bank_wdata[3] = write_data[31:24];
-            end
-
-            // For LBU (zero-extended)
-            MEM_UBYTE: begin
-                case (bank_select)
-                    2'b00: begin 
+                // For LHU (zero-extended)
+                MEM_UHALF: begin
+                    if (bank_select[1] == 0) begin
                         re0 = m_MemRead; 
-                    end
-                    2'b01: begin 
-                        re1 = m_MemRead; 
-                    end
-                    2'b10: begin 
+                        re1 = m_MemRead;
+                    end 
+                    else begin
                         re2 = m_MemRead; 
+                        re3 = m_MemRead;
                     end
-                    2'b11: begin 
-                        re3 = m_MemRead; 
-                    end
-                endcase
-            end
-
-            // For LHU (zero-extended)
-            MEM_UHALF: begin
-                if (bank_select[1] == 0) begin
-                    re0 = m_MemRead; 
-                    re1 = m_MemRead;
-                end 
-                else begin
-                    re2 = m_MemRead; 
-                    re3 = m_MemRead;
                 end
-            end
-        endcase
+            endcase
+        end
     end
 
     // bus controller
