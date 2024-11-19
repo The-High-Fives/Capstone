@@ -4,6 +4,7 @@
 #define true 1
 #define false 0
 #define bool char
+#define color_t unsigned char
 
 #define uint8_t unsigned char
 
@@ -72,3 +73,4 @@ Dot *hitDot(Dot *dots, int numDots, int x, int y);
 void step(Game *game, int dt);
 void sortDotsByTime(Dot *dots, int numDots);
 void finishLevel(Game *game);
+void drawGameState(Game *game);
