@@ -48,7 +48,7 @@ module PRU (
     // Combinational logic for state transitions and pixel calculations
     always_comb begin
         next_state = state;
-		pixel_calculator = (c + (480 * r)); // calculates 1D location of 2D (row,column)x
+		pixel_calculator = (c + (640 * r)); // calculates 1D location of 2D (row,column)x
         pixel_in_circle = ((r - row) * (r - row) + (c - col) * (c - col) <= height_radius * height_radius);
         rect_done = (r >= row + height_radius-1) && (c >= col + width-1);
         circle_done = (r >= row + height_radius - 1) && (c >= col + height_radius - 1);
@@ -155,6 +155,7 @@ module PRU (
 
                 COMPLETE: begin //This is complete
                     done <= 1;  // Signal that drawing is complete
+                    iwe <=0;
                 end
 
                 default: begin //IDLE
@@ -162,6 +163,7 @@ module PRU (
                     r <= 0;
                     c <= 0;
                     done <= 0;
+                    iwe <=0;
                 end
             endcase
         end
@@ -177,7 +179,7 @@ Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calcul
 
 async_fifo 
 #(
-     .width(2),.depth(1024))
+     .width(2),.depth(32))
 PRU_Fifo_Buffer
 (
      .i_wclk(clk)
@@ -185,13 +187,14 @@ PRU_Fifo_Buffer
     ,.i_wr(!fifo_full)
     ,.i_rd(VGA_Read)
     ,.i_wdata(ird_data)
-    ,.i_wrst_n(~rst_n)
-    ,.i_rrst_n(~rst_n)
+    ,.i_wrst_n(rst_n)
+    ,.i_rrst_n(rst_n)
 
     ,.o_rdata(current_pixel)
     ,.o_empty(fifo_empty)
     ,.o_full(fifo_full)
 );
+
 //Color Register
 always_ff @ (posedge clk, negedge rst_n) begin
     if (!rst_n) begin
@@ -215,8 +218,8 @@ end
 //Image Buffer and pru_color outputs
 always_ff @ (posedge clk, negedge rst_n) begin
 	if (!rst_n) begin
-        pru_red = 10'h15f;
-        pru_green = 10'h200;
+        pru_red = 10'hFFF;
+        pru_green = 10'h3FF;
         pru_blue = 10'h3ff;	
 	end
 	else begin
@@ -262,7 +265,7 @@ always_ff @ (posedge ~VGA_CTRL_CLK, negedge rst_n, posedge screen_reset) begin
         pixel_counter <= '0;
     end
      //Note: VGA_Read and fifo_full sensitivity is the opposite of what their respective enable signals are. This is on purpose, and so that a pixel isn't skipped
-    else if (VGA_Read && ~fifo_full)
+    else if (VGA_Read)
         pixel_counter <= pixel_counter + 1; //VGA READ IS boofed
 end
 endmodule
