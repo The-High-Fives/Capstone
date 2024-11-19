@@ -11,12 +11,18 @@ module cpu
     input rst_n,
 
     // bus master interface
-    output [31:0] b_addr_o, // bus r/w address
+    inout [31:0] b_addr_o, // bus r/w address
     input [31:0] b_data_i,  // bus data input
-    output [31:0] b_data_o, // bus data output
-    output b_read_o,        // bus read
-    output b_write_o,       // bus write
-    input b_ack_i           // bus acknowledgement signal
+    inout [31:0] b_data_o, // bus data output
+    inout b_read_o,        // bus read
+    inout b_write_o,       // bus write
+    input b_ack_i,          // bus acknowledgement signal
+
+    // bootloader 
+    input [3:0] bl_strobe,
+    input [31:0] bl_data,
+    input [13:0] bl_addr,
+    input bl_stall
 );
 
 // signal declarations
@@ -55,10 +61,10 @@ wire if_id_flush;
 wire id_ex_flush;
 wire takeBranch;
 
-assign stall_if = load_use_hazard | stall_mem;
-assign stall_id = load_use_hazard | stall_mem;
-assign stall_ex = stall_mem;
-assign stall_m = stall_mem;
+assign stall_if = load_use_hazard | stall_mem | bl_stall;
+assign stall_id = load_use_hazard | stall_mem | bl_stall;
+assign stall_ex = stall_mem | bl_stall;
+assign stall_m = stall_mem | bl_stall;
 
 assign if_id_flush = takeBranch;
 assign id_ex_flush = takeBranch;
@@ -79,7 +85,13 @@ fetch u_fetch (
     // .instr_mem_data         (instr_mem_data),
     // outputs
     .instruction_IFID_in    (instruction_IFID_in),
-    .PC_IFID_in             (PC_IFID_in)
+    .PC_IFID_in             (PC_IFID_in),
+
+    // bootloader
+    .wr_strobe              (bl_strobe),
+    .wrdata                 (bl_data),
+    .wraddr                 (bl_addr),
+    .bl_stall               (bl_stall)
 );
 
 if_id_buffer u_if_id_buffer (
@@ -244,6 +256,7 @@ ex_m_buffer u_ex_m_buffer (
 memory u_memory (
     .clk                (clk),
     .rst_n              (rst_n),
+    .bl_stall           (bl_stall),
     .m_MemRead          (m_MemRead),
     .m_MemWrite         (m_MemWrite),
     .m_JAL              (m_JAL),

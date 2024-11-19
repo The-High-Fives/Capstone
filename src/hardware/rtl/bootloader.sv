@@ -31,7 +31,7 @@ logic wr_ic;
 logic wr_buff;
 logic inc_addr;
 logic inc_rxc;
-wire rx_counter_inc; // rx_counter + 1
+wire [31:0] rx_counter_inc; // rx_counter + 1
 
 // bus signals
 logic b_write;
@@ -65,7 +65,7 @@ always_ff @(posedge clk, negedge rst_n) begin
         bl_addr <= bl_addr + 1;
 end
 
-// rx_counter
+// rx_counter counts received bytes
 always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n)
         rx_counter <= 0;
@@ -78,11 +78,12 @@ end
 always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n)
         instr_buffer <= 0;
-    else if (wr_buff) begin
+    else if (wr_ic) begin
         case (byte_count)
-            2'b00: instr_buffer[7:0] <= rx_data;
-            2'b01: instr_buffer[15:8] <= rx_data;
-            2'b10: instr_buffer[23:16] <= rx_data;
+            2'b00: instr_count[7:0] <= rx_data;
+            2'b01: instr_count[15:8] <= rx_data;
+            2'b10: instr_count[23:16] <= rx_data;
+            2'b11: instr_count[31:24] <= rx_data;
         endcase
     end
 end
@@ -93,10 +94,9 @@ always_ff @(posedge clk, negedge rst_n) begin
         instr_count <= 0;
     else if (wr_buff) begin
         case (byte_count)
-            2'b00: instr_count[7:0] <= rx_data;
-            2'b01: instr_count[15:8] <= rx_data;
-            2'b10: instr_count[23:16] <= rx_data;
-            2'b11: instr_count[31:24] <= rx_data;
+            2'b00: instr_buffer[7:0] <= rx_data;
+            2'b01: instr_buffer[15:8] <= rx_data;
+            2'b10: instr_buffer[23:16] <= rx_data;
         endcase
     end
 end
@@ -120,6 +120,7 @@ always_comb begin
     b_write = 0;
     b_read = 0;
     b_addr = 32'h00000000;
+    bl_strobe = 4'b0000;
 
     case (state)
         INIT1: begin // displays char 'B'
@@ -147,10 +148,13 @@ always_comb begin
             if (ack_i) begin
                 wr_buff = 1;
                 inc = 1;
-                if (byte_count == 2'b11)
+                if (byte_count == 2'b11) begin
                     bl_strobe = 4'b1111;
-                if (rx_counter_inc == instr_count)
-                    next_state = STOP;
+                    inc_addr = 1;
+                    inc_rxc = 1;
+                    if (rx_counter_inc == instr_count)
+                        next_state = STOP;
+                end
             end
         end
 
