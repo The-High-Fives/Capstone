@@ -83,8 +83,16 @@ int getSPART()
 {
     int *memSet;
 
-    memSet = (int *)SPART_ADDR;
+    memSet = (int *)SPART_READ_ADDR;
     return *memSet;
+}
+
+int setSPART(char value)
+{
+    int *memSet;
+
+    memSet = (int *)SPART_WRITE_ADDR;
+    *memSet = value;
 }
 
 void getIO(int *timer, int *handLocation, int *SPART)
