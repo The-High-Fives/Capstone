@@ -146,11 +146,35 @@ void step(Game *game, int dt)
         return;
     }
 
+    int i;
+
+    for (i = 0; i < game->numLeftActiveDots; i++)
+    {
+        Dot *dot = &game->leftActiveDots[i];
+
+        if (checkLocationForColor(dot->x, dot->y, DOT_RADIUS + 2))
+        {
+            dot->isHit = true;
+            game->score += calculateScore(dot->hitTime, game->time);
+        }
+    }
+
+    for (i = 0; i < game->numRightActiveDots; i++)
+    {
+        Dot *dot = &game->rightActiveDots[i];
+
+        if (checkLocationForColor(dot->x, dot->y, DOT_RADIUS + 2))
+        {
+            dot->isHit = true;
+            game->score += calculateScore(dot->hitTime, game->time);
+        }
+    }
+
     game->time += dt;
 
     Level *level = &game->levels[game->activeLevel];
 
-    for (int i = 0; i < level->numLeftDots; i++)
+    for (i = 0; i < level->numLeftDots; i++)
     {
         Dot *dot = &level->leftDots[i];
 
@@ -180,7 +204,7 @@ void step(Game *game, int dt)
         }
     }
 
-    for (int i = 0; i < level->numRightDots; i++)
+    for (i = 0; i < level->numRightDots; i++)
     {
         Dot *dot = &level->rightDots[i];
 
@@ -257,6 +281,12 @@ void drawGameOverScreen(Game *game)
 {
     drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     drawLetter(400, 240, 1, 1, 1);
+}
+
+void drawGameCompleteScreen(Game *game)
+{
+    drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    drawLetter(400, 240, 1, 2, 1);
 }
 
 void sortDotsByTime(Dot *dots, int numDots)

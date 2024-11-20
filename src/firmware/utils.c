@@ -82,15 +82,15 @@ bool checkLocationForColor(int x, int y, int radius)
     return (*memSet) & 1;
 }
 
-int getSPART()
+char getSPART()
 {
-    int *memSet;
+    char *memSet;
 
-    memSet = (int *)SPART_READ_ADDR;
+    memSet = (char *)SPART_READ_ADDR;
     return *memSet;
 }
 
-int setSPART(char value)
+void setSPART(char value)
 {
     int *memSet;
 

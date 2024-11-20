@@ -3,7 +3,8 @@
 
 #include "utils.h"
 
-#define START_SIGNAL 97
+#define START_SIGNAL 'p'
+#define END_SIGNAL 'q'
 
 #define MAX_DOTS 50
 #define MAX_LEFT_DOTS 50
@@ -70,5 +71,6 @@ void startLevel(Game *game, int level);
 void drawStartScreen(Game *game);
 void drawGameOverScreen(Game *game);
 void drawGameScreen(Game *game);
+void drawGameCompleteScreen(Game *game);
 
 #endif

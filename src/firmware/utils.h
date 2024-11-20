@@ -35,6 +35,6 @@ int getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);
 int getSPART();
 void setSPART(char value);
-void getIO(int *timer, int *handLocation, int *SPART);
+void getIO(int *timer, char *SPART);
 
 #endif
