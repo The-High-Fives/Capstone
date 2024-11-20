@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "levels.h"
+#include "utils.h"
 
 void setupGame(Game *game)
 {
@@ -213,6 +214,49 @@ void step(Game *game, int dt)
     {
         game->isGameOver = true;
     }
+}
+
+void drawGameScreen(Game *game)
+{
+    drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    if (game->activeLevel >= game->numLevels || game->activeLevel < 0)
+    {
+        return;
+    }
+
+    Level *level = &game->levels[game->activeLevel];
+
+    for (int i = 0; i < game->numLeftActiveDots; i++)
+    {
+        Dot *dot = &game->leftActiveDots[i];
+
+        int windupCircleRadius = DOT_RADIUS + (dot->hitTime - game->time) / dot->holdTime * DOT_RADIUS;
+        drawCircle(dot->x, dot->y, windupCircleRadius, dot->color);
+        drawCircle(dot->x, dot->y, windupCircleRadius - 5, 0);
+        drawCircle(dot->x, dot->y, DOT_RADIUS, dot->color);
+    }
+
+    for (int i = 0; i < game->numRightActiveDots; i++)
+    {
+        Dot *dot = &game->rightActiveDots[i];
+
+        int windupCircleRadius = DOT_RADIUS + (dot->hitTime - game->time) / dot->holdTime * DOT_RADIUS;
+        drawCircle(dot->x, dot->y, windupCircleRadius, dot->color);
+        drawCircle(dot->x, dot->y, windupCircleRadius - 5, 0);
+        drawCircle(dot->x, dot->y, DOT_RADIUS, dot->color);
+    }
+}
+
+void drawStartScreen(Game *game)
+{
+    drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    drawLetter(400, 240, 1, 0, 1);
+}
+
+void drawGameOverScreen(Game *game)
+{
+    drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    drawLetter(400, 240, 1, 1, 1);
 }
 
 void sortDotsByTime(Dot *dots, int numDots)
