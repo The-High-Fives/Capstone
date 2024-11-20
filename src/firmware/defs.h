@@ -8,12 +8,17 @@
 
 #define uint8_t unsigned char
 
+#define START_SIGNAL 97
+
 #define MAX_DOTS 50
 #define MAX_LEFT_DOTS 50
 #define MAX_RIGHT_DOTS 50
 #define MAX_LEVELS 3
 
-const int DOT_RADIUS = 20;
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
+#define DOT_RADIUS 20
 
 typedef struct
 {
@@ -26,7 +31,7 @@ typedef struct
 {
     int x;
     int y;
-    Color color;
+    color_t color;
     int hitTime;
     int holdTime;
     int appearTime;
@@ -73,4 +78,7 @@ Dot *hitDot(Dot *dots, int numDots, int x, int y);
 void step(Game *game, int dt);
 void sortDotsByTime(Dot *dots, int numDots);
 void finishLevel(Game *game);
-void drawGameState(Game *game);
+void startLevel(Game *game, int level);
+void drawStartScreen(Game *game);
+void drawGameOverScreen(Game *game);
+void drawGameScreen(Game *game);

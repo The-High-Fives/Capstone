@@ -16,41 +16,40 @@ int main()
 
     while (!game->quitGame)
     {
+        int *dt;
+        int *handLocation;
+        int *SPART;
+        getIO(dt, handLocation, SPART);
+
         if (game->onStartScreen)
         {
-            // getIO();
-            // drawStartScreen(game);
+            drawStartScreen(game);
 
-            /*
             if (game->quitGame)
             {
                 break;
             }
 
-            if (levelSelected)
+            if (SPART == START_SIGNAL)
             {
-                startLevel(game, selectedLevel);
+                startLevel(game, 0);
             }
-            */
         }
         else if (game->isGameOver)
         {
             finishLevel(game);
-            // getIO();
-            /*
+
             if (game->quitGame)
             {
                 break;
             }
-            */
-            //  drawGameOverScreen(game);
+
+            drawGameOverScreen(game);
         }
         else
         {
-            int dt = 0;
-            // getIO();
-            step(game, dt);
-            // drawGameScreen(game);
+            step(game, *dt);
+            drawGameScreen(game);
         }
     }
 
