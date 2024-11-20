@@ -8,20 +8,9 @@ void setColor(color_t addr, Color color)
     int *memSet;
 
     memSet = (int *)COLOR_ADDR;
-    memSet += addr * 4;
+    memSet += (addr & 3) * 4;
 
     *memSet = ((color.r & 0x3FF) << 20) | ((color.g & 0x3FF) << 10) | (color.b & 0x3FF);
-}
-
-void drawCircle(int x, int y, int radius, color_t color)
-{
-    int *memSet;
-
-    memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (x << 9) | (y & 0x1FF);
-
-    memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 23) | (1 << 21) | ((color & 3) << 19) | (radius & 0x7FFFF);
 }
 
 void drawRect(int x, int y, int width, int height, color_t color)
@@ -29,10 +18,21 @@ void drawRect(int x, int y, int width, int height, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (x << 9) | (y & 0x1FF);
+    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)DRAW_CONTROL_ADDR;
     *memSet = (1 << 23) | (0 << 21) | ((color & 3) << 19) | ((width & 0x3FF) << 9) | (height & 0x1FF);
+}
+
+void drawCircle(int x, int y, int radius, color_t color)
+{
+    int *memSet;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
+
+    memSet = (int *)DRAW_CONTROL_ADDR;
+    *memSet = (1 << 23) | (1 << 21) | ((color & 3) << 19) | (radius & 0x7FFFF);
 }
 
 void drawSprite(int x, int y, int scale, int addr, color_t color)
@@ -40,7 +40,7 @@ void drawSprite(int x, int y, int scale, int addr, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (x << 9) | (y & 0x1FF);
+    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)SPRITE_ADDR;
     *memSet = addr;
@@ -54,7 +54,7 @@ void drawLetter(int x, int y, int scale, int addr, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (x << 9) | (y & 0x1FF);
+    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)SPRITE_ADDR;
     *memSet = addr;
@@ -71,12 +71,15 @@ int getTimerValue()
     return *memSet;
 }
 
-int getHandLocation()
+bool checkLocationForColor(int x, int y, int radius)
 {
     int *memSet;
 
-    memSet = (int *)HAND_LOCATION_ADDR;
-    return *memSet;
+    memSet = (int *)DETECT_LOCATION_ADDR;
+    *memSet = ((x & 0x3FF) << 19) | ((y & 0x1FF) << 10) | (radius & 0x3FF);
+
+    memSet = (int *)COLOR_LOCATED_ADDR;
+    return (*memSet) & 1;
 }
 
 int getSPART()
@@ -95,9 +98,8 @@ int setSPART(char value)
     *memSet = value;
 }
 
-void getIO(int *timer, int *handLocation, int *SPART)
+void getIO(int *timer, int *SPART)
 {
     *timer = getTimerValue();
-    *handLocation = getHandLocation();
     *SPART = getSPART();
 }

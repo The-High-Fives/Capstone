@@ -3,11 +3,6 @@
 
 #include "utils.h"
 
-#define NULL (void *)0
-#define true 1
-#define false 0
-#define bool char
-
 #define START_SIGNAL 97
 
 #define MAX_DOTS 50
