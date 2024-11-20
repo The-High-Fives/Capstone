@@ -1,12 +1,12 @@
-#pragma once
+#ifndef DEFS_H
+#define DEFS_H
+
+#include "utils.h"
 
 #define NULL (void *)0
 #define true 1
 #define false 0
 #define bool char
-#define color_t unsigned char
-
-#define uint8_t unsigned char
 
 #define START_SIGNAL 97
 
@@ -19,13 +19,6 @@
 #define SCREEN_HEIGHT 480
 
 #define DOT_RADIUS 20
-
-typedef struct
-{
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} Color;
 
 typedef struct
 {
@@ -82,3 +75,5 @@ void startLevel(Game *game, int level);
 void drawStartScreen(Game *game);
 void drawGameOverScreen(Game *game);
 void drawGameScreen(Game *game);
+
+#endif
