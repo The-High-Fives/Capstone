@@ -1,8 +1,6 @@
 module group_detection (
     iColor,
     iDVAL,
-    iX_Cont,
-    iY_Cont,
     iCLK,
     iRST,
     oX,
@@ -12,8 +10,6 @@ module group_detection (
 
 input [11:0] iColor;
 input iDVAL;
-input reg [10:0] iX_Cont;
-input reg [10:0] iY_Cont;
 input iCLK;
 input iRST;
 
@@ -26,8 +22,8 @@ localparam threshold = 12'h700;
 localparam endX = 640;
 localparam endY = 480;
 
-wire [10:0] X;
-wire [10:0] Y;
+reg [10:0] X;
+reg [10:0] Y;
 
 reg [10:0] prevTotalRow;
 reg [10:0] prevTotalCol;
@@ -41,20 +37,21 @@ reg [10:0] xCount;
 reg [10:0] totalY;
 
 
-assign X = iX_Cont;
-assign Y = iY_Cont;
-
 assign totalX = iColor > threshold ? X + prevTotalX : 0;
 assign totalY = iColor > threshold ? 1 + prevTotalY : 0;
 assign xCount = iColor > threshold ? 1 + prevXCount : 0;
 
 always_ff @(posedge iCLK or negedge iRST) begin
     if (!iRST) begin
+        X <= 0;
+        Y <= 0;
         prevTotalRow <= 0;
         prevTotalCol <= 0;
         prevTotalX <= 0;
         prevTotalY <= 0;
     end else if (iDVAL) begin
+        X <= X == endX ? 0 : X + 1;
+        Y <= Y == endY ? 0 : Y + 1;
         
         if (Y == 0 && X == 0) begin
             prevTotalRow <= 0;

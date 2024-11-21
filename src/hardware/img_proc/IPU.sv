@@ -42,8 +42,6 @@ color_filter_unified u_color_filter_unified (
 );
 
 group_detection u_group_detection (
-    .iX_Cont(iX_Cont),
-    .iY_Cont(iY_Cont),
     .iColor(filterRed),
     .iDVAL(filterDVAL),
     .iCLK(iCLK),
