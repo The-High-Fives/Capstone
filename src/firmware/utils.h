@@ -10,6 +10,7 @@
 #define COLOR_LOCATED_ADDR 0x4208
 #define SPART_READ_ADDR 0x420C
 #define SPART_WRITE_ADDR 0x4210
+#define LED_ADDR 0x4214
 
 #define uint8_t unsigned char
 #define color_t unsigned char
@@ -28,8 +29,10 @@ typedef struct
 
 void drawCircle(int x, int y, int radius, color_t color);
 void drawRect(int x, int y, int width, int height, color_t color);
-void drawSprite(int x, int y, int memoryLocation, int wordCount, color_t color);
+void drawSprite(int x, int y, int scale, int addr, color_t color);
+void drawLetter(int x, int y, int scale, int addr, color_t color);
 void setColor(color_t addr, Color color);
+void setLED(bool value, int led);
 
 int getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);

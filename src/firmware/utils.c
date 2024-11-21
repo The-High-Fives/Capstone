@@ -63,6 +63,23 @@ void drawLetter(int x, int y, int scale, int addr, color_t color)
     *memSet = (1 << 23) | (3 << 21) | ((color & 3) << 19) | (scale & 0x7FFFF);
 }
 
+void setLED(bool value, int led)
+{
+    int *memSet;
+    bool val = value & 1;
+
+    memSet = (int *)LED_ADDR;
+
+    if (val)
+    {
+        *memSet |= 1 << led;
+    }
+    else
+    {
+        *memSet &= ~(1 << led);
+    }
+}
+
 int getTimerValue()
 {
     int *memSet;
