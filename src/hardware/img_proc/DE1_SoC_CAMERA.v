@@ -350,8 +350,8 @@ color_filter_unified u_color_filter_unified (
 group_detection u_group_detection (
     .iCLK       (D5M_PIXLCLK),
     .iRST       (DLY_RST_1),
-    .iColor     (RG_RED),
-    .iDVAL      (RG_VAL),
+    .iColor     (pro_CCD_R),
+    .iDVAL      (pro_CCD_DVAL),
     .iX_Cont    (X_Cont),
     .iY_Cont    (Y_Cont),
     .oX         (AVG_X),
@@ -372,7 +372,7 @@ assign prev_AVG_Y = AVG_DVAL ? AVG_Y : prev_AVG_Y;
 //    end
 // end
 
-assign {final_CCD_R, final_CCD_G, final_CCD_B} = ((X_Cont == 300) || (Y_Cont == 300)) ? {12'h000, 12'h7FF, 12'h000} : {pro_CCD_R, pro_CCD_G, pro_CCD_B};
+assign {final_CCD_R, final_CCD_G, final_CCD_B} = ((X_Cont == 16'd300) || (Y_Cont == 16'd300)) ? {12'h000, 12'h7FF, 12'h000} : {pro_CCD_R, pro_CCD_G, pro_CCD_B};
 
 assign {sCCD_R, sCCD_G, sCCD_B, sCCD_DVAL} = SW[4] ? {final_CCD_R, final_CCD_G, final_CCD_B, pro_CCD_DVAL} : {RG_RED, RG_GREEN, RG_BLUE, RG_VAL};
 
