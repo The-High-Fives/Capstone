@@ -55,6 +55,32 @@ module IPU_tb ();
             iX_Cont = 0;
             iY_Cont = iY_Cont + 1;
         end
+
+        repeat (50) @(posedge clk);
+
+        repeat (10) begin
+            red = 0;
+            green = 0;
+            blue = 0;
+            iX_Cont = 0;
+            iY_Cont = 0;
+
+            repeat (50) @(posedge clk);
+
+            repeat (480) begin
+                repeat (640) @(posedge clk) begin
+                    dVAL = 1;
+                    red = $random;
+                    green = $random;
+                    blue = $random;
+                    iX_Cont = iX_Cont + 1;
+                end
+                iX_Cont = 0;
+                iY_Cont = iY_Cont + 1;
+            end
+        end
+
+        $stop();
     end
 
 
