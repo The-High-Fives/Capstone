@@ -20,6 +20,12 @@ logic [11:0] filterGreen;
 logic [11:0] filterBlue;
 logic filterDVAL;
 
+logic [10:0] gd_X;
+logic [10:0] gd_Y;
+
+reg [10:0] avg_X;
+reg [10:0] avg_Y;
+
 color_filter_unified u_color_filter_unified (
     .iX_Cont(iX_Cont),
     .iY_Cont(iY_Cont),
@@ -42,9 +48,22 @@ group_detection u_group_detection (
     .iDVAL(filterDVAL),
     .iCLK(iCLK),
     .iRST(iRST),
-    .oX(oX),
-    .oY(oY),
+    .oX(gd_x),
+    .oY(gd_Y),
     .oDVAL(oDVAL)
 );
+
+always_ff @(posedge iCLK or negedge iRST) begin
+    if (!iRST) begin
+        avg_X <= 0;
+        avg_Y <= 0;
+    end else if (oDVAL) begin
+        avg_X <= gd_X;
+        avg_Y <= gd_Y;
+    end
+end
+
+assign oX = avg_X;
+assign oY = avg_Y;
 
 endmodule
