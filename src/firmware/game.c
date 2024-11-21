@@ -12,7 +12,7 @@ void setupGame(Game *game)
     game->quitGame = false;
 
     game->numLevels = LEVEL_COUNT;
-    // game->levels = createAllLevels();
+    createAllLevels(game);
 }
 
 void resetGame(Game *game)

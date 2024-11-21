@@ -98,7 +98,7 @@ void setSPART(char value)
     *memSet = value;
 }
 
-void getIO(int *timer, int *SPART)
+void getIO(int *timer, char *SPART)
 {
     *timer = getTimerValue();
     *SPART = getSPART();

@@ -17,20 +17,19 @@ int main()
     while (!game->quitGame)
     {
         int *dt;
-        int *handLocation;
         char *SPART;
-        getIO(dt, handLocation, SPART);
+        getIO(dt, SPART);
 
         if (game->onStartScreen)
         {
             drawStartScreen(game);
 
-            if (SPART == END_SIGNAL)
+            if (*SPART == END_SIGNAL)
             {
                 break;
             }
 
-            if (SPART == START_SIGNAL)
+            if (*SPART == START_SIGNAL)
             {
                 startLevel(game, 0);
             }
@@ -39,7 +38,7 @@ int main()
         {
             finishLevel(game);
 
-            if (SPART == END_SIGNAL)
+            if (*SPART == END_SIGNAL)
             {
                 break;
             }

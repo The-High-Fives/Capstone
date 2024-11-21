@@ -33,7 +33,7 @@ void setColor(color_t addr, Color color);
 
 int getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);
-int getSPART();
+char getSPART();
 void setSPART(char value);
 void getIO(int *timer, char *SPART);
 
