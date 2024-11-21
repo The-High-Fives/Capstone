@@ -1,7 +1,7 @@
 module IPU_tb ();
 
     // inputs
-    logic clk, rst;
+    logic clk, rst_n;
     logic dVAL;
     logic	[11:0]	red,
     logic	[11:0]	greed,
@@ -16,7 +16,7 @@ module IPU_tb ();
 
     IPU dut(
         .iCLK(clk),
-        .iRST(rst),
+        .iRST(rst_n),
         .iDVAL(dVAL),
         .iRed(red),
         .iGreen(green),
@@ -32,6 +32,6 @@ module IPU_tb ();
         clk = 0;
         forever #5 clk = ~clk;
     end
-    
+
 
 endmodule
