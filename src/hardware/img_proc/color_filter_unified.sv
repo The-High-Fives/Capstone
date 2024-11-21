@@ -42,8 +42,8 @@ always_comb begin
     if (red_filter(iRed, iBlue, iGreen)) begin
         // oRed = iRed;
         oRed = 11'h7FF;
-        oGreen = iGreen;
-        oBlue = iBlue;
+        oGreen = 11'h000;
+        oBlue = 11'h000;
     end else begin
         oRed = 0;
         oGreen = 0;
