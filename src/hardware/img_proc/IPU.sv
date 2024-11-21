@@ -53,7 +53,7 @@ group_detection u_group_detection (
     .oDVAL(oDVAL)
 );
 
-always_ff @(posedge iCLK or negedge iRST) begin
+always_comb @(posedge iCLK or negedge iRST) begin
     if (!iRST) begin
         avg_X <= 0;
         avg_Y <= 0;
