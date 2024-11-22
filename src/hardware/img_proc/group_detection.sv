@@ -10,8 +10,6 @@ module group_detection (
 
 input [11:0] iColor;
 input iDVAL;
-input [10:0] iX_Cont;
-input [10:0] iY_Cont;
 input iCLK;
 input iRST;
 
@@ -20,13 +18,11 @@ output [10:0] oY;
 output oVALID_COORD;
 
 logic [16:0] y_accum; // column accumulation
-logic [18:0] total_col_accumulate // column average accumulate
-logic [9:0] act_row_count; // count of rows active in column
-logic active_row; // if this row is active
+logic [18:0] total_col_accumulate; // column average accumulate
+logic [9:0] act_row_count; // count of rows active in total_col_accumulate
+logic [9:0] red_row_count; // number of red pixels in row
 
-logic [16:0] x_accum; // row accumulation
 logic [18:0] total_row_accumulate; // row average accumulate
-logic [9:0] act_col_count; // count of cols active in total row accumation
  
 logic [9:0] col_count; // counts current pixel col
 logic [9:0] row_count; // counts current pixel row
@@ -35,9 +31,10 @@ logic [9:0] row_count; // counts current pixel row
 logic y_init, y_acc, tcol_init, tcol_acc;
 
 assign oVALID_COORD = (row_count == 0) & (col_count == 0) & (act_row_count != 0); // TODO maybe add act_col_count? or add threshold
+assign oX = total_row_accumulate/act_row_count;
+assign oY = total_col_accumulate/act_row_count;
 
 always_comb begin
-    oY = total_col_accumulate/act_row_count;
     y_init = 0;
     y_acc = 0;
     tcol_init = 0;
@@ -86,10 +83,12 @@ end
 // active row
 always_ff @(posedge iCLK or negedge iRST) begin
     if (!iRST) begin
-        active_row <= 0;
-    end 
+        red_row_count <= 0;
+    end if (y_init) begin
+        red_row_count <= (iColor != 0) ? 1 : 0;
+    end
     else if (y_acc) begin
-        active_row <= 1;
+        red_row_count <= red_row_count + 1;
     end
 end
 
@@ -112,10 +111,11 @@ always_ff @(posedge iCLK or negedge iRST) begin
         total_col_accumulate <= 0;
     end 
     else if (tcol_init) begin
-        total_col_accumulate <= (iColor != 0) ? 1 : 0;
+        total_col_accumulate <= 0;
     end
     else if (tcol_acc) begin
-        total_col_accumulate <= total_col_accumulate + (y_accum/480);
+        if (red_row_count != 0)
+            total_col_accumulate <= total_col_accumulate + (y_accum/red_row_count);
     end
 end
 
@@ -128,26 +128,23 @@ always_ff @(posedge iCLK or negedge iRST) begin
         act_row_count <= 0;
     end
     else if (tcol_acc) begin
-        act_row_count <= act_row_count + active_row;
+        if (red_row_count != 0)
+            act_row_count <= act_row_count + 1;
     end
 end
 
-// always_ff @(posedge iCLK or negedge iRST) begin
-//     if (!iRST) begin
-//         x_accum <= 0;
-//     end
-// end
+always_ff @(posedge iCLK or negedge iRST) begin
+    if (!iRST) begin
+        total_row_accumulate <= 0;
+    end
+    else if (tcol_init) begin
+        total_row_accumulate <= 0;
+    end
+    else if (tcol_acc) begin
+        if (red_row_count != 0)
+            total_row_accumulate <= total_row_accumulate + row_count;
+    end
+end
 
-// always_ff @(posedge iCLK or negedge iRST) begin
-//     if (!iRST) begin
-//         total_row_accumulate <= 0;
-//     end
-// end
-
-// always_ff @(posedge iCLK or negedge iRST) begin
-//     if (!iRST) begin
-//         act_col_count <= 0;
-//     end
-// end
 
 endmodule
