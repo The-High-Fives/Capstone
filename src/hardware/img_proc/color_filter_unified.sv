@@ -8,9 +8,9 @@ module color_filter_unified
     input			iDVAL,
     input			iCLK,
     input			iRST,
-    output	[11:0]	oRed,
-    output	[11:0]	oGreen,
-    output	[11:0]	oBlue,
+    output logic	[11:0]	oRed,
+    output logic    [11:0]	oGreen,
+    output logic	[11:0]	oBlue,
     output			oDVAL
 );
 

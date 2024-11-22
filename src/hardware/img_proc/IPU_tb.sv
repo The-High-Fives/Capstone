@@ -1,11 +1,11 @@
 module IPU_tb ();
 
     // inputs
-    logic clk, rst_n;
-    logic dVAL;
-    logic	[11:0]	red,
-    logic	[11:0]	greed,
-    logic	[11:0]	blue,
+    logic iCLK, iRST;
+    logic iDVAL;
+    logic	[11:0]	iColor;
+    logic	[11:0]	green;
+    logic	[11:0]	blue;
     logic [10:0] iX_Cont;
     logic [10:0] iY_Cont;
 
@@ -15,10 +15,10 @@ module IPU_tb ();
     logic valid;
 
     IPU dut(
-        .iCLK(clk),
-        .iRST(rst_n),
-        .iDVAL(dVAL),
-        .iRed(red),
+        .iCLK(iCLK),
+        .iRST(iRST),
+        .iDVAL(iDVAL),
+        .iRed(iColor),
         .iGreen(green),
         .iBlue(blue),
         .iX_Cont(iX_Cont),
@@ -29,59 +29,43 @@ module IPU_tb ();
     );
 
     initial begin 
-        clk = 0;
-        forever #5 clk = ~clk;
+        iCLK = 0;
+        forever #5 iCLK = ~iCLK;
     end
+
+    int row;
+    int col;
     initial begin
-        rst_n = 0;
-        dVAL = 0;
-        red = 0;
-        green = 0;
+        iRST = 0;
         blue = 0;
-        iX_Cont = 0;
-        iY_Cont = 0;
-
-        repeat (10) @(posedge clk);
-        rst_n = 1;
-
-        repeat (480) begin
-            repeat (640) @(posedge clk) begin
-                dVAL = 1;
-                red = 12'hFFF;
-                green = 12'h000;
-                blue = 12'h000;
-                iX_Cont = iX_Cont + 1;
+        green = 0;
+        iCLK = 0;
+        row = 0;
+        col = 0;
+        iDVAL = 0;
+        iColor = '0;
+        repeat(2) @(posedge iCLK);
+        iRST = 1;
+        
+        repeat(400) begin
+            repeat (200) begin
+                @(posedge iCLK);
+                iDVAL = 1;
             end
-            iX_Cont = 0;
-            iY_Cont = iY_Cont + 1;
-        end
-
-        repeat (50) @(posedge clk);
-
-        repeat (10) begin
-            red = 0;
-            green = 0;
-            blue = 0;
-            iX_Cont = 0;
-            iY_Cont = 0;
-
-            repeat (50) @(posedge clk);
-
-            repeat (480) begin
-                repeat (640) @(posedge clk) begin
-                    dVAL = 1;
-                    red = $random;
-                    green = $random;
-                    blue = $random;
-                    iX_Cont = iX_Cont + 1;
-                end
-                iX_Cont = 0;
-                iY_Cont = iY_Cont + 1;
+            repeat(100) begin
+                @(posedge iCLK);
+                iDVAL = 1;
+                iColor = '1;
+            end
+            iColor = '0;
+            repeat (180) begin
+                @(posedge iCLK);
+                iDVAL = 1;
             end
         end
-
+        iColor = 0;
+        repeat (134400) @(posedge iCLK);
+        repeat(100) @(posedge iCLK);
         $stop();
     end
-
-
 endmodule
