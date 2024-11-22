@@ -27,8 +27,7 @@ module PRU_Preprocessing (
 			
         else
             state <= next_state;
-    end
-
+    end     	 
 	always_comb begin
 		ack = 0;
 		load1 = 0;
@@ -57,13 +56,13 @@ module PRU_Preprocessing (
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // Reset all outputs
+			start <= 0;
             color <= 0;
             row <= 0;
             col <= 0;
             width <= 0;
             height_radius <= 0;
             shape_select <= 0;
-            start <= 0;
             subtract <= 0;
             color_load <= 0;
             VGA_CTRL_CLK <= 0;
@@ -75,16 +74,19 @@ module PRU_Preprocessing (
                 row <= data[11:2];
                 col <= data[20:12];
                 width <= data[30:21];
+				start = 0;
             end
             else if (load2) begin
                 // Populate the remaining PRU inputs
                 height_radius <= data[8:0];
                 shape_select <= data[10:9];
-                start <= data[11];
                 subtract <= data[12];
                 color_load <= data[13];
                 VGA_CTRL_CLK <= data[14];
                 VGA_Read <= data[15];
+				start = 1;
+			end else begin
+				start = 0;
             end
 				
 		end		
