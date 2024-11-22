@@ -77,11 +77,13 @@ module PRU_tb;
 
         // Test rectangle input
         $display("Testing rectangle...");
+		        //--------width-------col-------row-----color
 				//32'b0_0000001111_000001010_0000001010_01
         data = 32'b0_0000001111_000001010_0000001010_01;
 		write = 1;
 		repeat (1) @(posedge clk);
 		write = 0;
+				//-------------------------cl-su-st--ss--height_radius
 				//32'b0000000000000000_0_0_0_0_1_00_000001111
         data = 32'b0000000000000000_0_0_0_0_1_00_000001111;
 		repeat (1) @(posedge clk);
@@ -89,19 +91,43 @@ module PRU_tb;
 		repeat (1) @(posedge clk);
 		write = 0;		
 
-		
-        repeat (2) @(posedge clk);
-
-		write = 0;
         repeat (10000) @(posedge clk);
 		display_color_map(0, 0, 30, 30);
         // Test circle input
         $display("Testing circle...");
-        data = 32'h11112222;   // Example data for DATA1
-        repeat (2) @(posedge clk);
-        data = 32'h33334444;   // Example data for DATA2
-        repeat (10) @(posedge clk);
+				//--------width-------col-------row-----color
+				//32'b0_0000001111_000001010_0000011110_10
+        data = 32'b0_0000001010_000011110_0000011110_10;
+		write = 1;
+        repeat (1) @(posedge clk);
+		write = 0;
+				//-------------------------cl-su-st--ss--height_radius
+				//32'b0000000000000000_0_0_0_0_1_00_000001111
+        data = 32'b0000000000000000_0_0_0_0_1_01_000001010;
+        repeat (1) @(posedge clk);
+		write = 1;	
+		repeat (1) @(posedge clk);
+		write = 0;		
 
+        repeat (10000) @(posedge clk);
+		display_color_map(0, 0, 50, 50);
+		$display("Testing circle...");
+				//--------width-------col-------row-----color
+				//32'b0_0000001111_000001010_0000011110_10
+        data = 32'b0_0000100000_000001010_0000001010_11;
+		write = 1;
+        repeat (1) @(posedge clk);
+		write = 0;
+				//-------------------------cl-su-st--ss--height_radius
+				//32'b0000000000000000_0_0_0_0_1_00_000001111
+        data = 32'b0000000000000000_0_0_0_0_1_11_000100000;
+        repeat (1) @(posedge clk);
+		write = 1;	
+		repeat (1) @(posedge clk);
+		write = 0;		
+
+        repeat (10000) @(posedge clk);
+		display_color_map(0, 0, 50, 50);
         // End simulation
         $stop;
     end
