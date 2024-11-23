@@ -1,7 +1,5 @@
-module cpu_pru(input clk, input rst_n);
+module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read);
 
-    logic clk;
-    logic rst_n;
     logic [1:0] color;
     logic [9:0] row;
     logic [8:0] col;
@@ -11,7 +9,7 @@ module cpu_pru(input clk, input rst_n);
     logic [1:0] shape_select;
 	logic [31:0] pru_addr;
     logic [31:0] pru_data;
-    logic start, VGA_CTRL_CLK, VGA_Read;
+    logic start;
     logic subtract;
     logic i_color_load;
     logic busy;
