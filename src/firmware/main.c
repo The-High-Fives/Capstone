@@ -56,5 +56,8 @@ int main()
 
     game = NULL;
 
+end:
+    goto end;
+
     return 0;
 }

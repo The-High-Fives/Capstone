@@ -1,16 +1,26 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define COLOR_ADDR 0x4000
+// Peripheral Addresses
+#define LED_ADDR 0x4000
+#define TIMER_ADDR 0x4004
+#define SPART_READ_ADDR 0x4008
+#define SPART_WRITE_ADDR 0x4009
+
+// PRU Addresses
 #define DRAW_LOCATION_ADDR 0x4100
 #define DRAW_CONTROL_ADDR 0x4104
 #define SPRITE_ADDR 0x4108
-#define TIMER_ADDR 0x4200
-#define DETECT_LOCATION_ADDR 0x4204
-#define COLOR_LOCATED_ADDR 0x4208
-#define SPART_READ_ADDR 0x420C
-#define SPART_WRITE_ADDR 0x4210
-#define LED_ADDR 0x4214
+#define COLOR_ADDR 0x410C
+
+// IPU Addresses
+#define DETECT_LOCATION_ADDR 0x4200
+#define COLOR_LOCATED_ADDR 0x4204
+
+#define RECT_CODE 0b00
+#define CIRCLE_CODE 0b01
+#define SPRITE_CODE 0b10
+#define LETTER_CODE 0b11
 
 #define uint8_t unsigned char
 #define color_t unsigned char

@@ -18,10 +18,10 @@ void drawRect(int x, int y, int width, int height, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 23) | (0 << 21) | ((color & 3) << 19) | ((width & 0x3FF) << 9) | (height & 0x1FF);
+    *memSet = (1 << 23) | (RECT_CODE << 19) | ((width & 0x3FF) << 9) | (height & 0x1FF);
 }
 
 void drawCircle(int x, int y, int radius, color_t color)
@@ -29,10 +29,10 @@ void drawCircle(int x, int y, int radius, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 23) | (1 << 21) | ((color & 3) << 19) | (radius & 0x7FFFF);
+    *memSet = (CIRCLE_CODE << 19) | (radius & 0x7FFFF);
 }
 
 void drawSprite(int x, int y, int scale, int addr, color_t color)
@@ -40,13 +40,13 @@ void drawSprite(int x, int y, int scale, int addr, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)SPRITE_ADDR;
     *memSet = addr;
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 23) | (2 << 21) | ((color & 3) << 19) | (scale & 0x7FFFF);
+    *memSet = (1 << 23) | (SPRITE_CODE << 19) | (scale & 0x7FFFF);
 }
 
 void drawLetter(int x, int y, int scale, int addr, color_t color)
@@ -54,13 +54,13 @@ void drawLetter(int x, int y, int scale, int addr, color_t color)
     int *memSet;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
 
     memSet = (int *)SPRITE_ADDR;
     *memSet = addr;
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 23) | (3 << 21) | ((color & 3) << 19) | (scale & 0x7FFFF);
+    *memSet = (1 << 23) | (LETTER_CODE << 19) | (scale & 0x7FFFF);
 }
 
 void setLED(bool value, int led)
@@ -112,7 +112,7 @@ void setSPART(char value)
     int *memSet;
 
     memSet = (int *)SPART_WRITE_ADDR;
-    *memSet = value;
+    *memSet = (value & 0xFF);
 }
 
 void getIO(int *timer, char *SPART)
