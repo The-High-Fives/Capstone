@@ -10,8 +10,8 @@ module IPU(
     input [10:0] iY_Cont,
 
     // outputs
-    output [10:0] oX,
-    output [10:0] oY,
+    output [10:0] oRow,
+    output [10:0] oCol,
     output oDVAL
 );
 
@@ -20,8 +20,8 @@ logic [11:0] filterGreen;
 logic [11:0] filterBlue;
 logic filterDVAL;
 
-logic [10:0] gd_X;
-logic [10:0] gd_Y;
+// logic [10:0] gd_X;
+// logic [10:0] gd_Y;
 
 color_filter_unified u_color_filter_unified (
     .iX_Cont(iX_Cont),
@@ -43,8 +43,8 @@ group_detection u_group_detection (
     .iDVAL(filterDVAL),
     .iCLK(iCLK),
     .iRST(iRST),
-    .oX(gd_x),
-    .oY(gd_Y),
+    .oRow(oRow),
+    .oCol(oCol),
     .oVALID_COORD(oDVAL)
 );
 

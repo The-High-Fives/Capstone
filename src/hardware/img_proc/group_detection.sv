@@ -3,8 +3,8 @@ module group_detection (
     iDVAL,
     iCLK,
     iRST,
-    oX,
-    oY,
+    oRow,
+    oCol,
     oVALID_COORD
 );
 
@@ -13,8 +13,8 @@ input iDVAL;
 input iCLK;
 input iRST;
 
-output [10:0] oX;
-output [10:0] oY;
+output [10:0] oRow;
+output [10:0] oCol;
 output oVALID_COORD;
 
 logic [16:0] y_accum; // column accumulation
@@ -31,8 +31,8 @@ logic [9:0] row_count; // counts current pixel row
 logic y_init, y_acc, tcol_init, tcol_acc;
 
 assign oVALID_COORD = (row_count == 0) & (col_count == 0) & (act_row_count != 0); // TODO maybe add act_col_count? or add threshold
-assign oX = total_row_accumulate/act_row_count;
-assign oY = total_col_accumulate/act_row_count;
+assign oRow = total_row_accumulate/act_row_count;
+assign oCol = total_col_accumulate/act_row_count;
 
 always_comb begin
     y_init = 0;
