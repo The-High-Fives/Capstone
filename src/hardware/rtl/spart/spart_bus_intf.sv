@@ -34,6 +34,6 @@ module spart_bus_intf(
     assign rx_ack = ((addr_i[1:0] == 2'b01) & (write_i | (read_i & rda))); 
     assign ack_o = cs ? (tx_ack | rx_ack | (addr_i[1:0] == 2'b10) | (addr_i[1:0] == 2'b11)) : 1'bz;
 
-    assign data_o = cs ? databus_in : 32'hzzzzzzzz;
+    assign data_o = cs ? ((addr_i[1:0] == 2'b01) ? {24'h000000, databus_in} : {24'h000000, status_reg}) : 32'hzzzzzzzz;
 endmodule
 
