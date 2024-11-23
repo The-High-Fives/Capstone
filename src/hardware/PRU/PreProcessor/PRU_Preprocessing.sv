@@ -71,6 +71,7 @@ module PRU_Preprocessing (
 		row <= data[8:0];
 		col <= data[18:9];
 		color <= data[20:19];
+				shape_select <= data[22:21];
 				start = 0;
             end
             else if (load2) begin
@@ -78,7 +79,6 @@ module PRU_Preprocessing (
 	                height_radius <= data[8:0];
 		width <= data[18:9];
 
-		shape_select <= data[20:19];
 		
 		    subtract <= data[21];
 		    color_load <= data[22];
