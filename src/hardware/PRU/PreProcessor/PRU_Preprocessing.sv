@@ -71,15 +71,13 @@ module PRU_Preprocessing (
 		row <= data[8:0];
 		col <= data[18:9];
 		color <= data[20:19];
-				shape_select <= data[22:21];
-				start = 0;
+		shape_select <= data[22:21];
+		start = 0;
             end
-            else if (load2) begin
+        else if (load2) begin
                 // Populate the remaining PRU inputs
-	                height_radius <= data[8:0];
-		width <= data[18:9];
-
-		
+	            height_radius <= data[8:0];
+		    width <= data[18:9];
 		    subtract <= data[21];
 		    color_load <= data[22];
 		start = 1;

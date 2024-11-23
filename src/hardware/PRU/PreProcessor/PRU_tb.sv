@@ -13,6 +13,7 @@ module PRU_tb;
     logic busy, done;
     logic [31:0] pru_addr, pru_data;
     logic [1:0] color_map [2499:0];    // 50 x 50 = 2500
+    logic bus_ack;
 
     // Instantiate the PRU_Preprocessing module
     PRU_Preprocessing preprocessor (
@@ -29,8 +30,7 @@ module PRU_tb;
         .start(start),
         .subtract(subtract),
         .color_load(color_load),
-        .VGA_CTRL_CLK(VGA_CTRL_CLK),
-        .VGA_Read(VGA_Read)
+        .ack(bus_ack)
     );
 
     // Instantiate the PRU module

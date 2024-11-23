@@ -34,9 +34,7 @@ module PRU_tb;
         .subtract(subtract),
         .busy(busy),
         .done(done),
-        .color_load(i_color_load),
-        .VGA_CTRL_CLK(VGA_CTRL_CLK),
-        .VGA_Read(VGA_Read),                 
+        .color_load(i_color_load),              
         .pru_red(PRU_RED),
         .pru_green(PRU_GREEN),
         .pru_blue(PRU_BLUE)
