@@ -26,4 +26,7 @@ int main()
     //     }
 
     // } while (1);
+
+end:
+    goto end;
 }
