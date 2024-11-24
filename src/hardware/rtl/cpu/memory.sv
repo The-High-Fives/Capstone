@@ -37,7 +37,7 @@ module memory (
     output logic [31:0] read_data_MEMWB, // Data read from memory for WB stage
     output logic [31:0] reg_data_MEMWB       
 );
-    localparam IO_MEM_SPACE = 24'h000000; // top 24 bits of IO address space
+    localparam IO_MEM_SPACE = 24'h400000; // top 24 bits of IO address space
 
     wire bus_transaction;
     wire [31:0] write_data;
