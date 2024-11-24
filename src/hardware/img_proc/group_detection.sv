@@ -84,7 +84,8 @@ end
 always_ff @(posedge iCLK or negedge iRST) begin
     if (!iRST) begin
         red_row_count <= 0;
-    end if (y_init) begin
+    end 
+    else if (y_init) begin
         red_row_count <= (iColor != 0) ? 1 : 0;
     end
     else if (y_acc) begin
