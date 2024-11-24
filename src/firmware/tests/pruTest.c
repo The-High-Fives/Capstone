@@ -4,7 +4,7 @@ int main()
 {
     drawCircle(80, 80, 10, 1);
     drawRect(80, 80, 10, 10, 2);
-    int iter = 0;
+    int i, iter = 7;
     do
     {
         iter = (iter + 1) & 7;
@@ -20,5 +20,10 @@ int main()
         {
             drawRect(x, y, 10, 10, 2);
         }
+
+        for (i = 0; i < 10000000; i++)
+        {
+        }
+
     } while (1);
 }
