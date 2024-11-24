@@ -14,7 +14,7 @@ module spart_bus_intf(
     inout [31:0] data_o,
     inout ack_o
 );
-    localparam addr_offset = 30'h10000007; // 0x1C
+    localparam addr_offset = 30'h10000007; // 0x4000001C
 
     wire cs; // device 'cs' enable based on address
     wire [7:0] status_reg;
