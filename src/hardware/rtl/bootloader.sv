@@ -18,7 +18,7 @@ module bootloader (
 );
 
 localparam spart_offset = 32'h0000001C;
-typedef enum logic [1:0] {INIT1, INIT2, INSTRUCTION, STOP} state_t; 
+typedef enum logic [2:0] {INIT1, INIT2, INSTRUCTION, ACK, STOP} state_t; 
 
 // declarations
 state_t state, next_state;
@@ -153,12 +153,20 @@ always_comb begin
                     inc_addr = 1;
                     inc_rxc = 1;
                     if (rx_counter_inc == instr_count)
-                        next_state = STOP;
+                        next_state = ACK;
                 end
             end
         end
+		
+		ACK: begin
+			b_addr = spart_offset;
+            b_write = 1;
+            b_data = 32'h00000041;
+            if (ack_i)
+                next_state = STOP;
+		end
 
-        STOP: begin
+        default: begin
             bl_stall = 0;
         end
     endcase
