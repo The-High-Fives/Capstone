@@ -25,13 +25,13 @@ def main():
         byte3 = instructions[i][4:6]
         byte4 = instructions[i][6:8]
 
-        with open(instruction_file[:-4] + '_byte1.hex', 'a') as f:
+        with open('init0.hex', 'a') as f:
             f.write(f"{byte1}\n")
-        with open(instruction_file[:-4] + '_byte2.hex', 'a') as f:
+        with open('init1.hex', 'a') as f:
             f.write(f"{byte2}\n")
-        with open(instruction_file[:-4] + '_byte3.hex', 'a') as f:
+        with open('init2.hex', 'a') as f:
             f.write(f"{byte3}\n")
-        with open(instruction_file[:-4] + '_byte4.hex', 'a') as f:
+        with open('init3.hex', 'a') as f:
             f.write(f"{byte4}\n")
 
 
