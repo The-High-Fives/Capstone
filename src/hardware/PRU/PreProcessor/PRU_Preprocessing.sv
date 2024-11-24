@@ -68,8 +68,8 @@ module PRU_Preprocessing (
         end else begin
 			if (load1) begin
                 // Populate the first set of PRU inputs
-		row <= data[8:0];
-		col <= data[18:9];
+		col <= data[8:0];
+		row <= data[18:9];
 		color <= data[20:19];
 		shape_select <= data[22:21];
 		start = 0;

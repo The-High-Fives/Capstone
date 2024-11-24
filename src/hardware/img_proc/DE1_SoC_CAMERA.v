@@ -332,49 +332,70 @@ RAW2RGB				u4	(
 							.iY_Cont(Y_Cont)
 						   );
 
-color_filter_unified u_color_filter_unified (
+wire [10:0] oRow, oCol;
+
+IPU u_IPU (
+    // inputs
     .iCLK       (D5M_PIXLCLK),
     .iRST       (DLY_RST_1),
-    .iRed       (RG_RED),
-	.iGreen     (RG_GREEN),
-	.iBlue      (RG_BLUE),
     .iDVAL      (RG_VAL),
-    .oRed       (pro_CCD_R),
-    .oGreen     (pro_CCD_G),
-    .oBlue      (pro_CCD_B),
-    .oDVAL      (pro_CCD_DVAL),
+    .iRed       (RG_RED),
+    .iGreen     (RG_GREEN),
+    .iBlue      (RG_BLUE),
     .iX_Cont    (X_Cont),
     .iY_Cont    (Y_Cont),
+    // outputs
+    .oRow       (oRow),
+    .oCol       (oCol),
+    .oDVAL      (oVALID_COORD)
 );
 
-group_detection u_group_detection (
-    .iCLK       (D5M_PIXLCLK),
-    .iRST       (DLY_RST_1),
-    .iColor     (pro_CCD_R),
-    .iDVAL      (pro_CCD_DVAL),
-    .iX_Cont    (X_Cont),
-    .iY_Cont    (Y_Cont),
-    .oX         (AVG_X),
-    .oY         (AVG_Y),
-    .oDVAL      (AVG_DVAL),
-);
+reg [9:0] col_count; // counts current pixel col
+reg [9:0] row_count; // counts current pixel row
+reg [9:0] row, col;
 
-assign prev_AVG_X = AVG_DVAL ? AVG_X : prev_AVG_X;
-assign prev_AVG_Y = AVG_DVAL ? AVG_Y : prev_AVG_Y;
+// row, col
+always @(posedge D5M_PIXLCLK or negedge DLY_RST_1) begin
+   if (!DLY_RST_1) begin
+       row <= 0;
+       col <= 0;
+   end 
+   else if (oVALID_COORD) begin
+       row <= oRow[9:0];
+       col <= oCol[9:0];
+   end
+end
 
-// always @(posedge D5M_PIXLCLK or negedge DLY_RST_1) begin
-//    if (!DLY_RST_1) begin
-//       prev_AVG_X <= 0;
-//       prev_AVG_Y <= 0;
-//    end else begin
-//       prev_AVG_X <= AVG_DVAL ? AVG_X : prev_AVG_X;
-//       prev_AVG_Y <= AVG_DVAL ? AVG_Y : prev_AVG_Y;
-//    end
-// end
+// col counter
+always @(posedge D5M_PIXLCLK or negedge DLY_RST_1) begin
+   if (!DLY_RST_1) begin
+       col_count <= 0;
+   end 
+   else if (RG_VAL) begin
+       if (col_count == 479)
+           col_count <= 0;
+       else 
+           col_count <= col_count+1;
+   end
+end
 
-assign {final_CCD_R, final_CCD_G, final_CCD_B} = ((X_Cont == 16'd300) || (Y_Cont == 16'd300)) ? {12'h000, 12'h7FF, 12'h000} : {pro_CCD_R, pro_CCD_G, pro_CCD_B};
+// row counter
+always @(posedge D5M_PIXLCLK or negedge DLY_RST_1) begin
+   if (!DLY_RST_1) begin
+       row_count <= 0;
+   end 
+   else if (RG_VAL) begin
+       if (col_count == 479) begin
+           if (row_count == 639) begin
+               row_count <= 0;
+           end else 
+               row_count <= row_count+1;
+       end
+   end
+end
 
-assign {sCCD_R, sCCD_G, sCCD_B, sCCD_DVAL} = SW[4] ? {final_CCD_R, final_CCD_G, final_CCD_B, pro_CCD_DVAL} : {RG_RED, RG_GREEN, RG_BLUE, RG_VAL};
+assign {sCCD_R, sCCD_G, sCCD_B, sCCD_DVAL} = SW[4] ? (((Y_Cont == 120) | (X_Cont == 120)) ? {12'h000, 12'h7FF, 12'h000, RG_VAL} : {RG_RED, RG_GREEN, RG_BLUE, RG_VAL}) :
+   (((row_count == row) | (col_count == col)) ? {12'h000, 12'h7FF, 12'h000, RG_VAL} : {RG_RED, RG_GREEN, RG_BLUE, RG_VAL});
 
 // assign sCCD_R = pro_CCD_R;
 // assign sCCD_G = pro_CCD_G;
