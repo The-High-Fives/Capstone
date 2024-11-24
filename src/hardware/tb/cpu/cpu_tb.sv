@@ -1,22 +1,9 @@
 module cpu_tb ();
     logic clk, rst_n;
-    logic [31:0] b_addr_o;  // bus r/w address
-    logic [31:0] b_data_i;  // bus data input
-    logic [31:0] b_data_o;  // bus data output
-    logic b_read_o;         // bus read
-    logic b_write_o;        // bus write
-    logic b_ack_i;          // bus acknowledgement signal
-
-
+    
     cpu uut (
         .clk(clk),
         .rst_n(rst_n)
-        .b_addr_o(b_addr_o),
-        .b_data_i(b_data_i),
-        .b_data_o(b_data_o),
-        .b_read_o(b_read_o),
-        .b_write_o(b_write_o),
-        .b_ack_i(b_ack_i)
     );
 
     initial begin

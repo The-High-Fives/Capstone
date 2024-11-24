@@ -121,16 +121,31 @@ initial begin
         end : timeout
     join
 	
-	send_instruction(3); // set instruction count
+	send_instruction(13); // set instruction count
 	
-	send_instruction(32'h67800093);
-	send_instruction(32'h01c00113);
-	send_instruction(32'h00110023);
+	//send_instruction(32'h67800093);
+	//send_instruction(32'h01c00113);
+	//send_instruction(32'h00110023);
+
+    send_instruction(32'h01c00093);
+    send_instruction(32'h05200113);
+    send_instruction(32'h00208023);
+    send_instruction(32'h04500113);
+    send_instruction(32'h00208023);
+    send_instruction(32'h04100113);
+    send_instruction(32'h00208023);
+    send_instruction(32'h04400113);
+    send_instruction(32'h00208023);
+    send_instruction(32'h05900113);
+    send_instruction(32'h00208023);
+    send_instruction(32'h05d00893);
+    send_instruction(32'h00000073);
+
 	 
 	while (!tbr) begin
 		@(posedge clk);
 	end
-	#10000;
+	#100000000;
 	$stop;
 end
 
