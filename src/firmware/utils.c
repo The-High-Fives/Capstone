@@ -16,23 +16,29 @@ void setColor(color_t addr, Color color)
 void drawRect(int x, int y, int width, int height, color_t color)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (RECT_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    command = (RECT_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 31) | ((width & 0x3FF) << 9) | (height & 0x1FF);
+    command = (1 << 31) | ((width & 0x3FF) << 9) | (height & 0x1FF);
+    *memSet = command;
 }
 
 void drawCircle(int x, int y, int radius, color_t color)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (CIRCLE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    command = (CIRCLE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 31) | (radius & 0x7FFFF);
+    command = (1 << 31) | (radius & 0x7FFFF);
+    *memSet = command;
 }
 
 void drawSprite(int x, int y, int scale, int addr, color_t color)
