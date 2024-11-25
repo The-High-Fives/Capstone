@@ -7,7 +7,7 @@ input [18:0] wr_addr;
 
 output reg [1:0] rd_data;
 
-reg [1:0] imagebuffer [2499:0];
+reg [1:0] imagebuffer [307199:0];
 
 always @ (posedge clk) begin
     if (we)
@@ -17,7 +17,7 @@ end
         
 
 initial begin
-    $readmemb("buffer_16_38400.mem", imagebuffer);
+    $readmemb("307199_zeroes.mem", imagebuffer);
 end
 
 endmodule

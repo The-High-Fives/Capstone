@@ -1,4 +1,5 @@
-module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read);
+module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read,
+    input bl_stall, input [3:0] bl_strobe);
 
     logic [1:0] color;
     logic [9:0] row;
@@ -14,13 +15,10 @@ module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read);
     logic i_color_load;
     logic busy;
     logic done;
-    logic [1:0] color_map [2499:0];  // 50 * 50 = 2500
-    logic [31:0] bus_addr, bus_data_in, bus_data_out;
-    logic bus_read, bus_write, bus_ack;
-    logic [3:0] bl_strobe;
-    logic [31:0] bl_data;
-    logic [13:0] bl_addr;
-    logic bl_stall;
+//    logic [1:0] color_map [307199:0];  //
+    wire [31:0] bus_addr, bus_data_in, bus_data_out, bl_data;
+    wire [13:0] bl_addr;
+    wire bus_read, bus_write, bus_ack;
 
 cpu RISCV
 (
@@ -41,10 +39,11 @@ cpu RISCV
 );
 
 PRU_Preprocessing pru_buffer (
-    .clk(CLOCK_50),
-    .rst_n(DLY_RST_1),
-    .write(b_write_o),
-    .data(b_data_o),
+    .clk(clk),
+    .rst_n(rst_n),
+    .write(bus_write),
+    .data(bus_data_out),
+    .busy(busy),
     .color(color),
     .row(row),
     .col(col),
@@ -53,8 +52,8 @@ PRU_Preprocessing pru_buffer (
     .shape_select(shape_select),
     .start(start),
     .subtract(subtract),
-    .color_load(color_load),
-    .ack(b_ack_i)
+    .color_load(i_color_load),
+    .ack(bus_ack)
 );
 
 // Instantiate the PRU module

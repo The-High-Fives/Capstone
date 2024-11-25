@@ -37,7 +37,7 @@ module memory (
     output logic [31:0] read_data_MEMWB, // Data read from memory for WB stage
     output logic [31:0] reg_data_MEMWB       
 );
-    localparam IO_MEM_SPACE = 24'h400000; // top 24 bits of IO address space
+    localparam IO_MEM_SPACE = 20'h40000; // top 24 bits of IO address space
 
     wire bus_transaction;
     wire [31:0] write_data;
@@ -193,9 +193,9 @@ module memory (
     end
 
     // bus controller
-    assign bus_transaction = (m_alu_out[31:8] == IO_MEM_SPACE); // checks if address is in IO space
+    assign bus_transaction = (m_alu_out[31:12] == IO_MEM_SPACE); // checks if address is in IO space
     assign b_addr_o = bl_stall ? 32'hzzzzzzzz : m_alu_out;
-    assign b_data_o = bl_stall ? 32'hzzzzzzzz : write_data;
+    assign b_data_o = bl_stall ? 32'hzzzzzzzz : memDataOut;
     assign b_read_o = bl_stall ? 1'bz : (bus_transaction ? m_MemRead : 1'b0);
     assign b_write_o = bl_stall ? 1'bz : (bus_transaction ? m_MemWrite : 1'b0);
     assign stall_mem = (b_read_o | b_write_o) & ~b_ack_i;

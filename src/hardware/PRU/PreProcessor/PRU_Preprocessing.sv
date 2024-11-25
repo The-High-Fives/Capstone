@@ -3,6 +3,7 @@ module PRU_Preprocessing (
     input logic rst_n,                   // Reset signal (active low)
 	input logic write,
     input logic [31:0] data,             // 32-bit data input
+    input logic busy,
     output logic [1:0] color,            // Color value
     output logic [9:0] row,              // Starting row for rectangle, center row for circle
     output logic [8:0] col,              // Starting col for rectangle, center col for circle
@@ -35,7 +36,7 @@ module PRU_Preprocessing (
 		next_state = state;
 		case (state)
 			LOAD: begin
-				if (write) begin
+				if (write && !busy) begin
 					next_state = IDLE;
 					load2 = 1;
 					ack = 1;
@@ -43,7 +44,7 @@ module PRU_Preprocessing (
 
 			end
 			default: begin //IDLE
-				if (write) begin
+				if (write && !busy) begin
 					load1 = 1;
 					ack = 1;
 					next_state = LOAD;
@@ -66,23 +67,23 @@ module PRU_Preprocessing (
             subtract <= 0;
             color_load <= 0;
         end else begin
-			if (load1) begin
+            if (load1) begin
                 // Populate the first set of PRU inputs
-		col <= data[8:0];
-		row <= data[18:9];
-		color <= data[20:19];
-		shape_select <= data[22:21];
-		start = 0;
+                col <= data[8:0];
+                row <= data[18:9];
+                color <= data[20:19];
+                shape_select <= data[22:21];
+                start = 0;
             end
-        else if (load2) begin
+            else if (load2) begin
                 // Populate the remaining PRU inputs
-	            height_radius <= data[8:0];
-		    width <= data[18:9];
-		    subtract <= data[21];
-		    color_load <= data[22];
-		start = 1;
-		end else begin
-			start = 0;
+                height_radius <= data[8:0];
+                width <= data[18:9];
+                subtract <= data[21];
+                color_load <= data[22];
+                start = 1;
+            end else begin
+                start = 0;
             end	
 		end		
             
