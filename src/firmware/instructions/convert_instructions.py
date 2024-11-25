@@ -4,6 +4,15 @@ def main():
     if len(sys.argv) != 2:
         print("Usage: python3 convert_instructions.py <instruction_file>")
         return
+    
+    with open('init0.hex', 'w') as f:
+        pass
+    with open('init1.hex', 'w') as f:
+        pass
+    with open('init2.hex', 'w') as f:
+        pass
+    with open('init3.hex', 'w') as f:
+        pass
 
     instruction_file = sys.argv[1]
 
