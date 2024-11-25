@@ -2,8 +2,8 @@
 
 int main()
 {
-    drawCircle(80, 80, 10, 1);
-    drawRect(80, 80, 10, 10, 2);
+    drawCircle(300, 100, 30, 1);
+    drawRect(300, 300, 50, 50, 2);
     // int i, iter = 0;
     // do
     // {
