@@ -10,14 +10,25 @@ def send_file_over_uart(filename, port="COM5", baudrate=19200):
         ser.bytesize = serial.EIGHTBITS
         ser.stopbits = serial.STOPBITS_ONE
         
-        # Wait for 'B' from bootloader
-        print("Waiting for 'B'...")
-        while True:
+        # Flush any existing data
+        ser.reset_input_buffer()
+        ser.reset_output_buffer()
+        
+        print("Opening port and waiting for B...")
+        
+        # More detailed debugging for B reception
+        timeout = time.time() + 10  # 10 second timeout
+        while time.time() < timeout:
             if ser.in_waiting:
                 data = ser.read()
+                print(f"Received byte: {data.hex()} (ASCII: {data if data.isascii() and data.isalnum() else '?'})")
                 if data == b'B':
-                    print("Received 'B', starting transmission")
+                    print("Got B! Starting transmission...")
                     break
+            time.sleep(0.1)  # Small delay to prevent CPU spinning
+        else:
+            print("Timeout waiting for B")
+            return
 
         # Count instructions in file
         with open(filename, "r") as f:
