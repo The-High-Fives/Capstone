@@ -27,10 +27,7 @@ def send_file_over_uart(filename, port="COM5", baudrate=19200):
         ser.stopbits = serial.STOPBITS_ONE
         ser.xonxoff = 0
         ser.rtscts = 0
-        # IF you don't set the timeout for reads the code will hang
-        #ser.timeout = 2
-
-
+        
         # Start the reading thread
         read_thread = threading.Thread(target=read_from_uart, args=(ser,))
         read_thread.daemon = True
