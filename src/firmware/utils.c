@@ -6,11 +6,13 @@
 void setColor(color_t addr, Color color)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)COLOR_ADDR;
     memSet += (addr & 3) * 4;
 
-    *memSet = ((color.r & 0x3FF) << 20) | ((color.g & 0x3FF) << 10) | (color.b & 0x3FF);
+    command = ((color.r & 0x3FF) << 20) | ((color.g & 0x3FF) << 10) | (color.b & 0x3FF);
+    *memSet = command;
 }
 
 void drawRect(int x, int y, int width, int height, color_t color)
@@ -44,46 +46,57 @@ void drawCircle(int x, int y, int radius, color_t color)
 void drawSprite(int x, int y, int scale, int addr, color_t color)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (SPRITE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    command = (SPRITE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
 
     memSet = (int *)SPRITE_ADDR;
-    *memSet = addr;
+    command = addr;
+    *memSet = command;
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 31) | (scale & 0x7FFFF);
+    command = (1 << 31) | (scale & 0x7FFFF);
+    *memSet = command;
 }
 
 void drawLetter(int x, int y, int scale, int addr, color_t color)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)DRAW_LOCATION_ADDR;
-    *memSet = (LETTER_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    command = (LETTER_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
 
     memSet = (int *)SPRITE_ADDR;
-    *memSet = addr;
+    command = addr;
+    *memSet = command;
 
     memSet = (int *)DRAW_CONTROL_ADDR;
-    *memSet = (1 << 31) | (scale & 0x7FFFF);
+    command = (1 << 31) | (scale & 0x7FFFF);
+    *memSet = command;
 }
 
 void setLED(bool value, int led)
 {
     int *memSet;
+    int command;
     bool val = value & 1;
 
     memSet = (int *)LED_ADDR;
 
     if (val)
     {
-        *memSet |= 1 << led;
+        command = *memSet | 1 << led;
     }
     else
     {
-        *memSet &= ~(1 << led);
+        command = *memSet & ~(1 << led);
     }
+
+    *memSet = command;
 }
 
 int getTimerValue()
@@ -97,9 +110,11 @@ int getTimerValue()
 bool checkLocationForColor(int x, int y, int radius)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)DETECT_LOCATION_ADDR;
-    *memSet = ((x & 0x3FF) << 19) | ((y & 0x1FF) << 10) | (radius & 0x3FF);
+    command = ((x & 0x3FF) << 19) | ((y & 0x1FF) << 10) | (radius & 0x3FF);
+    *memSet = command;
 
     memSet = (int *)COLOR_LOCATED_ADDR;
     return (*memSet) & 1;
@@ -116,9 +131,11 @@ char getSPART()
 void setSPART(char value)
 {
     int *memSet;
+    int command;
 
     memSet = (int *)SPART_WRITE_ADDR;
-    *memSet = (value & 0xFF);
+    command = (value & 0xFF);
+    *memSet = command;
 }
 
 void getIO(int *timer, char *SPART)
