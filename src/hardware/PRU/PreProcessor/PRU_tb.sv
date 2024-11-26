@@ -4,8 +4,8 @@ module PRU_tb;
     logic rst_n;
     logic [31:0] data;                  // Data input to PRU_Preprocessing
     logic [1:0] color;
-    logic [9:0] row;
-    logic [8:0] col;
+    logic [9:0] col;
+    logic [8:0] row;
     logic [9:0] width, PRU_RED, PRU_GREEN, PRU_BLUE;
     logic [8:0] height_radius;
     logic [1:0] shape_select;
@@ -21,8 +21,8 @@ module PRU_tb;
 		.write(write),
         .data(data),
         .color(color),
-        .row(row),
         .col(col),
+        .row(row),
         .width(width),
         .height_radius(height_radius),
         .shape_select(shape_select),
@@ -38,8 +38,8 @@ module PRU_tb;
         .clk(clk),
         .rst_n(rst_n),
         .color(color),
-        .row(row),
         .col(col),
+        .row(row),
         .width(width),
         .height_radius(height_radius),
         .pru_addr(pru_addr),
