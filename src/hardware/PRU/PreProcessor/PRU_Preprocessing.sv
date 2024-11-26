@@ -13,8 +13,6 @@ module PRU_Preprocessing (
     output logic start,                  // Start signal
     output logic subtract,               // Subtract flag
     output logic color_load,             // Color load signal
-    output logic VGA_CTRL_CLK,           // VGA Control Clock
-    output logic VGA_Read,                // VGA Read signal
 	output logic ack
 );
 

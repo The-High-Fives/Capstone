@@ -1,10 +1,11 @@
 module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read,
-    input bl_stall, input [3:0] bl_strobe);
+    input bl_stall, input [3:0] bl_strobe, output [9:0] VGA_RED,
+    output [9:0] VGA_GREEN, output [9:0] VGA_BLUE);
 
     logic [1:0] color;
     logic [9:0] row;
     logic [8:0] col;
-    logic [9:0] width, PRU_RED, PRU_GREEN, PRU_BLUE;
+    logic [9:0] width;
     logic [8:0] height_radius;
     logic [31:0] bitmap_addr;
     logic [1:0] shape_select;
@@ -15,10 +16,15 @@ module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read,
     logic i_color_load;
     logic busy;
     logic done;
+    wire [9:0] PRU_RED, PRU_GREEN, PRU_BLUE;
 //    logic [1:0] color_map [307199:0];  //
     wire [31:0] bus_addr, bus_data_in, bus_data_out, bl_data;
     wire [13:0] bl_addr;
     wire bus_read, bus_write, bus_ack;
+
+   assign VGA_RED = PRU_RED;
+   assign VGA_GREEN = PRU_GREEN;
+   assign VGA_BLUE = PRU_BLUE;
 
 cpu RISCV
 (
