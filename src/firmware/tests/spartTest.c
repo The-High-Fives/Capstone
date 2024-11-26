@@ -112,5 +112,9 @@ int main()
             setSpart('a');
         }
     } while (sp != 'q');
+
+end:
+    goto end;
+
     return 0;
 }
