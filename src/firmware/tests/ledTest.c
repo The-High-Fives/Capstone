@@ -23,5 +23,8 @@ int main()
         setLED(false, i);
     }
 
+end:
+    goto end;
+
     return 0;
 }

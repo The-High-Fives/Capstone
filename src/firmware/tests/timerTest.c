@@ -8,7 +8,7 @@ int main()
     do
     {
         timer += getTimerValue();
-        bool switchLED = timer > 1000;
+        bool switchLED = timer >= 1000;
         if (switchLED)
         {
             setLED(LED, 1);
