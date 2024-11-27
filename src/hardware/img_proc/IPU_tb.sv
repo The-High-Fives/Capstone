@@ -23,8 +23,8 @@ module IPU_tb ();
         .iBlue(blue),
         .iX_Cont(iX_Cont),
         .iY_Cont(iY_Cont),
-        .oX(avg_X),
-        .oY(avg_Y),
+        .oRow(avg_X),
+        .oCol(avg_Y),
         .oDVAL(valid)
     );
 
