@@ -21,6 +21,7 @@ logic [16:0] y_accum; // column accumulation
 logic [18:0] total_col_accumulate; // column average accumulate
 logic [9:0] act_row_count; // count of rows active in total_col_accumulate
 logic [9:0] red_row_count; // number of red pixels in row
+logic [9:0] red_row_count_max; // largest number of red pixels in row
 
 logic [18:0] total_row_accumulate; // row average accumulate
  
@@ -30,9 +31,9 @@ logic [9:0] row_count; // counts current pixel row
 // control signals
 logic y_init, y_acc, tcol_init, tcol_acc;
 
-assign oVALID_COORD = (row_count == 0) & (col_count == 0) & (act_row_count != 0); // TODO maybe add act_col_count? or add threshold
+assign oVALID_COORD = (row_count == 0) & (col_count == 0) & (act_row_count > 10); // TODO maybe add act_col_count? or add threshold
 assign oRow = total_row_accumulate/act_row_count;
-assign oCol = total_col_accumulate/act_row_count;
+assign oCol = total_col_accumulate;
 
 always_comb begin
     y_init = 0;
@@ -43,7 +44,7 @@ always_comb begin
     if ((row_count == 0) & (col_count == 0) & iDVAL) begin
         tcol_init = 1;
     end
-    if (col_count == 0 & iDVAL) begin
+    if (col_count == 0 & iDVAL) begin // start of col
         y_init = 1;
         tcol_acc = 1;
     end
@@ -57,7 +58,7 @@ always_ff @(posedge iCLK or negedge iRST) begin
         col_count <= 0;
     end 
     else if (iDVAL) begin
-        if (col_count == 479)
+        if (col_count == 639)
             col_count <= 0;
         else 
             col_count <= col_count+1;
@@ -70,12 +71,11 @@ always_ff @(posedge iCLK or negedge iRST) begin
         row_count <= 0;
     end 
     else if (iDVAL) begin
-        if (col_count == 479) begin
-            if (row_count == 639) begin
+        if (col_count == 639) begin
+            if (row_count == 479) begin
                 row_count <= 0;
             end else 
                 row_count <= row_count+1;
-            
         end
     end
 end
@@ -90,6 +90,22 @@ always_ff @(posedge iCLK or negedge iRST) begin
     end
     else if (y_acc) begin
         red_row_count <= red_row_count + 1;
+    end
+end
+
+
+// max red row pixel count
+always_ff @(posedge iCLK or negedge iRST) begin
+    if (!iRST) begin
+        red_row_count_max <= 0;
+    end 
+    else if (tcol_init) begin
+        red_row_count_max <= 10;
+    end
+    else if (y_init) begin
+        if (red_row_count > red_row_count_max) begin
+            red_row_count_max <= red_row_count;
+        end
     end
 end
 
@@ -115,8 +131,8 @@ always_ff @(posedge iCLK or negedge iRST) begin
         total_col_accumulate <= 0;
     end
     else if (tcol_acc) begin
-        if (red_row_count != 0)
-            total_col_accumulate <= total_col_accumulate + (y_accum/red_row_count);
+        if (red_row_count > red_row_count_max)
+            total_col_accumulate <= (y_accum/red_row_count);
     end
 end
 
@@ -129,7 +145,7 @@ always_ff @(posedge iCLK or negedge iRST) begin
         act_row_count <= 0;
     end
     else if (tcol_acc) begin
-        if (red_row_count != 0)
+        if (red_row_count > 10)
             act_row_count <= act_row_count + 1;
     end
 end
@@ -142,10 +158,9 @@ always_ff @(posedge iCLK or negedge iRST) begin
         total_row_accumulate <= 0;
     end
     else if (tcol_acc) begin
-        if (red_row_count != 0)
+        if (red_row_count > 10)
             total_row_accumulate <= total_row_accumulate + row_count;
     end
 end
-
 
 endmodule

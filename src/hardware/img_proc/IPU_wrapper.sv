@@ -18,7 +18,7 @@ module IPU_wrapper (
     inout ack_o
 );
 
-    localparam addr_offset = 30'h00000000;
+    localparam addr_offset = 32'h40000100;
 
     logic [9:0] row;
     logic [9:0] col;
@@ -67,7 +67,7 @@ module IPU_wrapper (
             valid <= 0;
     end
 
-    assign cs = (addr_i[31:2] == addr_offset);
+    assign cs = (addr_i[31:2] == addr_offset[31:2]);
     
     assign data_o = cs ? {10'h000, row, col, present, valid} : 32'hzzzzzzzz;
     assign ack_o = cs ? 1'b1 : 1'bz;
