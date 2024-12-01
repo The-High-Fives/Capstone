@@ -13,7 +13,9 @@ module PRU_Preprocessing (
     output logic start,                  // Start signal
     output logic subtract,               // Subtract flag
     output logic color_load,             // Color load signal
-	output logic ack
+	output logic ack,
+    output logic in_idle,
+    output logic in_load_2
 );
 
     typedef enum logic [1:0] {IDLE, LOAD} state_t; // State definitions
@@ -31,9 +33,14 @@ module PRU_Preprocessing (
 		ack = 1'bz;
 		load1 = 0;
 		load2 = 0;
+        in_idle = 0;
+        in_load_2 = 0;
 		next_state = state;
 		case (state)
 			LOAD: begin
+                in_load_2 = 1;
+                if (write)
+                    ack = 1'b0;
 				if (write && !busy) begin
 					next_state = IDLE;
 					load2 = 1;
@@ -42,6 +49,9 @@ module PRU_Preprocessing (
 
 			end
 			default: begin //IDLE
+                in_idle = 1;
+                if (write)
+                    ack = 1'b0;
 				if (write && !busy) begin
 					load1 = 1;
 					ack = 1;

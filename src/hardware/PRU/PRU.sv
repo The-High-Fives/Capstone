@@ -190,6 +190,7 @@ module PRU (
 
                 COMPLETE: begin //This is complete
                     done <= 1;  // Signal that drawing is complete
+                    iwe <= 0;
                 end
 
                 default: begin //IDLE
@@ -198,6 +199,7 @@ module PRU (
                     c <= 0;
 					draw_bitmap_counter <= 0;
                     done <= 0;
+                    iwe <=0;
                 end
             endcase
         end

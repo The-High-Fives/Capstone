@@ -1,6 +1,7 @@
 module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read,
     input bl_stall, input [3:0] bl_strobe, output [9:0] VGA_RED,
-    output [9:0] VGA_GREEN, output [9:0] VGA_BLUE);
+    output [9:0] VGA_GREEN, output [9:0] VGA_BLUE, 
+    output b_ack, output pru_start, output pru_done, output in_idle, output in_load_2);
 
     logic [1:0] color;
     logic [9:0] row;
@@ -21,7 +22,9 @@ module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read,
     wire [31:0] bus_addr, bus_data_in, bus_data_out, bl_data;
     wire [13:0] bl_addr;
     wire bus_read, bus_write, bus_ack;
-
+    assign b_ack = bus_ack;
+    assign pru_start = start;
+    assign pru_done = done;
    assign VGA_RED = PRU_RED;
    assign VGA_GREEN = PRU_GREEN;
    assign VGA_BLUE = PRU_BLUE;
@@ -59,7 +62,9 @@ PRU_Preprocessing pru_buffer (
     .start(start),
     .subtract(subtract),
     .color_load(i_color_load),
-    .ack(bus_ack)
+    .ack(bus_ack),
+    .in_idle(in_idle),
+    .in_load_2(in_load_2)
 );
 
 // Instantiate the PRU module
