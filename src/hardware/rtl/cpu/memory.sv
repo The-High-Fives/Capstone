@@ -195,10 +195,25 @@ module memory (
     // bus controller
     assign bus_transaction = (m_alu_out[31:12] == IO_MEM_SPACE); // checks if address is in IO space
     assign b_addr_o = bl_stall ? 32'hzzzzzzzz : m_alu_out;
-    assign b_data_o = bl_stall ? 32'hzzzzzzzz : memDataOut;
+    assign b_data_o = bl_stall ? 32'hzzzzzzzz : write_data;
     assign b_read_o = bl_stall ? 1'bz : (bus_transaction ? m_MemRead : 1'b0);
     assign b_write_o = bl_stall ? 1'bz : (bus_transaction ? m_MemWrite : 1'b0);
     assign stall_mem = (b_read_o | b_write_o) & ~b_ack_i;
 
-    assign read_data_MEMWB = bus_transaction ? b_data_i : memDataOut;
+    // b_data_i buffer & bus transaction buffer
+    // delayed selection since memory reads are flopped
+    logic [31:0] b_data_buffer;
+    logic bus_transaction_buffer;
+    always_ff @(posedge clk, negedge rst_n) begin
+        if (!rst_n) begin
+            b_data_buffer <= 0;
+            bus_transaction_buffer <= 0;
+        end 
+        else begin
+            b_data_buffer <= b_data_i;
+            bus_transaction_buffer <= bus_transaction;
+        end
+    end
+
+    assign read_data_MEMWB = bus_transaction_buffer ? b_data_buffer : memDataOut;
 endmodule
