@@ -37,7 +37,7 @@ module memory (
     output logic [31:0] read_data_MEMWB, // Data read from memory for WB stage
     output logic [31:0] reg_data_MEMWB       
 );
-    localparam IO_MEM_SPACE = 24'h400000; // top 24 bits of IO address space
+    localparam IO_MEM_SPACE = 20'h40000; // top 24 bits of IO address space
 
     wire bus_transaction;
     wire [31:0] write_data;
@@ -57,16 +57,17 @@ module memory (
     assign reg_data_MEMWB = m_JAL ? m_pc_inc : (m_LUI ? m_imm : m_alu_out);
 
     // Instantiate four banks of dmem32 for the memory
+    //#(.depth(16384),.FILENAME("pruTest_byte3.hex"))
     dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re0), .we(we0), 
                         .wdata(bank_wdata[0]), .rdata(bank_rdata[0]));
 
-    dmem32 dmem_bank1 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re1), .we(we1), 
+    dmem32 dmem_bank1  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re1), .we(we1), 
                         .wdata(bank_wdata[1]), .rdata(bank_rdata[1]));
 
-    dmem32 dmem_bank2 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re2), .we(we2), 
+    dmem32 dmem_bank2  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re2), .we(we2), 
                         .wdata(bank_wdata[2]), .rdata(bank_rdata[2]));
 
-    dmem32 dmem_bank3 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re3), .we(we3), 
+    dmem32 dmem_bank3  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re3), .we(we3), 
                         .wdata(bank_wdata[3]), .rdata(bank_rdata[3]));
 
     // Memory read data multiplexing based on selected bank
@@ -192,12 +193,27 @@ module memory (
     end
 
     // bus controller
-    assign bus_transaction = (m_alu_out[31:8] == IO_MEM_SPACE); // checks if address is in IO space
+    assign bus_transaction = (m_alu_out[31:12] == IO_MEM_SPACE); // checks if address is in IO space
     assign b_addr_o = bl_stall ? 32'hzzzzzzzz : m_alu_out;
     assign b_data_o = bl_stall ? 32'hzzzzzzzz : write_data;
     assign b_read_o = bl_stall ? 1'bz : (bus_transaction ? m_MemRead : 1'b0);
     assign b_write_o = bl_stall ? 1'bz : (bus_transaction ? m_MemWrite : 1'b0);
     assign stall_mem = (b_read_o | b_write_o) & ~b_ack_i;
 
-    assign read_data_MEMWB = bus_transaction ? b_data_i : memDataOut;
+    // b_data_i buffer & bus transaction buffer
+    // delayed selection since memory reads are flopped
+    logic [31:0] b_data_buffer;
+    logic bus_transaction_buffer;
+    always_ff @(posedge clk, negedge rst_n) begin
+        if (!rst_n) begin
+            b_data_buffer <= 0;
+            bus_transaction_buffer <= 0;
+        end 
+        else begin
+            b_data_buffer <= b_data_i;
+            bus_transaction_buffer <= bus_transaction;
+        end
+    end
+
+    assign read_data_MEMWB = bus_transaction_buffer ? b_data_buffer : memDataOut;
 endmodule
