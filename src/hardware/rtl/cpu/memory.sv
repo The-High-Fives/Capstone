@@ -5,6 +5,7 @@ module memory (
     input logic rst_n,
 
     input bl_stall,
+    input stall, // same as mem_wb_buffer
 
     // Control signals from EX/MEM buffer
     input logic m_MemRead,         // Memory read enable
@@ -58,16 +59,16 @@ module memory (
 
     // Instantiate four banks of dmem32 for the memory
     //#(.depth(16384),.FILENAME("pruTest_byte3.hex"))
-    dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re0), .we(we0), 
+    dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(!stall & re0), .we(we0), 
                         .wdata(bank_wdata[0]), .rdata(bank_rdata[0]));
 
-    dmem32 dmem_bank1  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re1), .we(we1), 
+    dmem32 dmem_bank1  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(!stall & re1), .we(we1), 
                         .wdata(bank_wdata[1]), .rdata(bank_rdata[1]));
 
-    dmem32 dmem_bank2  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re2), .we(we2), 
+    dmem32 dmem_bank2  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(!stall & re2), .we(we2), 
                         .wdata(bank_wdata[2]), .rdata(bank_rdata[2]));
 
-    dmem32 dmem_bank3  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(re3), .we(we3), 
+    dmem32 dmem_bank3  (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(!stall & re3), .we(we3), 
                         .wdata(bank_wdata[3]), .rdata(bank_rdata[3]));
 
     // Memory read data multiplexing based on selected bank
@@ -209,7 +210,7 @@ module memory (
             b_data_buffer <= 0;
             bus_transaction_buffer <= 0;
         end 
-        else begin
+        else if (!stall) begin
             b_data_buffer <= b_data_i;
             bus_transaction_buffer <= bus_transaction;
         end
