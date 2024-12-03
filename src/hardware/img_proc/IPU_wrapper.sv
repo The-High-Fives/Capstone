@@ -1,7 +1,9 @@
 // wraps IPU to work with bus interface
 module IPU_wrapper (
-    input clk, 
+    input camera_clk, 
+    input sys_clk,
     input rst_n, 
+    input w_rst_n,
 
     // RGB input
     input iDVAL,
@@ -26,11 +28,13 @@ module IPU_wrapper (
     logic present;
 
     wire [10:0] oRow, oCol;
+    wire [20:0] fifo_out;
+    wire o_empty;
 
     IPU u_IPU (
         // inputs
-        .iCLK       (clk),
-        .iRST       (rst_n),
+        .iCLK       (camera_clk),
+        .iRST       (w_rst_n),
         .iDVAL      (iDVAL),
         .iRed       (iRed),
         .iGreen     (iGreen),
@@ -44,25 +48,42 @@ module IPU_wrapper (
         .oPresent   (oPresent)
     );
 
-    always_ff @(posedge clk, negedge rst_n) begin
+    async_fifo u_async_fifo (
+    #(
+        .width(22),
+        .depth(4)
+    )
+    .i_wclk      (camera_clk),
+    .i_rclk      (sys_clk),
+    .i_wr        (oDVAL),
+    .i_rd        (!o_empty),
+    .i_wdata     ({oPresent, oRow[9:0], oCol[9:0]}),
+    .i_wrst_n    (w_rst_n),
+    .i_rrst_n    (rst_n),
+    .o_rdata     (fifo_out),
+    .o_empty     (o_empty),
+    .o_full      (o_full)
+);
+
+    always_ff @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
             row <= 0;
             col <= 0;
             present <= 0;
         end
-        else if (oDVAL) begin
-            row <= oRow[9:0];
-            col <= oCol[9:0];
-            present <= oPresent;
+        else if (!o_empty) begin
+            row <= fifo_out[9:0];
+            col <= fifo_out[19:10];
+            present <= fifo_out[20];
         end
     end
 
     // valid is knocked down on read
-    always_ff @(posedge clk, negedge rst_n) begin
+    always_ff @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
             valid <= 0;
         end
-        else if (oDVAL) begin
+        else if (!o_empty) begin
             valid <= 1;
         end
         else if (cs & read_i)
