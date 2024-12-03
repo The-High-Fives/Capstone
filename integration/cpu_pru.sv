@@ -52,6 +52,7 @@ PRU_Preprocessing pru_buffer (
     .rst_n(rst_n),
     .write(bus_write),
     .data(bus_data_out),
+    .bus_addr(bus_addr),
     .busy(busy),
     .color(color),
     .row(row),

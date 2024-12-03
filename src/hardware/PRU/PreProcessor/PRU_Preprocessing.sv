@@ -3,6 +3,7 @@ module PRU_Preprocessing (
     input logic rst_n,                   // Reset signal (active low)
 	input logic write,
     input logic [31:0] data,             // 32-bit data input
+    input logic [31:0] bus_addr,
     input logic busy,
     output logic [1:0] color,            // Color value
     output logic [9:0] col,              // Starting col for rectangle, center col for circle
@@ -39,9 +40,9 @@ module PRU_Preprocessing (
 		case (state)
 			LOAD: begin
                 in_load_2 = 1;
-                if (write)
+                if (write && bus_addr[31:8] == 24'h400001)
                     ack = 1'b0;
-				if (write && !busy) begin
+				if (write && !busy && bus_addr[31:8] == 24'h400001) begin
 					next_state = IDLE;
 					load2 = 1;
 					ack = 1;
@@ -50,9 +51,9 @@ module PRU_Preprocessing (
 			end
 			default: begin //IDLE
                 in_idle = 1;
-                if (write)
+                if (write && bus_addr[31:8] == 24'h400001)
                     ack = 1'b0;
-				if (write && !busy) begin
+				if (write && !busy && bus_addr[31:8] == 24'h400001) begin
 					load1 = 1;
 					ack = 1;
 					next_state = LOAD;
