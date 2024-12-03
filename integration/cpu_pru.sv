@@ -4,8 +4,8 @@ module cpu_pru(input clk, input rst_n, input VGA_CTRL_CLK, input VGA_Read,
     output b_ack, output pru_start, output pru_done, output in_idle, output in_load_2);
 
     logic [1:0] color;
-    logic [9:0] row;
-    logic [8:0] col;
+    logic [8:0] row;
+    logic [9:0] col;
     logic [9:0] width;
     logic [8:0] height_radius;
     logic [31:0] bitmap_addr;
