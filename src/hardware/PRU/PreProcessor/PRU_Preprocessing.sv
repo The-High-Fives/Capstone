@@ -5,8 +5,8 @@ module PRU_Preprocessing (
     input logic [31:0] data,             // 32-bit data input
     input logic busy,
     output logic [1:0] color,            // Color value
-    output logic [9:0] row,              // Starting row for rectangle, center row for circle
-    output logic [8:0] col,              // Starting col for rectangle, center col for circle
+    output logic [9:0] col,              // Starting col for rectangle, center col for circle
+    output logic [8:0] row,              // Starting row for rectangle, center row for circle
     output logic [9:0] width,            // Width of the rectangle
     output logic [8:0] height_radius,    // Height of rectangle or radius of circle
     output logic [1:0] shape_select,     // Shape selection: 00 for rectangle, 01 for circle
@@ -65,10 +65,10 @@ module PRU_Preprocessing (
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             // Reset all outputs
-		start <= 0;
+		    start <= 0;
             color <= 0;
-            row <= 0;
             col <= 0;
+            row <= 0;
             width <= 0;
             height_radius <= 0;
             shape_select <= 0;
@@ -77,21 +77,22 @@ module PRU_Preprocessing (
         end else begin
             if (load1) begin
                 // Populate the first set of PRU inputs
-                col <= data[8:0];
-                row <= data[18:9];
-                color <= data[20:19];
-                shape_select <= data[22:21];
-                start = 0;
+
+		row <= data[8:0];
+		col <= data[18:9];
+		color <= data[20:19];
+				shape_select <= data[22:21];
+				start = 0;
             end
             else if (load2) begin
                 // Populate the remaining PRU inputs
-                height_radius <= data[8:0];
-                width <= data[18:9];
-                subtract <= data[21];
-                color_load <= data[22];
-                start = 1;
-            end else begin
-                start = 0;
+	    height_radius <= data[8:0];
+		width <= data[18:9];
+		    subtract <= data[19];
+		    color_load <= data[20];
+		start = 1;
+		end else begin
+			start = 0;
             end	
 		end		
             

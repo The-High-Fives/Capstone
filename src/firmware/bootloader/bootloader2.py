@@ -1,16 +1,19 @@
 import serial
 
-spart_port = 'COM5' # guess
+spart_port = 'COM4' # guess
 baud_rate = 19200  # also a guess
 
 def send_instruction_count(count):
     """
     Sends the number of instructions as a 4-byte integer.
     """
+    acc = ''
     for i in range(4):
         number = (count >> (8 * i)) & 0xFF
         ser.write(number.to_bytes(1, 'little'))
+        acc = acc + ser.read().decode('ascii')
     print(f"Sent instruction count: {count}")
+    print(acc)
 
 def send_instructions(filename):
     """
@@ -25,22 +28,24 @@ def send_instructions(filename):
 
     # Load each instruction into the appropriate bank
     for line in instructions:
+        acc = ''
         instruction = int(line.strip(), 16)  # Convert hex string to integer
         for i in range(4):
             instruction_byte = (instruction >> (8 * i)) & 0xFF
             ser.write(instruction_byte.to_bytes(1, 'little'))
-
+            acc = acc + ser.read().decode('ascii')
+        print(acc)
     print("All instructions sent.")
 
 if __name__ == "__main__":
     # Open the SPART port
     try:
-        ser = serial.Serial(spart_port, baud_rate, timeout = 2, bytesize = serial.EIGHTBITS,
+        ser = serial.Serial(spart_port, baud_rate, timeout = 0.1, bytesize = serial.EIGHTBITS,
                             stopbits = serial.STOPBITS_ONE, parity = serial.PARITY_NONE)
         print(f"{spart_port} is available")
 
         # Send the instructions from the hex file
-        filename = './whoami.hex'  # up for grabs!
+        filename = './echo.hex'  # up for grabs!
         send_instructions(filename)
 
         hello = str(ser.read(5))
