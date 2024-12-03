@@ -2,21 +2,38 @@ module PRU_tb;
     // Testbench signals
     logic clk;
     logic rst_n;
+    logic [31:0] data;                  // Data input to PRU_Preprocessing
     logic [1:0] color;
-    logic [9:0] row;
-    logic [8:0] col;
+    logic [8:0] row;
+    logic [9:0] col;
     logic [9:0] width, PRU_RED, PRU_GREEN, PRU_BLUE;
     logic [8:0] height_radius;
-    logic [31:0] bitmap_addr;
     logic [1:0] shape_select;
-	logic [31:0] pru_addr;
-    logic [31:0] pru_data;
-    logic start, VGA_CTRL_CLK, VGA_Read;
-    logic subtract;
-    logic i_color_load;
-    logic busy;
-    logic done;
-    logic [1:0] color_map [2499:0];  // 50 * 50 = 2500
+    logic start, write, subtract, color_load, VGA_CTRL_CLK, VGA_Read;
+    logic busy, done, ack;
+    logic [31:0] pru_addr, pru_data, bitmap_address;
+    logic [1:0] color_map [2499:0];    // 50 x 50 = 2500
+
+    // Instantiate the PRU_Preprocessing module
+    PRU_Preprocessing preprocessor (
+        .clk(clk),
+        .rst_n(rst_n),
+		.write(write),
+        .data(data),
+        .color(color),
+        .row(row),
+        .col(col),
+        .width(width),
+		.bitmap_address(bitmap_address),
+        .height_radius(height_radius),
+        .shape_select(shape_select),
+        .start(start),
+        .subtract(subtract),
+        .color_load(color_load),
+        .VGA_CTRL_CLK(VGA_CTRL_CLK),
+        .VGA_Read(VGA_Read),
+		.ack()
+    );
 
     // Instantiate the PRU module
     PRU dut (
@@ -29,15 +46,16 @@ module PRU_tb;
         .height_radius(height_radius),
         .pru_addr(pru_addr),
         .pru_data(pru_data),
+		.bitmap_address(bitmap_address),
         .shape_select(shape_select),
         .start(start),
         .subtract(subtract),
         .busy(busy),
         .done(done),
-        .color_load(i_color_load),
+        .color_load(color_load),
         .VGA_CTRL_CLK(VGA_CTRL_CLK),
-        .VGA_Read(VGA_Read),                 
-        .pru_red(PRU_RED),
+        .VGA_Read(VGA_Read),
+		.pru_red(PRU_RED),
         .pru_green(PRU_GREEN),
         .pru_blue(PRU_BLUE)
     );
@@ -45,84 +63,76 @@ module PRU_tb;
     // Clock generation
     initial begin
         clk = 0;
-        VGA_CTRL_CLK = 0;
         forever #5 clk = ~clk;  // 10ns clock period
-        forever #10 VGA_CTRL_CLK = ~VGA_CTRL_CLK;  // 10ns clock period
     end
 
     // Test sequence
     initial begin
         // Initialize signals
+		write = 0;
         rst_n = 0;
-        color = 2'b01;            // Arbitrary color value for rectangle
-        row = 10;                 // Starting row for rectangle
-        col = 10;                 // Starting column for rectangle
-        width = 15;               // Width of rectangle
-        height_radius = 15;       // Height for rectangle
-        bitmap_addr = 32'h0;      // Not used in this example
-        shape_select = 2'b00;     // Start with rectangle
-        start = 0;
-        subtract = 0;
-        VGA_Read = 0;
-        i_color_load = 0;
-
+        data = 32'h0;
+		pru_data = 32'h0000;
+		pru_addr = 32'h0000;
         // Apply reset
-        repeat (1) @(posedge clk);
+        repeat (2) @(posedge clk);
         rst_n = 1;
 
-        // Draw a rectangle
-        repeat (1) @(posedge clk);
-        start = 1;                // Begin drawing rectangle
-        repeat (10000) @(posedge clk);
-        start = 0;                // Release start after one cycle
-        repeat (1000) @(posedge clk);
-		
-        // Display color_map (partial, top left corner) to check rectangle
-        $display("Color map after rectangle (top left corner):");
-        display_color_map(0, 0, 30, 30);
-		
-        // Draw a circle
-        shape_select = 2'b01;     // Set to circle
-        color = 2'b10;            // New color for circle
-        row = 30;                 // Center row for circle
-        col = 30;                 // Center column for circle
-        height_radius = 10;       // Set radius for circle
-        repeat (1000) @(posedge clk);
-        start = 1;                // Begin drawing circle
-        repeat (1000) @(posedge clk);
-        start = 0;                // Release start after one cycle
-        repeat (10000) @(posedge clk);
-		
-        // Display color_map (partial, around the circle center) to check circle
-        $display("Color map after circle (around circle center):");
-        display_color_map(0, 0, 50, 50);
-		
-		// Apply reset
-        repeat (1) @(posedge clk);
-        //rst_n = 1;
-		
+        // Test rectangle input
+        $display("Testing rectangle...");
+				//-----------ss-color---col------row
+		data = 32'b000000000_00_01_0000001010_000001010;
+		write = 1;
 		repeat (1) @(posedge clk);
-		// Disable reset
-        //rst_n = 0;
-        color = 2'b11;            // Arbitrary color value for bitmap
-        row = 10;                 // Starting row for bitmap
-        col = 10;                 // Starting column for bitmap
-        width = 32;               // Width of bitmap
-        height_radius = 32;       // Height for bitmap
-        bitmap_addr = 32'h0;      // Bitmap address
-        shape_select = 2'b10;     // Set Shape Select to be bitmap
-		
-        // Draw a bitmap_image
+		write = 0;
+		//-----------------------cl--sub-width------height_radius
+		data = 32'b000000000000_0_0000001111_000001111;
+		repeat (1) @(posedge clk);
+		write = 1;	
+		repeat (1) @(posedge clk);
+		write = 0;		
+
+        repeat (1) @(posedge done);
+		repeat (1) @(posedge clk);
+		display_color_map(0, 0, 30, 30);
+        // Test circle input
+        $display("Testing circle...");
+				
+					//-----------ss-color---col------row
+		data = 32'b000000000_01_10_0000011110_000011110;
+		write = 1;
         repeat (1) @(posedge clk);
-        start = 1;                // Begin drawing bitmap
-        repeat (10000) @(posedge clk);
-        start = 0;                // Release start after one cycle
-        repeat (1000) @(posedge clk);
-        // End simulation
+		write = 0;
+		//-----------------------cl--sub-width------height_radius	
+        data = 32'b000000000000_0_0000001010_000001010;
 		
-		$display("Color map after bitmap:");
-        display_color_map(0, 0, 50, 50);
-        #10 $stop();
+
+        repeat (1) @(posedge clk);
+		write = 1;	
+		repeat (1) @(posedge clk);
+		write = 0;		
+
+        repeat (10000) @(posedge clk);
+		display_color_map(0, 0, 50, 50);
+		$display("Testing bitmap...");
+		
+		//-----------ss-color---col------row
+		data = 32'b000000000_10_11_0000001010_000001010;
+		write = 1;
+        repeat (1) @(posedge clk);
+		write = 0;
+				//-------------BITMAP_ADDRESS------
+				//32'h00000000;
+        data = 32'h0000_0000;
+        repeat (1) @(posedge clk);
+		write = 1;	
+		repeat (1) @(posedge clk);
+		write = 0;		
+
+        repeat (10000) @(posedge clk);
+		display_color_map(0, 0, 50, 50);
+        // End simulation
+        $stop;
     end
 
     // Task to display a section of the color_map array as 2D
