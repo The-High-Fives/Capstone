@@ -1,4 +1,5 @@
 import serial
+import sys
 
 spart_port = 'COM4' # guess
 baud_rate = 19200  # also a guess
@@ -38,6 +39,11 @@ def send_instructions(filename):
     print("All instructions sent.")
 
 if __name__ == "__main__":
+
+    if len(sys.argv) != 2:
+        print("Usage: python bootloader5.py <instruction_file>")
+        sys.exit()
+
     # Open the SPART port
     try:
         ser = serial.Serial(spart_port, baud_rate, timeout = 0.1, bytesize = serial.EIGHTBITS,
@@ -45,7 +51,7 @@ if __name__ == "__main__":
         print(f"{spart_port} is available")
 
         # Send the instructions from the hex file
-        filename = './LED.hex'  # up for grabs!
+        filename = sys.argv[1]  # up for grabs!
         send_instructions(filename)
 
         hello = str(ser.read(5))

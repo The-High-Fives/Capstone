@@ -89,7 +89,7 @@ void setLED(bool value, int led)
 
     if (val)
     {
-        command = *memSet | 1 << led;
+        command = *memSet | (1 << led);
     }
     else
     {
