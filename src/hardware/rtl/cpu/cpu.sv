@@ -256,7 +256,7 @@ ex_m_buffer u_ex_m_buffer (
 memory u_memory (
     .clk                (clk),
     .rst_n              (rst_n),
-    .stall              (stall_m)
+    .stall              (stall_m),
     .bl_stall           (bl_stall),
     .m_MemRead          (m_MemRead),
     .m_MemWrite         (m_MemWrite),

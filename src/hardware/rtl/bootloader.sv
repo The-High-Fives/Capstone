@@ -14,7 +14,12 @@ module bootloader (
     output logic [3:0] bl_strobe,
     output [31:0] bl_data,
     output logic [13:0] bl_addr,
-    output logic bl_stall
+    output logic bl_stall,
+
+    // debug
+    output [2:0] debug_state,
+	output [11:0] lut_rx_counter, 
+    output [11:0] lut_instr_count
 );
 
 localparam spart_offset = 32'h4000001C;
@@ -50,6 +55,12 @@ assign addr_o = bl_stall ? b_addr : 32'hzzzzzzzz;
 assign data_o = bl_stall ? b_data : 32'hzzzzzzzz;
 assign bl_data = {rx_data, instr_buffer_2, instr_buffer_1, instr_buffer_0};
 
+// debug
+assign debug_state = state;
+assign lut_rx_counter = rx_counter[11:0];
+assign lut_instr_count = instr_count[11:0];
+
+// state ff
 always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n)
         state <= INIT1;
