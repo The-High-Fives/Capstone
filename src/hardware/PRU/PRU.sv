@@ -51,7 +51,7 @@ module PRU (
     // Combinational logic for state transitions and pixel calculations
     always_comb begin
         next_state = state;
-		pixel_calculator = (r + (50 * c)); // calculates 1D location of 2D (row,column)x
+	    pixel_calculator = (r + (640 * c)); // calculates 1D location of 2D (row,column)x
         pixel_in_circle = ((c - col) * (c - col) + (r - row) * (r - row) <= height_radius * height_radius);
         rect_done = (c >= col + height_radius-1) && (r >= row + width-1);
         circle_done = (c >= col + height_radius - 1) && (r >= row + height_radius - 1);
@@ -59,7 +59,7 @@ module PRU (
         case (state)
 
             RESET_MAP: begin        
-				if (c == 49 && r == 49) begin
+		    if (c == 479 && r == 639) begin
                     next_state = IDLE;
                 end     
             end
@@ -105,11 +105,11 @@ module PRU (
                 RESET_MAP: begin
                     // Reset color_map to 0s sequentially
                     //color_map[pixel_calculator] <= 2'b00;// TODO this is needs another think through
-                    if (r < 49) begin
+			if (r < 479) begin
                         r <= r + 1;
                     end else begin
                         r <= 0;
-                        if (c < 49) begin
+			    if (c < 639) begin
                             c <= c + 1;
                         end else begin
 							r <= 0;
@@ -125,7 +125,7 @@ module PRU (
                     
                     // Draw rectangle sequentially within bounds
                     if (c >= col && c < col + height_radius && r >= row && r < row + width) begin
-                        if (c < 50 && r < 50) begin  // Bounds check
+			    if (c < 640 && r < 480) begin  // Bounds check
                             iwe <= 1;
                         end
                         else begin
@@ -147,7 +147,7 @@ module PRU (
                     if (r < row - height_radius) r <= row - height_radius;
                     
                     // Draw circle sequentially, checking if each pixel is within radius
-                    if (c < 50 && r < 50 && pixel_in_circle) begin
+			if (c < 640 && r < 480 && pixel_in_circle) begin
                         iwe <= 1;
                     end
                     else begin
