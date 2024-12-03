@@ -18,7 +18,7 @@ module IPU_wrapper (
     inout ack_o
 );
 
-    localparam addr_offset = 32'h40000100;
+    localparam addr_offset = 32'h40000200;
 
     logic [9:0] row;
     logic [9:0] col;
@@ -40,22 +40,24 @@ module IPU_wrapper (
         // outputs
         .oRow       (oRow),
         .oCol       (oCol),
-        .oDVAL      (oDVAL)
+        .oDVAL      (oDVAL),
+        .oPresent   (oPresent)
     );
 
     always_ff @(posedge clk, negedge rst_n) begin
         if (!rst_n) begin
             row <= 0;
             col <= 0;
-            present <= 1;
+            present <= 0;
         end
         else if (oDVAL) begin
             row <= oRow[9:0];
             col <= oCol[9:0];
-            // present <= 0;
+            present <= oPresent;
         end
     end
 
+    // valid is knocked down on read
     always_ff @(posedge clk, negedge rst_n) begin
         if (!rst_n) begin
             valid <= 0;

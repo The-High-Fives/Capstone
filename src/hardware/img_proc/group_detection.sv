@@ -5,7 +5,8 @@ module group_detection (
     iRST,
     oRow,
     oCol,
-    oVALID_COORD
+    oVALID_COORD,
+    oPresent
 );
 
 input [11:0] iColor;
@@ -16,6 +17,7 @@ input iRST;
 output [10:0] oRow;
 output [10:0] oCol;
 output oVALID_COORD;
+output oPresent;
 
 logic [16:0] y_accum; // column accumulation
 logic [18:0] total_col_accumulate; // column average accumulate
@@ -31,7 +33,8 @@ logic [9:0] row_count; // counts current pixel row
 // control signals
 logic y_init, y_acc, tcol_init, tcol_acc;
 
-assign oVALID_COORD = (row_count == 0) & (col_count == 0) & (act_row_count > 10); // TODO maybe add act_col_count? or add threshold
+assign oVALID_COORD = (row_count == 0) & (col_count == 0);
+assign oPresent = (act_row_count > 10);
 assign oRow = total_row_accumulate/act_row_count;
 assign oCol = total_col_accumulate;
 

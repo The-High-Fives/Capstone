@@ -12,7 +12,8 @@ module IPU(
     // outputs
     output [10:0] oRow,
     output [10:0] oCol,
-    output oDVAL
+    output oDVAL,
+    output oPresent
 );
 
 logic [11:0] filterRed;
@@ -45,7 +46,8 @@ group_detection u_group_detection (
     .iRST(iRST),
     .oRow(oRow),
     .oCol(oCol),
-    .oVALID_COORD(oDVAL)
+    .oVALID_COORD(oDVAL),
+    .oPresent(oPresent)
 );
 
 endmodule
