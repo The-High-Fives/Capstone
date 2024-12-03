@@ -48,22 +48,23 @@ module IPU_wrapper (
         .oPresent   (oPresent)
     );
 
-    async_fifo u_async_fifo (
+    async_fifo 
     #(
         .width(22),
         .depth(4)
     )
-    .i_wclk      (camera_clk),
-    .i_rclk      (sys_clk),
-    .i_wr        (oDVAL),
-    .i_rd        (!o_empty),
-    .i_wdata     ({oPresent, oRow[9:0], oCol[9:0]}),
-    .i_wrst_n    (w_rst_n),
-    .i_rrst_n    (rst_n),
-    .o_rdata     (fifo_out),
-    .o_empty     (o_empty),
-    .o_full      (o_full)
-);
+    u_async_fifo (
+        .i_wclk      (camera_clk),
+        .i_rclk      (sys_clk),
+        .i_wr        (oDVAL),
+        .i_rd        (!o_empty),
+        .i_wdata     ({oPresent, oRow[9:0], oCol[9:0]}),
+        .i_wrst_n    (w_rst_n),
+        .i_rrst_n    (rst_n),
+        .o_rdata     (fifo_out),
+        .o_empty     (o_empty),
+        .o_full      (o_full)
+    );
 
     always_ff @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin

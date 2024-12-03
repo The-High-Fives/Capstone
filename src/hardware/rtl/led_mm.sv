@@ -25,7 +25,7 @@ module led_mm (
     end
 
     assign cs = (addr_i[31:2] == addr_offset[31:2]) & (read_i | write_i) & ((addr_i[1:0] == 2'b00) 
-                | (addr_i[1:0] == 2'b01) | (addr_i[1:0] == 2'b10) | (addr_i[1:0] == 2'b11))
+                | (addr_i[1:0] == 2'b01) | (addr_i[1:0] == 2'b10) | (addr_i[1:0] == 2'b11));
     assign ack_o = cs ? 1'b1 : 1'bz;
     assign data_o = cs ? {22'h000000, led} : 32'hzzzzzzzz;
 
