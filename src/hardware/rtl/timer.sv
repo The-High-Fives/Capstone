@@ -1,4 +1,7 @@
 module timer (
+    input clk,
+    input rst_n,
+
     // bus signals
     input write_i,
     input read_i,
@@ -8,7 +11,7 @@ module timer (
     inout ack_o
 );
 
-    localparam addr_offset = 30'h10000001; // 0x40000004
+    localparam addr_offset = 32'h40000004; // 0x40000004
 
     logic [31:0] timer;
 
@@ -21,7 +24,7 @@ module timer (
             timer <= timer + 1;
     end
 
-    assign cs = (addr_i[31:2] == addr_offset) & (read_i | write_i) & ((addr_i[1:0] == 2'b00) 
+    assign cs = (addr_i[31:2] == addr_offset[31:2]) & (read_i | write_i) & ((addr_i[1:0] == 2'b00) 
                 | (addr_i[1:0] == 2'b01) | (addr_i[1:0] == 2'b10) | (addr_i[1:0] == 2'b11))
     assign ack_o = cs ? 1'b1 : 1'bz;
     assign data_o = cs ? timer : 32'hzzzzzzzz;
