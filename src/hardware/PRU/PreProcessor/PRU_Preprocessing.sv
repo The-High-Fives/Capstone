@@ -3,9 +3,10 @@ module PRU_Preprocessing (
     input logic rst_n,                   // Reset signal (active low)
 	input logic write,
     input logic [31:0] data,             // 32-bit data input
+	output logic [31:0] bitmap_address,  // 32-bit bitmap_address
     output logic [1:0] color,            // Color value
-    output logic [9:0] row,              // Starting row for rectangle, center row for circle
-    output logic [8:0] col,              // Starting col for rectangle, center col for circle
+    output logic [9:0] col,              // Starting col for rectangle, center col for circle
+    output logic [8:0] row,              // Starting row for rectangle, center row for circle
     output logic [9:0] width,            // Width of the rectangle
     output logic [8:0] height_radius,    // Height of rectangle or radius of circle
     output logic [1:0] shape_select,     // Shape selection: 00 for rectangle, 01 for circle
@@ -17,9 +18,9 @@ module PRU_Preprocessing (
 	output logic ack
 );
 
-    typedef enum logic [1:0] {IDLE, LOAD} state_t; // State definitions
+    typedef enum logic [1:0] {IDLE, LOAD_SHAPE, LOAD_IMM} state_t; // State definitions
     state_t state, next_state;                            // Current and next state
-	logic load1, load2;
+	logic load1, load2, loadImm;
     // Sequential logic for state transitions
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -32,9 +33,10 @@ module PRU_Preprocessing (
 		ack = 1'bz;
 		load1 = 0;
 		load2 = 0;
+		loadImm = 0;
 		next_state = state;
 		case (state)
-			LOAD: begin
+			LOAD_SHAPE: begin
 				if (write) begin
 					next_state = IDLE;
 					load2 = 1;
@@ -42,11 +44,23 @@ module PRU_Preprocessing (
 				end
 
 			end
+			LOAD_IMM: begin
+				if (write) begin
+					next_state = IDLE;
+					loadImm = 1;
+					ack = 1;
+				end
+
+			end
 			default: begin //IDLE
 				if (write) begin
-					load1 = 1;
 					ack = 1;
-					next_state = LOAD;
+					load1 = 1;
+					if(data[22] == 1'b1) begin
+					next_state = LOAD_IMM;
+					end else begin
+					next_state = LOAD_SHAPE; 
+					end
 				end
 			end
 		endcase
@@ -58,37 +72,39 @@ module PRU_Preprocessing (
             // Reset all outputs
 		start <= 0;
             color <= 0;
-            row <= 0;
             col <= 0;
+            row <= 0;
             width <= 0;
             height_radius <= 0;
             shape_select <= 0;
             subtract <= 0;
             color_load <= 0;
-        end else begin
-			if (load1) begin
+        end 
+		else if (load1) begin
                 // Populate the first set of PRU inputs
-		col <= data[8:0];
-		row <= data[18:9];
+		row <= data[8:0];
+		col <= data[18:9];
 		color <= data[20:19];
 				shape_select <= data[22:21];
 				start = 0;
-            end
-            else if (load2) begin
+        end
+		else if (loadImm) begin
+				bitmap_address = data;
+				start = 1;
+		end
+        else if (load2) begin
                 // Populate the remaining PRU inputs
-	                height_radius <= data[8:0];
-		width <= data[18:9];
-
-		
-		    subtract <= data[21];
-		    color_load <= data[22];
-		start = 1;
+	        height_radius <= data[8:0];
+			width <= data[18:9];
+		    subtract <= data[19];
+		    color_load <= data[20];
+			start = 1;
 		end else begin
 			start = 0;
-            end	
-		end		
+        end	
+	end		
             
-    end
+    
     
 
 endmodule
