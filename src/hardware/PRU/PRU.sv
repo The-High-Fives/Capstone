@@ -52,8 +52,7 @@ module PRU (
     always_comb begin
         next_state = state;
 
-	    pixel_calculator = (r + (640 * c)); // calculates 1D location of 2D (row,column)x
-        pixel_in_circle = ((c - col) * (c - col) + (r - row) * (r - row) <= height_radius * height_radius);
+
         rect_done = (c >= col + height_radius-1) && (r >= row + width-1);
         circle_done = (c >= col + height_radius - 1) && (r >= row + height_radius - 1);
 		bitmap_done = (draw_bitmap_counter == 1023);
@@ -98,10 +97,13 @@ module PRU (
             r <= 0;
             done <= 0;
 			draw_bitmap_counter <= 0; // Reset bitmap counter
+        pixel_calculator = 0; // calculates 1D location of 2D (row,column)x
+        pixel_in_circle = 0;
         end
         else begin
             state <= next_state;
-
+	    pixel_calculator = (r + (640 * c)); // calculates 1D location of 2D (row,column)x
+        pixel_in_circle = ((c - col) * (c - col) + (r - row) * (r - row) <= height_radius * height_radius);
             case (state)
                 RESET_MAP: begin
                     // Reset color_map to 0s sequentially
