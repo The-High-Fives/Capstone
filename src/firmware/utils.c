@@ -89,7 +89,7 @@ void setLED(bool value, int led)
 
     if (val)
     {
-        command = *memSet | 1 << led;
+        command = *memSet | (1 << led);
     }
     else
     {
@@ -125,8 +125,14 @@ void getCursorLocation(int *x, int *y)
     int *memSet;
 
     memSet = (int *)DETECT_LOCATION_ADDR;
-    *x = (*memSet >> 9) & 0x3FF;
-    *y = (*memSet) & 0x1FF;
+    int valid = (*memSet) & 1;
+    int present = (*memSet >> 1) & 1;
+
+    if (present && valid)
+    {
+        *y = (*memSet >> 12) & 0x1FF;
+        *x = (*memSet >> 2) & 0x3FF;
+    }
 }
 
 char getSPART()
@@ -147,8 +153,10 @@ void setSPART(char value)
     *memSet = command;
 }
 
-void getIO(int *timer, char *SPART)
+void getIO(int *timer, char *SPART, int *x, int *y)
 {
     *timer = getTimerValue();
     *SPART = getSPART();
+
+    getCursorLocation(x, y);
 }

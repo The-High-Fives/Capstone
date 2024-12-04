@@ -14,11 +14,14 @@ int main()
 
     setupGame(game);
 
+    int *handX;
+    int *handY;
+
     while (!game->quitGame)
     {
         int *dt;
         char *SPART;
-        getIO(dt, SPART);
+        getIO(dt, SPART, handX, handY);
 
         if (game->onStartScreen)
         {
