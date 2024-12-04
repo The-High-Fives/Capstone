@@ -53,7 +53,7 @@ module PRU (
         next_state = state;
 
 
-        rect_done = (c >= col + height_radius-1) && (r >= row + width-1);
+        rect_done = (c >= col + width-1) && (r >= row + height_radius-1);
         circle_done = (c >= col + height_radius - 1) && (r >= row + height_radius - 1);
 		bitmap_done = (draw_bitmap_counter == 1023);
         case (state)
@@ -102,12 +102,10 @@ module PRU (
         end
         else begin
             state <= next_state;
-	    pixel_calculator = (r + (640 * c)); // calculates 1D location of 2D (row,column)x
+	    pixel_calculator = (c + (640 * r)); // calculates 1D location of 2D (row,column)x
         pixel_in_circle = ((c - col) * (c - col) + (r - row) * (r - row) <= height_radius * height_radius);
             case (state)
                 RESET_MAP: begin
-                    // Reset color_map to 0s sequentially
-                    //color_map[pixel_calculator] <= 2'b00;// TODO this is needs another think through
 
 			if (r < 479) begin
                         r <= r + 1;
@@ -129,7 +127,7 @@ module PRU (
                     
                     // Draw rectangle sequentially within bounds
 
-                    if (c >= col && c < col + height_radius && r >= row && r < row + width) begin
+                    if (c >= col && c < col + width && r >= row && r < row + height_radius) begin
 			    if (c < 640 && r < 480) begin  // Bounds check
                             iwe <= 1;
                         end
@@ -138,7 +136,7 @@ module PRU (
                         end
                     end
                     // Update column and row counters
-                    if (r < row + width - 1) begin
+                    if (r < row + height_radius - 1) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -175,7 +173,7 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-                    if ((c >= col && c < col + height_radius && r >= row) && (r < row + height_radius)) begin
+                    if ((c >= col && c < col + height_radius && r >= row) && (r < row + height_radius)) begin //FIXME LOOK OVER THIS? for height_radius and width
 						draw_bitmap_counter <= draw_bitmap_counter + 1;
                         iwe <= ibitmaprd_data == 1'b1;
                     end
@@ -268,34 +266,34 @@ always_ff @ (posedge clk, negedge rst_n) begin
 				//pru_red = 10'h3ff
 				//pru_green = 10'h000;
 				//pru_blue = 10'h000;
-				pru_red = color_buffer[0][9:0];
-				pru_green = color_buffer[0][19:10];
-				pru_blue = color_buffer[0][29:20];
+				pru_red = color_buffer[1][9:0];
+				pru_green = color_buffer[1][19:10];
+				pru_blue = color_buffer[1][29:20];
 				
 			end
 			2'b10: begin
 				//pru_red = 10'h000;
 				//pru_green = 10'h3ff;
 				//pru_blue = 10'h000;
-				pru_red = color_buffer[1][9:0];
-				pru_green = color_buffer[1][19:10];
-				pru_blue = color_buffer[1][29:20];
+				pru_red = color_buffer[2][9:0];
+				pru_green = color_buffer[2][19:10];
+				pru_blue = color_buffer[2][29:20];
 			end
 			2'b11: begin
 				//pru_red = 10'h200;
 				//pru_green = 10'h000;
 				//pru_blue = 10'h3ff;
-				pru_red = color_buffer[2][9:0];
-				pru_green = color_buffer[2][19:10];
-				pru_blue = color_buffer[2][29:20];
+				pru_red = color_buffer[3][9:0];
+				pru_green = color_buffer[3][19:10];
+				pru_blue = color_buffer[3][29:20];
 			end
 			default: begin //BACKGROUND
 				//pru_red = 10'h30f;
 				//pru_green = 10'h30f;
 				//pru_blue = 10'h30f;
-				pru_red = color_buffer[3][9:0];
-				pru_green = color_buffer[3][19:10];
-				pru_blue = color_buffer[3][29:20];
+				pru_red = color_buffer[0][9:0];
+				pru_green = color_buffer[0][19:10];
+				pru_blue = color_buffer[0][29:20];
 			end
 		endcase
 	end
