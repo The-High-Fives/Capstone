@@ -29,8 +29,8 @@ module dmem32
     end
 
     // Reading memory
-    initial begin
-        $readmemh(FILENAME, mem);
-    end
+    // initial begin
+    //     $readmemh(FILENAME, mem);
+    // end
 
 endmodule

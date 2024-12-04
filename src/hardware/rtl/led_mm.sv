@@ -12,7 +12,7 @@ module led_mm (
     inout ack_o
 );
 
-    localparam addr_offset = 30'h10000000; // 40000000
+    localparam addr_offset = 32'h40000000; // 40000000
 
     logic [9:0] led;
     assign LEDR = led;
@@ -24,9 +24,9 @@ module led_mm (
             led <= data_i[9:0];
     end
 
-    assign cs = (addr_i[31:2] == addr_offset) & (read_i | write_i) & ((addr_i[1:0] == 2'b00) 
-                | (addr_i[1:0] == 2'b01) | (addr_i[1:0] == 2'b10) | (addr_i[1:0] == 2'b11))
+    assign cs = (addr_i[31:2] == addr_offset[31:2]) & (read_i | write_i) & ((addr_i[1:0] == 2'b00) 
+                | (addr_i[1:0] == 2'b01) | (addr_i[1:0] == 2'b10) | (addr_i[1:0] == 2'b11));
     assign ack_o = cs ? 1'b1 : 1'bz;
-    assign data_o = cs ? {22'hFFFFFF, led} : 32'hzzzzzzzz;
+    assign data_o = cs ? {22'h000000, led} : 32'hzzzzzzzz;
 
 endmodule

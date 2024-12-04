@@ -14,8 +14,8 @@
 #define COLOR_ADDR 0x4000010C
 
 // IPU Addresses
-#define DETECT_LOCATION_ADDR 0x40000100
-#define COLOR_LOCATED_ADDR 0x40000104
+#define DETECT_LOCATION_ADDR 0x40000200
+#define COLOR_LOCATED_ADDR 0x40000204
 
 #define RECT_CODE 0b00
 #define CIRCLE_CODE 0b01
@@ -49,6 +49,6 @@ bool checkLocationForColor(int x, int y, int radius);
 void getCursorLocation(int *x, int *y);
 char getSPART();
 void setSPART(char value);
-void getIO(int *timer, char *SPART);
+void getIO(int *timer, char *SPART, int *x, int *y);
 
 #endif

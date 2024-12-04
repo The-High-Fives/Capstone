@@ -14,7 +14,7 @@ module IPU_tb ();
     logic [10:0] avg_Y;
     logic valid;
 
-    IPU dut(
+    IPU u_IPU(
         .iCLK(iCLK),
         .iRST(iRST),
         .iDVAL(iDVAL),
@@ -25,7 +25,8 @@ module IPU_tb ();
         .iY_Cont(iY_Cont),
         .oRow(avg_X),
         .oCol(avg_Y),
-        .oDVAL(valid)
+        .oDVAL(valid),
+        .oPresent(oPresent)
     );
 
     initial begin 

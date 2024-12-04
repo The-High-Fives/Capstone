@@ -45,7 +45,11 @@ if __name__ == "__main__":
         print(f"{spart_port} is available")
 
         # Send the instructions from the hex file
-        filename = './echo.hex'  # up for grabs!
+<<<<<<< HEAD
+        filename = './led.hex'  # up for grabs!
+=======
+        filename = './LED.hex'  # up for grabs!
+>>>>>>> 8e9fe7b3de1cd61c1fc43ff76b7d22563c2a382e
         send_instructions(filename)
 
         hello = str(ser.read(5))
