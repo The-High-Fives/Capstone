@@ -42,7 +42,7 @@ void drawRect(int x, int y, int width, int height, color_t color);
 void drawSprite(int x, int y, int scale, int addr, color_t color);
 void drawLetter(int x, int y, int scale, int addr, color_t color);
 void setColor(color_t addr, Color color);
-void setLED(bool value, int led);
+void setLED(bool value, int led, int *ledState);
 
 int getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);

@@ -1,26 +1,35 @@
 #include "../utils.h"
 
+// WORKING!!!
 int main()
 {
-    setLED(true, 1);
-    setLED(false, 1);
-    setLED(true, 2);
-    setLED(false, 2);
+    int ledState = 0;
+    int *statePointer = &ledState;
 
-    for (int i = 0; i < 10; i++)
+    while (true)
     {
-        setLED(true, i);
-    }
+        int i = 0;
+        int j = 0;
 
-    int j = 0;
-    for (int i = 0; i < 5000; i++)
-    {
-        j++;
-    }
+        for (i = 0; i < 10; i++)
+        {
+            setLED(true, i, &ledState);
+        }
 
-    for (int i = 0; i < 10; i++)
-    {
-        setLED(false, i);
+        for (j = 0; j < 1000000; j++)
+        {
+            j++;
+        }
+
+        for (i = 0; i < 10; i++)
+        {
+            setLED(false, i, &ledState);
+        }
+
+        for (j = 0; j < 1000000; j++)
+        {
+            j++;
+        }
     }
 
 end:
