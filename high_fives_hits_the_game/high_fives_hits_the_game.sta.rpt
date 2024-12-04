@@ -1,5 +1,5 @@
 Timing Analyzer report for high_fives_hits_the_game
-Wed Dec  4 12:35:36 2024
+Wed Dec  4 12:52:39 2024
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -103,26 +103,26 @@ https://fpgasoftware.intel.com/eula.
 ; Number detected on machine ; 22          ;
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
-; Average used               ; 3.36        ;
+; Average used               ; 3.78        ;
 ; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;  20.3%      ;
-;     Processor 3            ;  20.0%      ;
-;     Processor 4            ;  19.8%      ;
-;     Processor 5            ;  14.8%      ;
-;     Processor 6            ;  14.8%      ;
-;     Processor 7            ;  14.8%      ;
-;     Processor 8            ;  14.8%      ;
-;     Processor 9            ;  14.8%      ;
-;     Processor 10           ;  14.8%      ;
-;     Processor 11           ;  14.8%      ;
-;     Processor 12           ;  14.8%      ;
-;     Processor 13           ;  14.7%      ;
-;     Processor 14           ;  14.7%      ;
-;     Processor 15           ;  14.2%      ;
-;     Processor 16           ;  14.2%      ;
+;     Processor 2            ;  23.3%      ;
+;     Processor 3            ;  23.0%      ;
+;     Processor 4            ;  22.8%      ;
+;     Processor 5            ;  17.6%      ;
+;     Processor 6            ;  17.6%      ;
+;     Processor 7            ;  17.5%      ;
+;     Processor 8            ;  17.5%      ;
+;     Processor 9            ;  17.4%      ;
+;     Processor 10           ;  17.4%      ;
+;     Processor 11           ;  17.4%      ;
+;     Processor 12           ;  17.4%      ;
+;     Processor 13           ;  17.3%      ;
+;     Processor 14           ;  17.2%      ;
+;     Processor 15           ;  17.2%      ;
+;     Processor 16           ;  17.1%      ;
 +----------------------------+-------------+
 
 
@@ -131,7 +131,7 @@ https://fpgasoftware.intel.com/eula.
 +------------------------------+--------+--------------------------+
 ; SDC File Path                ; Status ; Read at                  ;
 +------------------------------+--------+--------------------------+
-; high_fives_hits_the_game.SDC ; OK     ; Wed Dec  4 12:35:29 2024 ;
+; high_fives_hits_the_game.SDC ; OK     ; Wed Dec  4 12:52:34 2024 ;
 +------------------------------+--------+--------------------------+
 
 
@@ -1446,7 +1446,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-    Info: Processing started: Wed Dec  4 12:35:28 2024
+    Info: Processing started: Wed Dec  4 12:52:32 2024
 Info: Command: quartus_sta high_fives_hits_the_game -c high_fives_hits_the_game
 Info: qsta_default_script.tcl version: #1
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
@@ -1636,9 +1636,9 @@ Info (332114): Report Metastability: Found 1 synchronizer chains.
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus Prime Timing Analyzer was successful. 0 errors, 24 warnings
-    Info: Peak virtual memory: 5419 megabytes
-    Info: Processing ended: Wed Dec  4 12:35:36 2024
-    Info: Elapsed time: 00:00:08
-    Info: Total CPU time (on all processors): 00:00:12
+    Info: Peak virtual memory: 5409 megabytes
+    Info: Processing ended: Wed Dec  4 12:52:39 2024
+    Info: Elapsed time: 00:00:07
+    Info: Total CPU time (on all processors): 00:00:11
 
 
