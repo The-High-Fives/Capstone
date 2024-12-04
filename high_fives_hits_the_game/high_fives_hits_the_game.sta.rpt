@@ -1,5 +1,5 @@
 Timing Analyzer report for high_fives_hits_the_game
-Tue Dec  3 18:16:17 2024
+Wed Dec  4 12:35:36 2024
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -100,29 +100,29 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 16          ;
+; Number detected on machine ; 22          ;
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
-; Average used               ; 4.17        ;
+; Average used               ; 3.36        ;
 ; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;  26.5%      ;
-;     Processor 3            ;  26.2%      ;
-;     Processor 4            ;  25.9%      ;
-;     Processor 5            ;  19.9%      ;
-;     Processor 6            ;  19.9%      ;
-;     Processor 7            ;  19.9%      ;
-;     Processor 8            ;  19.9%      ;
-;     Processor 9            ;  19.9%      ;
-;     Processor 10           ;  19.9%      ;
-;     Processor 11           ;  19.9%      ;
-;     Processor 12           ;  19.9%      ;
-;     Processor 13           ;  19.9%      ;
-;     Processor 14           ;  19.9%      ;
-;     Processor 15           ;  19.9%      ;
-;     Processor 16           ;  19.9%      ;
+;     Processor 2            ;  20.3%      ;
+;     Processor 3            ;  20.0%      ;
+;     Processor 4            ;  19.8%      ;
+;     Processor 5            ;  14.8%      ;
+;     Processor 6            ;  14.8%      ;
+;     Processor 7            ;  14.8%      ;
+;     Processor 8            ;  14.8%      ;
+;     Processor 9            ;  14.8%      ;
+;     Processor 10           ;  14.8%      ;
+;     Processor 11           ;  14.8%      ;
+;     Processor 12           ;  14.8%      ;
+;     Processor 13           ;  14.7%      ;
+;     Processor 14           ;  14.7%      ;
+;     Processor 15           ;  14.2%      ;
+;     Processor 16           ;  14.2%      ;
 +----------------------------+-------------+
 
 
@@ -131,7 +131,7 @@ https://fpgasoftware.intel.com/eula.
 +------------------------------+--------+--------------------------+
 ; SDC File Path                ; Status ; Read at                  ;
 +------------------------------+--------+--------------------------+
-; high_fives_hits_the_game.SDC ; OK     ; Tue Dec  3 18:16:10 2024 ;
+; high_fives_hits_the_game.SDC ; OK     ; Wed Dec  4 12:35:29 2024 ;
 +------------------------------+--------+--------------------------+
 
 
@@ -1446,7 +1446,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-    Info: Processing started: Tue Dec  3 18:16:08 2024
+    Info: Processing started: Wed Dec  4 12:35:28 2024
 Info: Command: quartus_sta high_fives_hits_the_game -c high_fives_hits_the_game
 Info: qsta_default_script.tcl version: #1
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
@@ -1454,28 +1454,28 @@ Info (20030): Parallel compilation is enabled and will use 16 of the 16 processo
 Info (21077): Low junction temperature is 0 degrees C
 Info (21077): High junction temperature is 85 degrees C
 Info (332104): Reading SDC File: 'high_fives_hits_the_game.SDC'
-Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(24): altera_reserved_tck could not be matched with a port or pin or register or keeper or net or combinational node or node File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 24
-Warning (332049): Ignored create_clock at high_fives_hits_the_game.sdc(24): Argument <targets> is not an object ID File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 24
-    Info (332050): create_clock -name {altera_reserved_tck} -period 40 {altera_reserved_tck} File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 24
-Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(25): altera_reserved_tdi could not be matched with a port File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
-Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(25): altera_reserved_tck could not be matched with a clock File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
-Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(25): Argument <targets> is an empty collection File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
-    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tdi] File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
-Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(25): Argument -clock is not an object ID File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
-Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(26): altera_reserved_tms could not be matched with a port File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
-Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(26): Argument <targets> is an empty collection File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
-    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tms] File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
-Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(26): Argument -clock is not an object ID File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
-Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(27): altera_reserved_tdo could not be matched with a port File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
-Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(27): Argument <targets> is an empty collection File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
-    Info (332050): set_output_delay -clock altera_reserved_tck 3 [get_ports altera_reserved_tdo] File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
-Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(27): Argument -clock is not an object ID File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
+Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(24): altera_reserved_tck could not be matched with a port or pin or register or keeper or net or combinational node or node File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 24
+Warning (332049): Ignored create_clock at high_fives_hits_the_game.sdc(24): Argument <targets> is not an object ID File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 24
+    Info (332050): create_clock -name {altera_reserved_tck} -period 40 {altera_reserved_tck} File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 24
+Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(25): altera_reserved_tdi could not be matched with a port File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
+Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(25): altera_reserved_tck could not be matched with a clock File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
+Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(25): Argument <targets> is an empty collection File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
+    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tdi] File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
+Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(25): Argument -clock is not an object ID File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 25
+Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(26): altera_reserved_tms could not be matched with a port File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
+Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(26): Argument <targets> is an empty collection File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
+    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tms] File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
+Warning (332049): Ignored set_input_delay at high_fives_hits_the_game.sdc(26): Argument -clock is not an object ID File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 26
+Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(27): altera_reserved_tdo could not be matched with a port File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
+Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(27): Argument <targets> is an empty collection File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
+    Info (332050): set_output_delay -clock altera_reserved_tck 3 [get_ports altera_reserved_tdo] File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
+Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(27): Argument -clock is not an object ID File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 27
 Info (332151): Clock uncertainty is not calculated until you update the timing netlist.
-Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(66): VGA_BLANK could not be matched with a port File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 66
-Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(66): Argument <targets> is an empty collection File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 66
-    Info (332050): set_output_delay -max -clock clk_vga 0.215 [get_ports VGA_BLANK] File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 66
-Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(67): Argument <targets> is an empty collection File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 67
-    Info (332050): set_output_delay -min -clock clk_vga -1.485 [get_ports VGA_BLANK] File: C:/Users/bzhan/Documents/ECE/ECE554/HighFives/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 67
+Warning (332174): Ignored filter at high_fives_hits_the_game.sdc(66): VGA_BLANK could not be matched with a port File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 66
+Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(66): Argument <targets> is an empty collection File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 66
+    Info (332050): set_output_delay -max -clock clk_vga 0.215 [get_ports VGA_BLANK] File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 66
+Warning (332049): Ignored set_output_delay at high_fives_hits_the_game.sdc(67): Argument <targets> is an empty collection File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 67
+    Info (332050): set_output_delay -min -clock clk_vga -1.485 [get_ports VGA_BLANK] File: C:/Users/rushe/OneDrive/Desktop/Madison/Madison Year 4 Sem 1/ECE 554/Capstone/Capstone/high_fives_hits_the_game/high_fives_hits_the_game.sdc Line: 67
 Warning (332060): Node: D5M_PIXCLK was determined to be a clock but was found without an associated clock assignment.
     Info (13166): Register IPU_wrapper:u_IPU_wrapper|async_fifo:u_async_fifo|wptr_syn2[1] is being clocked by D5M_PIXCLK
 Warning (332060): Node: I2C_CCD_Config:u8|mI2C_CTRL_CLK was determined to be a clock but was found without an associated clock assignment.
@@ -1636,9 +1636,9 @@ Info (332114): Report Metastability: Found 1 synchronizer chains.
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus Prime Timing Analyzer was successful. 0 errors, 24 warnings
-    Info: Peak virtual memory: 5418 megabytes
-    Info: Processing ended: Tue Dec  3 18:16:17 2024
-    Info: Elapsed time: 00:00:09
-    Info: Total CPU time (on all processors): 00:00:28
+    Info: Peak virtual memory: 5419 megabytes
+    Info: Processing ended: Wed Dec  4 12:35:36 2024
+    Info: Elapsed time: 00:00:08
+    Info: Total CPU time (on all processors): 00:00:12
 
 
