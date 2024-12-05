@@ -91,7 +91,7 @@ module IPU_wrapper (
             valid <= 0;
     end
 
-    assign cs = (addr_i[31:2] == addr_offset[31:2]);
+    assign cs = (addr_i[31:2] == addr_offset[31:2]) & (read_i | write_i);
     
     assign data_o = cs ? {10'h000, row, col, present, valid} : 32'hzzzzzzzz;
     assign ack_o = cs ? 1'b1 : 1'bz;
