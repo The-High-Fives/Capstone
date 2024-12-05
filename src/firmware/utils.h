@@ -49,6 +49,6 @@ bool checkLocationForColor(int x, int y, int radius);
 void getCursorLocation(int *x, int *y);
 char getSPART();
 void setSPART(char value);
-void getIO(int *timer, char *SPART);
+void getIO(int *timer, char *SPART, int *x, int *y);
 
 #endif
