@@ -20,7 +20,7 @@ module timer (
         if (!rst_n)
             timer <= 0;
         else if (cs & read_i)
-            timer <= 0;
+            timer <= 1;
         else
             timer <= timer + 1;
     end
