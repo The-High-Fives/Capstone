@@ -79,7 +79,7 @@ void drawLetter(int x, int y, int scale, int addr, color_t color)
     *memSet = command;
 }
 
-void setLED(bool value, int led)
+void setLED(bool value, int led, int *ledState)
 {
     int *memSet;
     int command;
@@ -89,14 +89,15 @@ void setLED(bool value, int led)
 
     if (val)
     {
-        command = *memSet | (1 << led);
+        command = (*ledState) | (1 << led);
     }
     else
     {
-        command = *memSet & ~(1 << led);
+        command = (*ledState) & (~(1 << led));
     }
 
     *memSet = command;
+    *ledState = command;
 }
 
 int getTimerValue()

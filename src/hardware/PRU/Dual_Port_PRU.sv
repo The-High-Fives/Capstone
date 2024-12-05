@@ -17,7 +17,7 @@ end
         
 
 initial begin
-    $readmemb("buffer_2_173.mem", imagebuffer);
+    $readmemb("307199_zeroes.mem", imagebuffer);
 end
 
 endmodule

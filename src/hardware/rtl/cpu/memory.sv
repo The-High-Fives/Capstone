@@ -59,6 +59,7 @@ module memory (
 
     // Instantiate four banks of dmem32 for the memory
     //#(.depth(16384),.FILENAME("pruTest_byte3.hex"))
+
     dmem32 dmem_bank0 (.clk(clk), .rst_n(rst_n), .addr(m_alu_out[15:2]), .re(!stall & re0), .we(we0), 
                         .wdata(bank_wdata[0]), .rdata(bank_rdata[0]));
 
@@ -210,6 +211,7 @@ module memory (
             b_data_buffer <= 0;
             bus_transaction_buffer <= 0;
         end 
+
         else if (!stall) begin
             b_data_buffer <= b_data_i;
             bus_transaction_buffer <= bus_transaction;
