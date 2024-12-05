@@ -174,7 +174,7 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-                    if ((c >= col && c < col + height_radius && r >= row) && (r < row + height_radius)) begin //FIXME LOOK OVER THIS? for height_radius and width
+                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 32)) begin //FIXME LOOK OVER THIS? for height_radius and width
 						draw_bitmap_counter <= draw_bitmap_counter + 1;
                         iwe <= ibitmaprd_data == 1'b1;
                     end
@@ -183,7 +183,7 @@ module PRU (
                     end
                     
                     // Update column and row counters
-                    if (r < row + height_radius - 1) begin
+                    if (r < row +  31) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -270,7 +270,6 @@ always_ff @ (posedge clk, negedge rst_n) begin
 				pru_red = color_buffer[1][9:0];
 				pru_green = color_buffer[1][19:10];
 				pru_blue = color_buffer[1][29:20];
->>>>>>> main
 				
 			end
 			2'b10: begin
@@ -280,7 +279,6 @@ always_ff @ (posedge clk, negedge rst_n) begin
 				pru_red = color_buffer[2][9:0];
 				pru_green = color_buffer[2][19:10];
 				pru_blue = color_buffer[2][29:20];
->>>>>>> main
 			end
 			2'b11: begin
 				//pru_red = 10'h200;
