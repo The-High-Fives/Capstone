@@ -14,6 +14,7 @@ module timer (
     localparam addr_offset = 32'h40000004; // 0x40000004
 
     logic [31:0] timer;
+	wire cs;
 
     always_ff @(posedge clk, negedge rst_n) begin
         if (!rst_n)
