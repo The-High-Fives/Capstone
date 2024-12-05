@@ -34,7 +34,7 @@ logic [9:0] row_count; // counts current pixel row
 logic y_init, y_acc, tcol_init, tcol_acc;
 
 assign oVALID_COORD = (row_count == 0) & (col_count == 0);
-assign oPresent = (act_row_count > 3);
+assign oPresent = (act_row_count > 5);
 assign oRow = total_row_accumulate/act_row_count;
 assign oCol = total_col_accumulate;
 
@@ -148,7 +148,7 @@ always_ff @(posedge iCLK or negedge iRST) begin
         act_row_count <= 0;
     end
     else if (tcol_acc) begin
-        if (red_row_count > 3)
+        if (red_row_count > 5)
             act_row_count <= act_row_count + 1;
     end
 end
@@ -161,7 +161,7 @@ always_ff @(posedge iCLK or negedge iRST) begin
         total_row_accumulate <= 0;
     end
     else if (tcol_acc) begin
-        if (red_row_count > 3)
+        if (red_row_count > 5)
             total_row_accumulate <= total_row_accumulate + row_count;
     end
 end
