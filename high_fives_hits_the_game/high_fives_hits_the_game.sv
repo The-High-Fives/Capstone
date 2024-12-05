@@ -66,6 +66,7 @@ wire VGA_Read;
 wire	       [9:0]			oVGA_R;   				//	VGA Red[9:0]
 wire	       [9:0]			oVGA_G;	 				//	VGA Green[9:0]
 wire	       [9:0]			oVGA_B;   				//	VGA Blue[9:0]
+
 assign  VGA_R = oVGA_R[9:2];
 assign  VGA_G = oVGA_G[9:2];
 assign  VGA_B = oVGA_B[9:2];
