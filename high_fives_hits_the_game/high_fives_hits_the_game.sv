@@ -234,6 +234,51 @@ IPU_wrapper u_IPU_wrapper (
     .ack_o      (bus_ack)
 );
 
+PRU_Preprocessing pru_buffer (
+    .clk(CLOCK_50),
+    .rst_n(DLY_RST_2),
+    .write(bus_write),
+    .data(bus_data_ss),
+    .bus_addr(bus_addr),
+    .busy(busy),
+    .color(color),
+    .row(row),
+    .col(col),
+    .width(width),
+    .height_radius(height_radius),
+    .shape_select(shape_select),
+    .start(start),
+    .subtract(subtract),
+    .color_load(i_color_load),
+    .ack(bus_ack),
+    .in_idle(in_idle),
+    .in_load_2(in_load_2)
+);
+
+// Instantiate the PRU module
+PRU DRAW (
+    .clk(CLOCK_50),
+    .rst_n(DLY_RST_2),
+    .color(color),
+    .row(row),
+    .col(col),
+    .width(width),
+    .height_radius(height_radius),
+    .pru_addr(pru_addr),
+    .pru_data(pru_data),
+    .shape_select(shape_select),
+    .start(start),
+    .subtract(subtract),
+    .busy(busy),
+    .done(done),
+    .color_load(i_color_load),
+    .VGA_CTRL_CLK(VGA_CTRL_CLK),
+    .VGA_Read(VGA_Read),                 
+    .pru_red(PRU_RED),
+    .pru_green(PRU_GREEN),
+    .pru_blue(PRU_BLUE)
+);
+
 timer u_timer (
     .clk        (CLOCK_50),
     .rst_n      (sys_rst_n),
