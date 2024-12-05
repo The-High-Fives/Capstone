@@ -6,7 +6,7 @@ set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEMA5F31C6
 set_global_assignment -name TOP_LEVEL_ENTITY "high_fives_hits_the_game"
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "15.1.0"
-set_global_assignment -name LAST_QUARTUS_VERSION "23.1std.1 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "23.1std.0 Lite Edition"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "15:27:30 DECEMBER 03,2024"
 set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
 set_global_assignment -name DEVICE_FILTER_PIN_COUNT 896
@@ -368,6 +368,11 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE ../src/hardware/PRU/VGA_Controller.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/PRU/Single_Port_PRU.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/PRU/Dual_Port_PRU.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/PRU/PreProcessor/PRU_Preprocessing.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/PRU/PRU.sv
 set_global_assignment -name VERILOG_FILE SEG7_LUT_6.v
 set_global_assignment -name VERILOG_FILE SEG7_LUT.v
 set_global_assignment -name VERILOG_FILE ../src/hardware/rtl/Line_Buffer1.v
@@ -408,4 +413,5 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/rtl/led_mm.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/rtl/bootloader.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../src/hardware/async_fifo.sv
 set_global_assignment -name SDC_FILE high_fives_hits_the_game.SDC
+set_global_assignment -name SOURCE_FILE db/high_fives_hits_the_game.cmp.rdb
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

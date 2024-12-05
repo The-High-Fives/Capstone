@@ -60,8 +60,16 @@ module high_fives_hits_the_game(
 //  REG/WIRE declarations
 //=======================================================
 
+//PRU and VGA
 wire sys_rst_n; // reset from reset delay
-
+wire VGA_Read;
+wire	       [9:0]			oVGA_R;   				//	VGA Red[9:0]
+wire	       [9:0]			oVGA_G;	 				//	VGA Green[9:0]
+wire	       [9:0]			oVGA_B;   				//	VGA Blue[9:0]
+assign  VGA_R = oVGA_R[9:2];
+assign  VGA_G = oVGA_G[9:2];
+assign  VGA_B = oVGA_B[9:2];
+assign   VGA_CTRL_CLK = VGA_CLK;
 // bootloader 
 wire [3:0] bl_strobe;
 wire [31:0] bl_data;
@@ -304,4 +312,24 @@ led_mm u_led_mm (
     .ack_o      (bus_ack)
 );
 
+
+VGA_Controller	  u1	(	//	Host Side
+							.oRequest(VGA_Read),
+							.iRed(PRU_RED),
+					      .iGreen(PRU_GREEN),
+						   .iBlue(PRU_BLUE),
+						
+							//	VGA Side
+							.oVGA_R(oVGA_R),
+							.oVGA_G(oVGA_G),
+							.oVGA_B(oVGA_B),
+							.oVGA_H_SYNC(VGA_HS),
+							.oVGA_V_SYNC(VGA_VS),
+							.oVGA_SYNC(VGA_SYNC_N),
+							.oVGA_BLANK(VGA_BLANK_N),
+							//	Control Signal
+							.iCLK(VGA_CTRL_CLK),
+							.iRST_N(DLY_RST_2),
+							.iZOOM_MODE_SW(SW[9])
+						   );
 endmodule
