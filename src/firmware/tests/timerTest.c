@@ -10,8 +10,7 @@ int main()
     do
     {
         timer += getTimerValue();
-        bool switchLED = timer >= 1000000;
-        if (switchLED)
+        if (timer >= 1000000)
         {
             setLED(LED, 1, statePointer);
             LED = !LED;
