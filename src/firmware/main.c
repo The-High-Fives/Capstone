@@ -17,10 +17,11 @@ int main()
     int *handX;
     int *handY;
 
+    int *dt;
+    char *SPART;
+
     while (!game->quitGame)
     {
-        int *dt;
-        char *SPART;
         getIO(dt, SPART, handX, handY);
 
         if (game->onStartScreen)

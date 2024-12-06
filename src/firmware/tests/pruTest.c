@@ -17,11 +17,11 @@ int main()
 
         if (iter < 16)
         {
-            drawCircle(x, y, 20 + iter * 2, 1);
+            drawCircle(x, y, 10 + iter, 1);
         }
         else
         {
-            drawRect(x, y, 50 + iter * 2, 50 + iter * 2, 2);
+            drawRect(x, y, 25 + iter, 25 + iter, 2);
         }
 
         for (i = 0; i < 10000000; i++)
