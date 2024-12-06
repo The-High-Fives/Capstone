@@ -30,6 +30,7 @@ module IPU_wrapper (
     wire [10:0] oRow, oCol;
     wire [20:0] fifo_out;
     wire o_empty;
+    wire cs;
 
     IPU u_IPU (
         // inputs

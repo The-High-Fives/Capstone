@@ -16,6 +16,7 @@ module led_mm (
 
     logic [9:0] led;
     assign LEDR = led;
+    wire cs;
 
     always_ff @(posedge clk, negedge rst_n) begin
         if (!rst_n)
