@@ -1,6 +1,5 @@
 #pragma once
 
-#include "defs.h"
 #include "utils.h"
 
 void setColor(color_t addr, Color color)
