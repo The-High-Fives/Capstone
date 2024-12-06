@@ -60,17 +60,6 @@ module high_fives_hits_the_game(
 //  REG/WIRE declarations
 //=======================================================
 
-//PRU and VGA
-wire sys_rst_n; // reset from reset delay
-wire VGA_Read;
-wire	       [9:0]			oVGA_R;   				//	VGA Red[9:0]
-wire	       [9:0]			oVGA_G;	 				//	VGA Green[9:0]
-wire	       [9:0]			oVGA_B;   				//	VGA Blue[9:0]
-
-assign  VGA_R = oVGA_R[9:2];
-assign  VGA_G = oVGA_G[9:2];
-assign  VGA_B = oVGA_B[9:2];
-assign   VGA_CTRL_CLK = VGA_CLK;
 // bootloader 
 wire [3:0] bl_strobe;
 wire [31:0] bl_data;
@@ -144,6 +133,17 @@ SEG7_LUT_6 	u_SEG7	(
 	.iDIG({lut_instr_count[11:0], lut_rx_counter[11:0]})
 );
 
+
+sdram_pll 			u6	(
+							.refclk(CLOCK_50),
+							.rst(1'b0),
+							.outclk_0(sdram_ctrl_clk),
+							.outclk_1(DRAM_CLK),
+							.outclk_2(D5M_XCLKIN),    //25M
+					      .outclk_3(VGA_CLK)       //25M
+
+						   );
+						   
 cpu u_cpu (
     .clk          (CLOCK_50),
     .rst_n        (sys_rst_n),
@@ -243,6 +243,34 @@ IPU_wrapper u_IPU_wrapper (
     .ack_o      (bus_ack)
 );
 
+
+//PRU and VGA
+wire sys_rst_n; // reset from reset delay
+wire Read;
+wire	       [9:0]			oVGA_R;   				//	VGA Red[9:0]
+wire	       [9:0]			oVGA_G;	 				//	VGA Green[9:0]
+wire	       [9:0]			oVGA_B;   				//	VGA Blue[9:0]
+
+assign  VGA_R = oVGA_R[9:2];
+assign  VGA_G = oVGA_G[9:2];
+assign  VGA_B = oVGA_B[9:2];
+assign   VGA_CTRL_CLK = VGA_CLK;
+wire [9:0] PRU_RED, PRU_GREEN, PRU_BLUE;
+    reg [1:0] color;
+    reg [9:0] row;
+    reg [8:0] col;
+    reg [9:0] width;
+    reg [8:0] height_radius;
+    // reg [31:0] bitmap_addr;
+    reg [1:0] shape_select;
+	 reg [31:0] pru_addr;
+    reg [31:0] pru_data;
+    reg start;
+    reg subtract;
+    reg i_color_load;
+    // reg i_busy,i_write;
+    reg done;
+
 PRU_Preprocessing pru_buffer (
     .clk(CLOCK_50),
     .rst_n(DLY_RST_2),
@@ -282,7 +310,7 @@ PRU DRAW (
     .done(done),
     .color_load(i_color_load),
     .VGA_CTRL_CLK(VGA_CTRL_CLK),
-    .VGA_Read(VGA_Read),                 
+    .VGA_Read(Read),                 
     .pru_red(PRU_RED),
     .pru_green(PRU_GREEN),
     .pru_blue(PRU_BLUE)
@@ -315,7 +343,7 @@ led_mm u_led_mm (
 
 
 VGA_Controller	  u1	(	//	Host Side
-							.oRequest(VGA_Read),
+							.oRequest(Read),
 							.iRed(PRU_RED),
 					      .iGreen(PRU_GREEN),
 						   .iBlue(PRU_BLUE),
