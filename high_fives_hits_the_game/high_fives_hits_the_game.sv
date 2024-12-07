@@ -68,6 +68,7 @@ wire bl_stall;
 
 // databus
 wire bus_ack, bus_read, bus_write;
+wire VGA_CTRL_CLK;
 wire [31:0] bus_addr;
 wire [31:0] bus_data_ms; // master source
 wire [31:0] bus_data_ss; // slave source
@@ -144,24 +145,7 @@ sdram_pll 			u6	(
 
 						   );
 						   
-cpu u_cpu (
-    .clk          (CLOCK_50),
-    .rst_n        (sys_rst_n),
 
-    .b_addr_o     (bus_addr),
-    .b_data_i     (bus_data_ss),
-    .b_data_o     (bus_data_ms),
-    .b_read_o     (bus_read),
-    .b_write_o    (bus_write),
-    .b_ack_i      (bus_ack),
-	
-	//.bl_strobe	(4'b0000),
-    .bl_strobe	(bl_strobe),
-	.bl_data	(bl_data),
-    .bl_addr	(bl_addr),
-    //.bl_stall	(1'b0)
-    .bl_stall	(bl_stall)
-);
 
 spart u_spart (
     .clk        (CLOCK_50),
@@ -271,11 +255,32 @@ wire [9:0] PRU_RED, PRU_GREEN, PRU_BLUE;
     // reg i_busy,i_write;
     reg done;
 
+
+cpu u_cpu (
+    .clk          (CLOCK_50),
+    .rst_n        (sys_rst_n),
+
+    .b_addr_o     (bus_addr),
+    .b_data_i     (bus_data_ss),
+    .b_data_o     (bus_data_ms),
+    .b_read_o     (bus_read),
+    .b_write_o    (bus_write),
+    .b_ack_i      (bus_ack),
+	
+	//.bl_strobe	(4'b0000),
+    .bl_strobe	(bl_strobe),
+	.bl_data	(bl_data),
+    .bl_addr	(bl_addr),
+    //.bl_stall	(1'b0)
+    .bl_stall	(bl_stall)
+);
+
+
 PRU_Preprocessing pru_buffer (
     .clk(CLOCK_50),
-    .rst_n(DLY_RST_2),
+    .rst_n(sys_rst_n),
     .write(bus_write),
-    .data(bus_data_ss),
+    .data(bus_data_ms),
     .bus_addr(bus_addr),
     .busy(busy),
     .color(color),
@@ -295,7 +300,7 @@ PRU_Preprocessing pru_buffer (
 // Instantiate the PRU module
 PRU DRAW (
     .clk(CLOCK_50),
-    .rst_n(DLY_RST_2),
+    .rst_n(sys_rst_n),
     .color(color),
     .row(row),
     .col(col),
