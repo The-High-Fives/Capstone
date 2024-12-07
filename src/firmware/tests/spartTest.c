@@ -9,107 +9,107 @@ int main()
         sp = getSPART();
         if (sp == 'a')
         {
-            setSpart('z');
+            setSPART('z');
         }
         else if (sp == 'b')
         {
-            setSpart('y');
+            setSPART('y');
         }
         else if (sp == 'c')
         {
-            setSpart('x');
+            setSPART('x');
         }
         else if (sp == 'd')
         {
-            setSpart('w');
+            setSPART('w');
         }
         else if (sp == 'e')
         {
-            setSpart('v');
+            setSPART('v');
         }
         else if (sp == 'f')
         {
-            setSpart('u');
+            setSPART('u');
         }
         else if (sp == 'g')
         {
-            setSpart('t');
+            setSPART('t');
         }
         else if (sp == 'h')
         {
-            setSpart('s');
+            setSPART('s');
         }
         else if (sp == 'i')
         {
-            setSpart('r');
+            setSPART('r');
         }
         else if (sp == 'j')
         {
-            setSpart('q');
+            setSPART('q');
         }
         else if (sp == 'k')
         {
-            setSpart('p');
+            setSPART('p');
         }
         else if (sp == 'l')
         {
-            setSpart('o');
+            setSPART('o');
         }
         else if (sp == 'm')
         {
-            setSpart('n');
+            setSPART('n');
         }
         else if (sp == 'n')
         {
-            setSpart('m');
+            setSPART('m');
         }
         else if (sp == 'o')
         {
-            setSpart('l');
+            setSPART('l');
         }
         else if (sp == 'p')
         {
-            setSpart('k');
+            setSPART('k');
         }
         else if (sp == 'q')
         {
-            setSpart('j');
+            setSPART('j');
         }
         else if (sp == 'r')
         {
-            setSpart('i');
+            setSPART('i');
         }
         else if (sp == 's')
         {
-            setSpart('h');
+            setSPART('h');
         }
         else if (sp == 't')
         {
-            setSpart('g');
+            setSPART('g');
         }
         else if (sp == 'u')
         {
-            setSpart('f');
+            setSPART('f');
         }
         else if (sp == 'v')
         {
-            setSpart('e');
+            setSPART('e');
         }
         else if (sp == 'w')
         {
-            setSpart('d');
+            setSPART('d');
         }
         else if (sp == 'x')
         {
-            setSpart('c');
+            setSPART('c');
         }
         else if (sp == 'y')
         {
-            setSpart('b');
+            setSPART('b');
         }
         else if (sp == 'z')
         {
-            setSpart('a');
+            setSPART('a');
         }
     } while (sp != 'q');
 
