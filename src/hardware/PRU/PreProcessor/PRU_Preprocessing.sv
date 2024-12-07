@@ -16,7 +16,6 @@ module PRU_Preprocessing (
     output logic color_load,             // Color load signal
 	output logic ack
 );
-
     typedef enum logic [1:0] {IDLE, LOAD_SHAPE, LOAD_IMM} state_t; // State definitions
     state_t state, next_state;                            // Current and next state
 	logic load1, load2, loadImm;
