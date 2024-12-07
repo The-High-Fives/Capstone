@@ -8,6 +8,7 @@ module PRU (
     input logic [8:0] height_radius,     // Height of rectangle or radius of circle
 	input logic [31:0] pru_addr,
     input logic [31:0] pru_data,
+    input logic [31:0] bitmap_addr,
     input logic [1:0] shape_select,      // Shape selection: 00 for rectangle, 01 for circle
     input logic start,                   // Start signal
 	input logic subtract,
@@ -173,7 +174,7 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-                    if ((c >= col && c < col + height_radius && r >= row) && (r < row + height_radius)) begin //FIXME LOOK OVER THIS? for height_radius and width
+                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 32)) begin //FIXME LOOK OVER THIS? for height_radius and width
 						draw_bitmap_counter <= draw_bitmap_counter + 1;
                         iwe <= ibitmaprd_data == 1'b1;
                     end
@@ -182,7 +183,7 @@ module PRU (
                     end
                     
                     // Update column and row counters
-                    if (r < row + height_radius - 1) begin
+                    if (r < row + 31) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -214,7 +215,7 @@ assign different_pixel = pixel_counter != prev_pixel_count;
 
 Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calculator),.we(iwe),.wrt_data(color),.rd_data(ird_data));
 
-Single_Port_PRU bitmaps (.clk(clk), .re_addr(draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
+Single_Port_PRU bitmaps (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
 
 async_fifo 
 #(
