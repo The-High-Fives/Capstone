@@ -74,8 +74,8 @@ module IPU_wrapper (
             present <= 0;
         end
         else if (!o_empty) begin
-            row <= fifo_out[9:0];
-            col <= fifo_out[19:10];
+            col <= fifo_out[9:0];
+            row <= fifo_out[19:10];
             present <= fifo_out[20];
         end
     end

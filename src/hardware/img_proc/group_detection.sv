@@ -16,7 +16,7 @@ input iRST;
 
 output [10:0] oRow;
 output [10:0] oCol;
-output oVALID_COORD;
+output logic oVALID_COORD;
 output oPresent;
 
 logic [16:0] y_accum; // column accumulation
@@ -32,11 +32,22 @@ logic [9:0] row_count; // counts current pixel row
 
 // control signals
 logic y_init, y_acc, tcol_init, tcol_acc;
+logic valid, valid_last;
 
-assign oVALID_COORD = (row_count == 0) & (col_count == 0);
+assign valid = (row_count == 0) & (col_count == 0);
 assign oPresent = (act_row_count > 5);
 assign oRow = total_row_accumulate/act_row_count;
 assign oCol = total_col_accumulate;
+
+assign oVALID_COORD = ~valid_last & valid;
+
+// VALID_COORD edge detector
+always_ff @(posedge clk, negedge rst_n) begin
+    if (!rst_n)
+        valid_last <= 0;
+    else
+        valid_last <= valid;
+end
 
 always_comb begin
     y_init = 0;
