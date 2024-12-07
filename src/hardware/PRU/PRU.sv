@@ -236,7 +236,7 @@ PRU_Fifo_Buffer
 //Color Register
 always_ff @ (posedge clk, negedge rst_n) begin
     if (!rst_n) begin
-        color_buffer[0] <= '0;
+        color_buffer[0] <= '1;
         color_buffer[1] <= 30'h30FFF0F0;
         color_buffer[2] <= 30'h107FF00F;
         color_buffer[3] <= 30'h270F3F53;
