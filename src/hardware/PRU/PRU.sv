@@ -20,8 +20,7 @@ module PRU (
     output logic [9:0] pru_red,
     output logic [9:0] pru_green,
     output logic [9:0] pru_blue
-);
-	
+);	
     // Define FSM States
     typedef enum logic [2:0] {
         IDLE, RESET_MAP, DRAW_RECT, DRAW_CIRCLE, DRAW_BITMAP, COMPLETE
