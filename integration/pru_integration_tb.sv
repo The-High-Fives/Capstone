@@ -8,7 +8,8 @@ module pru_integration_tb;
     logic [9:0] VGA_BLUE, VGA_GREEN, VGA_RED;
     cpu_pru DUT (.clk(clk),.rst_n(rst_n),.VGA_CTRL_CLK(VGA_CTRL_CLK),
     .VGA_Read(VGA_Read),.bl_stall(bl_stall),.bl_strobe(bl_strobe),
-    .VGA_BLUE(VGA_BLUE),.VGA_RED(VGA_RED),.VGA_GREEN(VGA_GREEN));
+    .VGA_BLUE(VGA_BLUE),.VGA_RED(VGA_RED),.VGA_GREEN(VGA_GREEN),
+    .b_ack(), .pru_start(),  .pru_done(),  .in_idle(), .in_load_2());
 
 
         // Clock generation

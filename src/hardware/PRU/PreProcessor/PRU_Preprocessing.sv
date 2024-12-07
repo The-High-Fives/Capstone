@@ -19,7 +19,7 @@ module PRU_Preprocessing (
     output logic in_load_2
 );
 
-    typedef enum logic [1:0] {IDLE, LOAD} state_t; // State definitions
+    typedef enum logic [1:0] {IDLE, LOAD_SHAPE} state_t; // State definitions
     state_t state, next_state;                            // Current and next state
 	logic load1, load2;
     // Sequential logic for state transitions
@@ -36,9 +36,10 @@ module PRU_Preprocessing (
 		load2 = 0;
         in_idle = 0;
         in_load_2 = 0;
+        color_load = 0;
 		next_state = state;
 		case (state)
-			LOAD: begin
+			LOAD_SHAPE: begin
                 in_load_2 = 1;
                 if (write && bus_addr[31:8] == 24'h400001)
                     ack = 1'b0;
@@ -54,9 +55,13 @@ module PRU_Preprocessing (
                 if (write && bus_addr[31:8] == 24'h400001)
                     ack = 1'b0;
 				if (write && !busy && bus_addr[31:8] == 24'h400001) begin
-					load1 = 1;
 					ack = 1;
-					next_state = LOAD;
+                    if ((bus_addr == 32'h4000010C) || (bus_addr == 32'h40000110) || (bus_addr == 32'h40000114) || (bus_addr == 32'h40000118)) begin
+						color_load = 1;
+                    end else begin
+                        load1 = 1;
+					    next_state = LOAD_SHAPE;
+                    end
 				end
 			end
 		endcase
@@ -74,9 +79,8 @@ module PRU_Preprocessing (
             height_radius <= 0;
             shape_select <= 0;
             subtract <= 0;
-            color_load <= 0;
         end else begin
-            if (load1) begin
+        if (load1) begin
                 // Populate the first set of PRU inputs
 
 		row <= data[8:0];
@@ -84,16 +88,16 @@ module PRU_Preprocessing (
 		color <= data[20:19];
 				shape_select <= data[22:21];
 				start = 0;
-            end
-            else if (load2) begin
+        end
+        else if (load2) begin
                 // Populate the remaining PRU inputs
-	    height_radius <= data[8:0];
-		width <= data[18:9];
-		    subtract <= data[19];
-		    color_load <= data[20];
-		start = 1;
+	        height_radius <= data[8:0];
+		    width <= data[18:9];
+	        subtract <= data[19];
+		    
+		    start = 1;
 		end else begin
-			start = 0;
+			    start = 0;
             end	
 		end		
             
