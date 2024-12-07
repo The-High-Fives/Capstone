@@ -17,7 +17,11 @@ module IPU_wrapper (
     input [31:0] addr_i,
     input [31:0] data_i,
     inout [31:0] data_o,
-    inout ack_o
+    inout ack_o,
+
+    // debug
+    output [9:0] debug_row, 
+    output [9:0] debug_col
 );
 
     localparam addr_offset = 32'h40000200;
@@ -31,6 +35,9 @@ module IPU_wrapper (
     wire [20:0] fifo_out;
     wire o_empty;
     wire cs;
+
+    assign debug_row = oRow[9:0];
+    assign debug_col = oCol[9:0];
 
     IPU u_IPU (
         // inputs
