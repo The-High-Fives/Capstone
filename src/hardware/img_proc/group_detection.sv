@@ -42,7 +42,7 @@ assign oCol = total_col_accumulate;
 assign oVALID_COORD = ~valid_last & valid;
 
 // VALID_COORD edge detector
-always_ff @(posedge clk, negedge rst_n) begin
+always_ff @(posedge iCLK, negedge iRST) begin
     if (!rst_n)
         valid_last <= 0;
     else
