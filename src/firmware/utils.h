@@ -46,9 +46,9 @@ void setLED(bool value, int led, int *ledState);
 
 int getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);
-void getCursorLocation(int *x, int *y);
+void getCursorLocation(int *x, int *y, bool *present, bool *valid);
 char getSPART();
 void setSPART(char value);
-void getIO(int *timer, char *SPART, int *x, int *y);
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
 
 #endif

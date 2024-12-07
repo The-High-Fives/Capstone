@@ -1,7 +1,7 @@
 import serial
 import sys
 
-spart_port = 'COM6' # guess
+spart_ports = ['COM4', 'COM5', 'COM6'] # guess
 baud_rate = 19200  # also a guess
 
 def send_instruction_count(count):
@@ -45,20 +45,22 @@ if __name__ == "__main__":
         sys.exit()
 
     # Open the SPART port
-    try:
-        ser = serial.Serial(spart_port, baud_rate, timeout = 0.1, bytesize = serial.EIGHTBITS,
-                            stopbits = serial.STOPBITS_ONE, parity = serial.PARITY_NONE)
-        print(f"{spart_port} is available")
+    for port in spart_ports:
+        try:
+            ser = serial.Serial(port, baud_rate, timeout = 0.1, bytesize = serial.EIGHTBITS,
+                                stopbits = serial.STOPBITS_ONE, parity = serial.PARITY_NONE)
+            print(f"{port} is available")
 
-        # Send the instructions from the hex file
-        filename = sys.argv[1]  # up for grabs!
-        send_instructions(filename)
+            # Send the instructions from the hex file
+            filename = sys.argv[1]  # up for grabs!
+            send_instructions(filename)
 
-        hello = str(ser.read(5))
-        print(hello)
+            hello = str(ser.read(5))
+            print(hello)
+            break
 
-    except serial.SerialException:
-        print(f"Error: Could not open port {spart_port}")
-    finally:
-        if 'ser' in locals() and ser.is_open:
-            ser.close()
+        except serial.SerialException:
+            print(f"Error: Could not open port {port}")
+        finally:
+            if 'ser' in locals() and ser.is_open:
+                ser.close()

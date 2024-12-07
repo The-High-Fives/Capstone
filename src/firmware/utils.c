@@ -120,15 +120,18 @@ bool checkLocationForColor(int x, int y, int radius)
     return (*memSet) & 1;
 }
 
-void getCursorLocation(int *x, int *y)
+void getCursorLocation(int *x, int *y, bool *present, bool *valid)
 {
     int *memSet;
 
     memSet = (int *)DETECT_LOCATION_ADDR;
-    int valid = (*memSet) & 1;
-    int present = (*memSet >> 1) & 1;
+    int validSig = ((*memSet) & 1);
+    int presentSig = ((*memSet >> 1) & 1);
 
-    if (present && valid)
+    *present = presentSig;
+    *valid = validSig;
+
+    if (presentSig && validSig)
     {
         *y = (*memSet >> 12) & 0x1FF;
         *x = (*memSet >> 2) & 0x3FF;
@@ -153,10 +156,10 @@ void setSPART(char value)
     *memSet = command;
 }
 
-void getIO(int *timer, char *SPART, int *x, int *y)
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid)
 {
     *timer = getTimerValue();
     *SPART = getSPART();
 
-    getCursorLocation(x, y);
+    getCursorLocation(x, y, present, valid);
 }
