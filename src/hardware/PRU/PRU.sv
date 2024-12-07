@@ -52,13 +52,15 @@ module PRU (
     // Combinational logic for state transitions and pixel calculations
     always_comb begin
         next_state = state;
-        rect_done = (c >= col + width-1) && (r >= row + height_radius-1);
+		pixel_calculator = (r + (50 * c)); // calculates 1D location of 2D (row,column)x
+        pixel_in_circle = ((c - col) * (c - col) + (r - row) * (r - row) <= height_radius * height_radius);
+        rect_done = (c >= col + height_radius-1) && (r >= row + width-1);
         circle_done = (c >= col + height_radius - 1) && (r >= row + height_radius - 1);
 		bitmap_done = (draw_bitmap_counter == 1023);
         case (state)
 
             RESET_MAP: begin        
-		    if (c == 479 && r == 639) begin
+				if (c == 49 && r == 49) begin
                     next_state = IDLE;
                 end     
             end
@@ -96,22 +98,19 @@ module PRU (
             r <= 0;
             done <= 0;
 			draw_bitmap_counter <= 0; // Reset bitmap counter
-        pixel_calculator = 0; // calculates 1D location of 2D (row,column)x
-        pixel_in_circle = 0;
         end
         else begin
             state <= next_state;
-	    pixel_calculator = (c + (640 * r)); // calculates 1D location of 2D (row,column)x
-        pixel_in_circle = ((c - col) * (c - col) + (r - row) * (r - row) <= height_radius * height_radius);
+
             case (state)
                 RESET_MAP: begin
-
-
-			if (r < 479) begin
+                    // Reset color_map to 0s sequentially
+                    //color_map[pixel_calculator] <= 2'b00;// TODO this is needs another think through
+                    if (r < 49) begin
                         r <= r + 1;
                     end else begin
                         r <= 0;
-			    if (c < 639) begin
+                        if (c < 49) begin
                             c <= c + 1;
                         end else begin
 							r <= 0;
@@ -126,9 +125,8 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-
-                    if (c >= col && c < col + width && r >= row && r < row + height_radius) begin
-			    if (c < 640 && r < 480) begin  // Bounds check
+                    if (c >= col && c < col + height_radius && r >= row && r < row + width) begin
+                        if (c < 50 && r < 50) begin  // Bounds check
                             iwe <= 1;
                         end
                         else begin
@@ -136,8 +134,7 @@ module PRU (
                         end
                     end
                     // Update column and row counters
-
-                    if (r < row + height_radius - 1) begin
+                    if (r < row + width - 1) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -151,8 +148,7 @@ module PRU (
                     if (r < row - height_radius) r <= row - height_radius;
                     
                     // Draw circle sequentially, checking if each pixel is within radius
-
-			if (c < 640 && r < 480 && pixel_in_circle) begin
+                    if (c < 50 && r < 50 && pixel_in_circle) begin
                         iwe <= 1;
                     end
                     else begin
@@ -174,7 +170,7 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 32)) begin //FIXME LOOK OVER THIS? for height_radius and width
+                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 32)) begin
 						draw_bitmap_counter <= draw_bitmap_counter + 1;
                         iwe <= ibitmaprd_data == 1'b1;
                     end
@@ -183,7 +179,7 @@ module PRU (
                     end
                     
                     // Update column and row counters
-                    if (r < row +  31) begin
+                    if (r < row + 31) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -193,7 +189,6 @@ module PRU (
 
                 COMPLETE: begin //This is complete
                     done <= 1;  // Signal that drawing is complete
-                    iwe <= 0;
                 end
 
                 default: begin //IDLE
@@ -202,7 +197,6 @@ module PRU (
                     r <= 0;
 					draw_bitmap_counter <= 0;
                     done <= 0;
-                    iwe <=0;
                 end
             endcase
         end
@@ -238,16 +232,16 @@ PRU_Fifo_Buffer
 always_ff @ (posedge clk, negedge rst_n) begin
     if (!rst_n) begin
         color_buffer[0] <= '0;
-        color_buffer[1] <= 30'h30FFF0F0;
-        color_buffer[2] <= 30'h107FF00F;
-        color_buffer[3] <= 30'h270F3F53;
+        color_buffer[1] <= '0;
+        color_buffer[2] <= '0;
+        color_buffer[3] <= '0;
     end
     else if (color_load) begin
-        if (pru_addr == 32'h4000)
+        if (pru_addr == 32'h4000010C)
             color_buffer[0] = pru_data[30:0];
-        else if (pru_addr == 32'h4004)
+        else if (pru_addr == 32'h40000110)
             color_buffer[1] = pru_data[30:0];
-        else if (pru_addr == 32'h4008)
+        else if (pru_addr == 32'h40000114)
             color_buffer[2] = pru_data[30:0];
         else
             color_buffer[3] = pru_data[30:0];
