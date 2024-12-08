@@ -22,7 +22,6 @@
 #define SPRITE_CODE 0b10
 #define LETTER_CODE 0b11
 
-#define uint8_t unsigned char
 #define color_t unsigned char
 #define bool unsigned char
 
@@ -32,9 +31,9 @@
 
 typedef struct
 {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
+    int r;
+    int g;
+    int b;
 } Color;
 
 void drawCircle(int x, int y, int radius, color_t color);
@@ -46,9 +45,9 @@ void setLED(bool value, int led, int *ledState);
 
 int getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);
-void getCursorLocation(int *x, int *y);
+void getCursorLocation(int *x, int *y, bool *present, bool *valid);
 char getSPART();
 void setSPART(char value);
-void getIO(int *timer, char *SPART, int *x, int *y);
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
 
 #endif
