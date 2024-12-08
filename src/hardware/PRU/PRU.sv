@@ -104,8 +104,10 @@ module PRU (
             r <= 0;
             done <= 0;
 			draw_bitmap_counter <= 0; // Reset bitmap counter
-        pixel_calculator = 0; // calculates 1D location of 2D (row,column)x
-        pixel_in_circle = 0;
+            draw_letter_counter <= 0; // Reset bitmap counter
+
+        pixel_calculator <= 0; // calculates 1D location of 2D (row,column)x
+        pixel_in_circle <= 0;
         end
         else begin
             state <= next_state;
@@ -204,8 +206,8 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 16)) begin //FIXME LOOK OVER THIS? for height_radius and width
-						iletterrd_data <= iletterrd_data + 1;
+                    if ((c >= col && c < col + 16 && r >= row) && (r < row + 32)) begin //FIXME LOOK OVER THIS? for height_radius and width
+						draw_letter_counter <= draw_letter_counter + 1;
                         iwe <= iletterrd_data == 1'b1;
                     end
                     else begin
@@ -213,7 +215,7 @@ module PRU (
                     end
                     
                     // Update column and row counters
-                    if (r < row + 15) begin
+                    if (r < row + 31) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -230,6 +232,7 @@ module PRU (
                     // Reset counters and done flag in IDLE state
                     c <= 0;
                     r <= 0;
+                    draw_letter_counter <= 0;
 					draw_bitmap_counter <= 0;
                     done <= 0;
                     iwe <=0;
@@ -247,7 +250,7 @@ Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calcul
 
 Single_Port_PRU bitmaps (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
 
-Single_Port_PRU letters (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_letter_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(iletterrd_data));
+Single_Port_PRU_l letters (.clk(clk), .re_addr(19'h00200 + draw_letter_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(iletterrd_data));
 
 async_fifo 
 #(

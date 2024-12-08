@@ -1,4 +1,4 @@
-module Single_Port_PRU(clk,re,re_addr,wr_addr,wrt_data,rd_data);
+module Single_Port_PRU_l(clk,re,re_addr,wr_addr,wrt_data,rd_data);
 input clk;
 input re;
 input [18:0] re_addr;
@@ -7,7 +7,7 @@ input [18:0] wr_addr;
 
 output reg rd_data;
 
-reg imagebuffer [1023:0];
+reg imagebuffer [20479:0];
 
 always @ (posedge clk) begin
 	if (re)     
