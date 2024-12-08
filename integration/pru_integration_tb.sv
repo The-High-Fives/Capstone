@@ -36,15 +36,14 @@ module pru_integration_tb;
         repeat (200)@ (posedge clk) begin 
         rst_n = 1;
         end
-        repeat (16000)@ (posedge clk) begin 
+        repeat (10000)@ (posedge clk) begin 
         VGA_Read = 1;
         end
 
 
         repeat (8000)@ (posedge clk);
-        display_color_map(80, 250, 175, 350);
+        display_color_map(80, 80, 150, 150);
         $display("Above is circle");
-        display_color_map(300, 300, 375, 375);
         $stop();
     end
     task display_color_map(input int x_start, input int y_start, input int x_end, input int y_end);
