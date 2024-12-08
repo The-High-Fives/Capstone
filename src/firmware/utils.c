@@ -7,8 +7,7 @@ void setColor(color_t addr, Color color)
     int *memSet;
     int command;
 
-    memSet = (int *)COLOR_ADDR;
-    memSet += (addr & 3) * 4;
+    memSet = (int *)(COLOR_ADDR + (addr & 3) * 4);
 
     command = ((color.r & 0x3FF) << 20) | ((color.g & 0x3FF) << 10) | (color.b & 0x3FF);
     *memSet = command;

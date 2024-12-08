@@ -22,7 +22,6 @@
 #define SPRITE_CODE 0b10
 #define LETTER_CODE 0b11
 
-#define uint8_t unsigned char
 #define color_t unsigned char
 #define bool unsigned char
 
@@ -32,9 +31,9 @@
 
 typedef struct
 {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
+    int r;
+    int g;
+    int b;
 } Color;
 
 void drawCircle(int x, int y, int radius, color_t color);
