@@ -125,51 +125,63 @@ drawCircle:
         addi    sp,sp,48
         jr      ra
 getCursorLocation:
-        addi    sp,sp,-48
-        sw      s0,44(sp)
-        addi    s0,sp,48
-        sw      a0,-36(s0)
-        sw      a1,-40(s0)
-        sw      a2,-44(s0)
-        sw      a3,-48(s0)
+        addi    sp,sp,-80
+        sw      s0,76(sp)
+        addi    s0,sp,80
+        sw      a0,-68(s0)
+        sw      a1,-72(s0)
+        sw      a2,-76(s0)
+        sw      a3,-80(s0)
         li      a5,1073741824
         addi    a5,a5,512
         sw      a5,-20(s0)
         lw      a5,-20(s0)
         lw      a5,0(a5)
-        andi    a5,a5,1
         sw      a5,-24(s0)
         lw      a5,-20(s0)
         lw      a5,0(a5)
         srai    a5,a5,1
-        andi    a5,a5,1
         sw      a5,-28(s0)
-        lw      a5,-28(s0)
-        andi    a4,a5,0xff
-        lw      a5,-44(s0)
-        sb      a4,0(a5)
-        lw      a5,-24(s0)
-        andi    a4,a5,0xff
-        lw      a5,-48(s0)
-        sb      a4,0(a5)
-        lw      a5,-28(s0)
-        beqz    a5,.L7
-        lw      a5,-24(s0)
-        beqz    a5,.L7
-        lw      a5,-20(s0)
-        lw      a5,0(a5)
-        srai    a5,a5,12
-        andi    a4,a5,511
-        lw      a5,-40(s0)
-        sw      a4,0(a5)
         lw      a5,-20(s0)
         lw      a5,0(a5)
         srai    a5,a5,2
-        andi    a4,a5,1023
+        sw      a5,-32(s0)
+        lw      a5,-20(s0)
+        lw      a5,0(a5)
+        srai    a5,a5,12
+        sw      a5,-36(s0)
+        lw      a5,-24(s0)
+        andi    a5,a5,1
+        sw      a5,-40(s0)
+        lw      a5,-28(s0)
+        andi    a5,a5,1
+        sw      a5,-44(s0)
+        lw      a5,-44(s0)
+        andi    a4,a5,0xff
+        lw      a5,-76(s0)
+        sb      a4,0(a5)
+        lw      a5,-40(s0)
+        andi    a4,a5,0xff
+        lw      a5,-80(s0)
+        sb      a4,0(a5)
+        lw      a5,-44(s0)
+        beqz    a5,.L7
+        lw      a5,-40(s0)
+        beqz    a5,.L7
         lw      a5,-36(s0)
+        andi    a5,a5,511
+        sw      a5,-48(s0)
+        lw      a5,-32(s0)
+        andi    a5,a5,1023
+        sw      a5,-52(s0)
+        lw      a5,-68(s0)
+        lw      a4,-52(s0)
+        sw      a4,0(a5)
+        lw      a5,-72(s0)
+        lw      a4,-48(s0)
         sw      a4,0(a5)
 .L7:
         nop
-        lw      s0,44(sp)
-        addi    sp,sp,48
+        lw      s0,76(sp)
+        addi    sp,sp,80
         jr      ra
