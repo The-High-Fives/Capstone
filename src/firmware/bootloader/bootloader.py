@@ -1,7 +1,7 @@
 import serial
 import sys
 
-spart_port = 'COM6' # guess
+spart_port = 'COM5' # guess
 baud_rate = 19200  # also a guess
 
 def send_instruction_count(count):
