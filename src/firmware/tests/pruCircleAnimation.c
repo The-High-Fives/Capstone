@@ -29,15 +29,10 @@ int main()
 
         windupCircleRadius = CIRCLE_RADIUS + (hold_time - milliseconds) / 10;
 
-        drawRect(0, 0, 640, 480, 0);
         drawCircle(x, y, windupCircleRadius, color);
         drawCircle(x, y, windupCircleRadius - 5, 0);
         drawCircle(x, y, CIRCLE_RADIUS, color);
 
         milliseconds = milliseconds % hold_time;
-
-        for (int i = 0; i < 10000; i++)
-        {
-        }
     }
 }
