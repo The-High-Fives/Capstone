@@ -124,16 +124,28 @@ void getCursorLocation(int *x, int *y, bool *present, bool *valid)
     int *memSet;
 
     memSet = (int *)DETECT_LOCATION_ADDR;
-    int validSig = ((*memSet) & 1);
-    int presentSig = ((*memSet >> 1) & 1);
+
+    int shift0 = *memSet;
+    int shift1 = *memSet >> 1;
+    int shift2 = *memSet >> 2;
+    int shift3 = *memSet >> 12;
+
+    int validSig = (shift0 & 1);
+    int presentSig = (shift1 & 1);
 
     *present = presentSig;
     *valid = validSig;
 
+    int xSig;
+    int ySig;
+
     if (presentSig && validSig)
     {
-        *y = (*memSet >> 12) & 0x1FF;
-        *x = (*memSet >> 2) & 0x3FF;
+        ySig = shift3 & 0x1FF;
+        xSig = shift2 & 0x3FF;
+
+        *x = xSig;
+        *y = ySig;
     }
 }
 

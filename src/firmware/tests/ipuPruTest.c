@@ -4,8 +4,8 @@ int main()
 {
     int *x;
     int *y;
-    int *present;
-    int *valid;
+    bool *present;
+    bool *valid;
 
     while (1)
     {
