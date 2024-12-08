@@ -241,8 +241,9 @@ assign  VGA_B = oVGA_B[9:2];
 assign   VGA_CTRL_CLK = VGA_CLK;
 wire [9:0] PRU_RED, PRU_GREEN, PRU_BLUE;
     reg [1:0] color;
-    reg [9:0] row;
-    reg [8:0] col;
+    reg [8:0] row;
+    reg [9:0] col;
+    
     reg [9:0] width;
     reg [8:0] height_radius;
     // reg [31:0] bitmap_addr;
