@@ -100,7 +100,7 @@ assign rxd = GPIO[5];
 assign auto_start = ((KEY[0])&&(DLY_RST_3)&&(!DLY_RST_4))? 1'b1:1'b0;
 
 assign	D5M_TRIGGER	=	1'b1;  // tRIGGER
-assign	D5M_RESET_N	=	DLY_RST_1;
+assign	D5M_RESET_N	=	sys_rst_n;
 
 Reset_Delay	u2	(	
 	.iCLK(CLOCK_50),
