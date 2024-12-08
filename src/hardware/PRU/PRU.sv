@@ -24,15 +24,15 @@ module PRU (
 	
     // Define FSM States
     typedef enum logic [2:0] {
-        IDLE, RESET_MAP, DRAW_RECT, DRAW_CIRCLE, DRAW_BITMAP, COMPLETE
+        IDLE, RESET_MAP, DRAW_RECT, DRAW_CIRCLE, DRAW_BITMAP, DRAW_LETTER, COMPLETE
     } state_t;
 
     state_t state, next_state;
     integer c, r;                        // Current row and column counters
 	logic [18:0] pixel_calculator;			 // Calculates position in 1D color_map array given row and column
-	logic [18:0] draw_bitmap_counter; // draw bitmap counter
+	logic [18:0] draw_bitmap_counter, draw_letter_counter; // draw bitmap counter
     logic pixel_in_circle;               // Flag to check if pixel is within circle bounds
-    logic rect_done, circle_done, bitmap_done;        // Flags for rectangle and circle completion
+    logic rect_done, circle_done, bitmap_done, letter_done;        // Flags for rectangle and circle completion
 	logic iwe;
     // Set busy signal when the drawing process is active
     
@@ -42,7 +42,7 @@ module PRU (
     logic [1:0] current_pixel, ird_data;	
 	
 	//bitmap rd data
-	logic ibitmaprd_data;
+	logic ibitmaprd_data, iletterrd_data;
 	
     logic fifo_full,fifo_empty,screen_reset;
 
@@ -57,6 +57,7 @@ module PRU (
         rect_done = (c >= col + width-1) && (r >= row + height_radius-1);
         circle_done = (c >= col + height_radius - 1) && (r >= row + height_radius - 1);
 		bitmap_done = (draw_bitmap_counter == 1023);
+        letter_done = (draw_letter_counter == 511);
         case (state)
 
             RESET_MAP: begin        
@@ -79,12 +80,17 @@ module PRU (
                     next_state = COMPLETE;
                 end
 			end
+            DRAW_LETTER: begin
+				if (letter_done) begin
+                    next_state = COMPLETE;
+                end
+			end
             COMPLETE: begin
                 if (!start) next_state = IDLE;
             end
             default: begin //IDLE
                 if (start) begin
-                    next_state = (shape_select == 2'b00) ? DRAW_RECT : (shape_select == 2'b01) ? DRAW_CIRCLE : DRAW_BITMAP;
+                    next_state = (shape_select == 2'b00) ? DRAW_RECT : (shape_select == 2'b01) ? DRAW_CIRCLE : (shape_select == 2'b10) ? DRAW_BITMAP : DRAW_LETTER;
                 end
             end
         endcase
@@ -190,6 +196,30 @@ module PRU (
                         c <= c + 1;  // Move to the next row
                     end
                 end
+                DRAW_LETTER: begin
+				    
+                    // Initialize r and c to the start of the rectangle bounds
+					
+                    if (c < col) c <= col;
+                    if (r < row) r <= row;
+                    
+                    // Draw rectangle sequentially within bounds
+                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 16)) begin //FIXME LOOK OVER THIS? for height_radius and width
+						iletterrd_data <= iletterrd_data + 1;
+                        iwe <= iletterrd_data == 1'b1;
+                    end
+                    else begin
+                        iwe <= 0;
+                    end
+                    
+                    // Update column and row counters
+                    if (r < row + 15) begin
+                        r <= r + 1;
+                    end else begin
+                        r <= row;  // Reset column to start of the rectangle
+                        c <= c + 1;  // Move to the next row
+                    end
+                end
 
                 COMPLETE: begin //This is complete
                     done <= 1;  // Signal that drawing is complete
@@ -216,6 +246,8 @@ assign different_pixel = pixel_counter != prev_pixel_count;
 Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calculator),.we(iwe),.wrt_data(color),.rd_data(ird_data));
 
 Single_Port_PRU bitmaps (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
+
+Single_Port_PRU letters (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_letter_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(iletterrd_data));
 
 async_fifo 
 #(
