@@ -98,11 +98,11 @@ void setLED(bool value, int led, int *ledState)
     *ledState = command;
 }
 
-int getTimerValue()
+uint getTimerValue()
 {
-    int *memSet;
+    uint *memSet;
 
-    memSet = (int *)TIMER_ADDR;
+    memSet = (uint *)TIMER_ADDR;
     return *memSet;
 }
 

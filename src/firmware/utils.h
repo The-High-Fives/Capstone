@@ -24,6 +24,7 @@
 
 #define color_t unsigned char
 #define bool unsigned char
+#define uint unsigned int
 
 #define NULL (void *)0
 #define true 1
@@ -43,7 +44,7 @@ void drawLetter(int x, int y, int scale, int addr, color_t color);
 void setColor(color_t addr, Color color);
 void setLED(bool value, int led, int *ledState);
 
-int getTimerValue();
+uint getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);
 void getCursorLocation(int *x, int *y, bool *present, bool *valid);
 char getSPART();
