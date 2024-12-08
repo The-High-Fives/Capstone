@@ -237,9 +237,9 @@ PRU_Fifo_Buffer
 always_ff @ (posedge clk, negedge rst_n) begin
     if (!rst_n) begin
         color_buffer[0] <= '1;
-        color_buffer[1] <= '0;//30'h30FFF0F0;
-        color_buffer[2] <= '0;//30'h107FF00F;
-        color_buffer[3] <= '0;//30'h270F3F53;
+        color_buffer[1] <= 30'h30FFF0F0;
+        color_buffer[2] <= 30'h107FF00F;
+        color_buffer[3] <= 30'h270F3F53;
     end
     else if (color_load) begin
         if (pru_addr == 32'h4000010C)
