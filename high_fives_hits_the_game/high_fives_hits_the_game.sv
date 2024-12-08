@@ -87,6 +87,9 @@ wire [15:0] X_Cont;
 wire [15:0]	Y_Cont;
 wire [31:0] lut_instr_count, lut_rx_counter;
 
+//debug
+wire [9:0] debug_col, debug_row;
+
 //=======================================================
 //  Structural coding
 //=======================================================
@@ -95,6 +98,9 @@ assign GPIO[3] = txd;
 assign rxd = GPIO[5];
 
 assign auto_start = ((KEY[0])&&(DLY_RST_3)&&(!DLY_RST_4))? 1'b1:1'b0;
+
+assign	D5M_TRIGGER	=	1'b1;  // tRIGGER
+assign	D5M_RESET_N	=	sys_rst_n;
 
 Reset_Delay	u2	(	
 	.iCLK(CLOCK_50),
@@ -131,7 +137,7 @@ SEG7_LUT_6 	u_SEG7	(
 	.oSEG0(HEX0),.oSEG1(HEX1),
 	.oSEG2(HEX2),.oSEG3(HEX3),
 	.oSEG4(HEX4),.oSEG5(HEX5),
-	.iDIG({lut_instr_count[11:0], lut_rx_counter[11:0]})
+	.iDIG({2'b00, debug_col[9:0], 2'b00, debug_row[9:0]})
 );
 
 
@@ -224,7 +230,10 @@ IPU_wrapper u_IPU_wrapper (
     .addr_i     (bus_addr),
     .data_i     (bus_data_ms),
     .data_o     (bus_data_ss),
-    .ack_o      (bus_ack)
+    .ack_o      (bus_ack),
+
+    .debug_col  (debug_col),
+    .debug_row  (debug_row)
 );
 
 

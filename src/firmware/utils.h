@@ -4,8 +4,8 @@
 // Peripheral Addresses
 #define LED_ADDR 0x40000000
 #define TIMER_ADDR 0x40000004
-#define SPART_READ_ADDR 0x4000001C
-#define SPART_WRITE_ADDR 0x4000001D
+#define SPART_READ_ADDR 0x4000001D
+#define SPART_WRITE_ADDR 0x4000001C
 
 // PRU Addresses
 #define DRAW_LOCATION_ADDR 0x40000100
@@ -22,9 +22,9 @@
 #define SPRITE_CODE 0b10
 #define LETTER_CODE 0b11
 
-#define uint8_t unsigned char
 #define color_t unsigned char
 #define bool unsigned char
+#define uint unsigned int
 
 #define NULL (void *)0
 #define true 1
@@ -32,9 +32,9 @@
 
 typedef struct
 {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
+    int r;
+    int g;
+    int b;
 } Color;
 
 void drawCircle(int x, int y, int radius, color_t color);
@@ -44,11 +44,11 @@ void drawLetter(int x, int y, int scale, int addr, color_t color);
 void setColor(color_t addr, Color color);
 void setLED(bool value, int led, int *ledState);
 
-int getTimerValue();
+uint getTimerValue();
 bool checkLocationForColor(int x, int y, int radius);
-void getCursorLocation(int *x, int *y);
+int getCursorLocation();
 char getSPART();
 void setSPART(char value);
-void getIO(int *timer, char *SPART, int *x, int *y);
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
 
 #endif

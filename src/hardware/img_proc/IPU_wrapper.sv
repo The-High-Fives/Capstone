@@ -20,8 +20,8 @@ module IPU_wrapper (
     inout ack_o,
 
     // debug
-    output [9:0] debug_row, 
-    output [9:0] debug_col
+    output logic [9:0] debug_row, 
+    output logic [9:0] debug_col
 );
 
     localparam addr_offset = 32'h40000200;
@@ -35,9 +35,6 @@ module IPU_wrapper (
     wire [20:0] fifo_out;
     wire o_empty;
     wire cs;
-
-    assign debug_row = oRow[9:0];
-    assign debug_col = oCol[9:0];
 
     IPU u_IPU (
         // inputs
@@ -58,7 +55,7 @@ module IPU_wrapper (
 
     async_fifo 
     #(
-        .width(22),
+        .width(21),
         .depth(4)
     )
     u_async_fifo (
@@ -76,16 +73,31 @@ module IPU_wrapper (
 
     always_ff @(posedge sys_clk, negedge rst_n) begin
         if (!rst_n) begin
-            row <= 0;
             col <= 0;
-            present <= 0;
         end
         else if (!o_empty) begin
             col <= fifo_out[9:0];
+        end
+    end
+
+    always_ff @(posedge sys_clk, negedge rst_n) begin
+        if (!rst_n) begin
+            row <= 0;
+        end
+        else if (!o_empty) begin
             row <= fifo_out[19:10];
+        end
+    end
+
+    always_ff @(posedge sys_clk, negedge rst_n) begin
+        if (!rst_n) begin
+            present <= 0;
+        end
+        else if (!o_empty) begin
             present <= fifo_out[20];
         end
     end
+
 
     // valid is knocked down on read
     always_ff @(posedge sys_clk, negedge rst_n) begin
@@ -103,4 +115,16 @@ module IPU_wrapper (
     
     assign data_o = cs ? {10'h000, row, col, present, valid} : 32'hzzzzzzzz;
     assign ack_o = cs ? 1'b1 : 1'bz;
+
+    // debug
+    always @(posedge camera_clk or negedge rst_n) begin
+        if (!rst_n) begin
+            debug_row <= 0;
+            debug_col <= 0;
+        end 
+        else if (cs & read_i & present) begin
+            debug_row <= data_o[21:12];
+            debug_col <= data_o[11:2];
+        end
+     end
 endmodule
