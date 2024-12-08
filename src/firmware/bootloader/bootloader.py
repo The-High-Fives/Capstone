@@ -1,7 +1,6 @@
 import serial
 import sys
 
-
 spart_ports = ['COM4', 'COM5', 'COM6'] # guess
 baud_rate = 19200  # also a guess
 
@@ -60,16 +59,8 @@ if __name__ == "__main__":
             print(hello)
             break
 
-<<<<<<< HEAD
-    except serial.SerialException:
-        print(f"Error: Could not open port {spart_port}")
-    finally:
-        if 'ser' in locals() and ser.is_open:
-            ser.close()
-=======
         except serial.SerialException:
             print(f"Error: Could not open port {port}")
         finally:
             if 'ser' in locals() and ser.is_open:
                 ser.close()
->>>>>>> 18e19d0558e66101390e2d4552f923c281935801
