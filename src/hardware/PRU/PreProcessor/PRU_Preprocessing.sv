@@ -5,6 +5,7 @@ module PRU_Preprocessing (
     input logic [31:0] data,             // 32-bit data input
     input logic [31:0] bus_addr,
     input logic busy,
+    output logic [31:0] bitmap_addr,
     output logic [1:0] color,            // Color value
     output logic [9:0] col,              // Starting col for rectangle, center col for circle
     output logic [8:0] row,              // Starting row for rectangle, center row for circle
@@ -19,9 +20,9 @@ module PRU_Preprocessing (
     output logic in_load_2
 );
 
-    typedef enum logic [1:0] {IDLE, LOAD} state_t; // State definitions
+    typedef enum logic [1:0] {IDLE, LOAD_SHAPE, LOAD_IMM} state_t; // State definitions
     state_t state, next_state;                            // Current and next state
-	logic load1, load2;
+	logic load1, load2, loadImm;
     // Sequential logic for state transitions
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -34,11 +35,13 @@ module PRU_Preprocessing (
 		ack = 1'bz;
 		load1 = 0;
 		load2 = 0;
+        loadImm = 0;
         in_idle = 0;
         in_load_2 = 0;
+        color_load = 0;
 		next_state = state;
 		case (state)
-			LOAD: begin
+			LOAD_SHAPE: begin
                 in_load_2 = 1;
                 if (write && bus_addr[31:8] == 24'h400001)
                     ack = 1'b0;
@@ -49,14 +52,32 @@ module PRU_Preprocessing (
 				end
 
 			end
+            LOAD_IMM: begin
+				if (write  && bus_addr[31:8] == 24'h400001)
+                    ack = 1'b0;
+				if (write && !busy && bus_addr[31:8] == 24'h400001) begin
+					next_state = IDLE;
+					loadImm = 1;
+					ack = 1;
+				end
+
+			end
 			default: begin //IDLE
                 in_idle = 1;
                 if (write && bus_addr[31:8] == 24'h400001)
                     ack = 1'b0;
 				if (write && !busy && bus_addr[31:8] == 24'h400001) begin
-					load1 = 1;
 					ack = 1;
-					next_state = LOAD;
+                    if ((bus_addr == 32'h4000010C) || (bus_addr == 32'h40000110) || (bus_addr == 32'h40000114) || (bus_addr == 32'h40000118)) begin
+						color_load = 1;
+                    end else 
+                    if(data[22] == 1'b1) begin
+						next_state = LOAD_IMM;
+                        load1 = 1;
+                    end else begin
+                        load1 = 1;
+					    next_state = LOAD_SHAPE;
+                    end
 				end
 			end
 		endcase
@@ -74,9 +95,12 @@ module PRU_Preprocessing (
             height_radius <= 0;
             shape_select <= 0;
             subtract <= 0;
-            color_load <= 0;
-        end else begin
-            if (load1) begin
+        end 
+        else if (loadImm) begin
+            bitmap_addr <= data;
+            start <= 1;
+        end 
+        else if (load1) begin
                 // Populate the first set of PRU inputs
 
 		row <= data[8:0];
@@ -84,20 +108,21 @@ module PRU_Preprocessing (
 		color <= data[20:19];
 				shape_select <= data[22:21];
 				start = 0;
-            end
-            else if (load2) begin
+        end
+        else if (load2) begin
                 // Populate the remaining PRU inputs
-	    height_radius <= data[8:0];
-		width <= data[18:9];
-		    subtract <= data[19];
-		    color_load <= data[20];
-		start = 1;
+	        height_radius <= data[8:0];
+		    width <= data[18:9];
+	        subtract <= data[19];
+		    
+		    start = 1;
 		end else begin
-			start = 0;
-            end	
-		end		
+			    start = 0;
+        end
+        	
+	end		
             
-    end
+    
     
 
 endmodule

@@ -264,6 +264,7 @@ wire [9:0] PRU_RED, PRU_GREEN, PRU_BLUE;
     reg i_color_load;
     // reg i_busy,i_write;
     reg done;
+    reg [31:0] bitmap_addr;
 
 
 cpu u_cpu (
@@ -292,6 +293,7 @@ PRU_Preprocessing pru_buffer (
     .write(bus_write),
     .data(bus_data_ms),
     .bus_addr(bus_addr),
+    .bitmap_addr(bitmap_addr),
     .busy(busy),
     .color(color),
     .row(row),
@@ -316,8 +318,9 @@ PRU DRAW (
     .col(col),
     .width(width),
     .height_radius(height_radius),
-    .pru_addr(pru_addr),
-    .pru_data(pru_data),
+    .pru_addr(bus_addr),
+    .pru_data(bus_data_ms),
+    .bitmap_addr(bitmap_addr),
     .shape_select(shape_select),
     .start(start),
     .subtract(subtract),

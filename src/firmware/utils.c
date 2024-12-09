@@ -59,10 +59,11 @@ void drawSprite(int x, int y, int scale, int addr, color_t color)
     // *memSet = command;
 }
 
-void drawScore(int startX, int y, int score, color_t color)
-{
-    if (score > 0xFFF)
-    {
+
+void drawScore(int startX, int y, int score, color_t color) {
+    drawRect(startX, y, 160, 32, 0);
+
+    if (score > 0xFFF) {
         score = 0xFFF;
     }
 
@@ -78,35 +79,25 @@ void drawScore(int startX, int y, int score, color_t color)
     int xHundred = startX + 112;
     int xTen = startX + 128;
     int xOne = startX + 144;
-
     char hundred;
     char ten;
     char one;
 
-    if (hundreds > 9)
-    {
+    if (hundreds > 9) {
         hundred = 'a' + (hundreds - 10);
-    }
-    else
-    {
+    } else {
         hundred = '0' + hundreds;
     }
 
-    if (tens > 9)
-    {
+    if (tens > 9) {
         ten = 'a' + (tens - 10);
-    }
-    else
-    {
+    } else {
         ten = '0' + tens;
     }
 
-    if (ones > 9)
-    {
+    if (ones > 9) {
         one = 'a' + (ones - 10);
-    }
-    else
-    {
+    } else {
         one = '0' + ones;
     }
 
@@ -121,31 +112,19 @@ void drawScore(int startX, int y, int score, color_t color)
     drawChar(xOne, y, one, color);
 }
 
-void drawChar(int x, int y, char c, color_t color)
-{
-    if (c == '!')
-    {
+void drawChar(int x, int y, char c, color_t color) {
+    if (c == '!') {
         drawLetter(x, y, 1, EXCLAMATION, color);
-    }
-    else if (c == '?')
-    {
+    } else if (c == '?') {
         drawLetter(x, y, 1, QUESTION, color);
-    }
-    else if (c == ':')
-    {
+    } else if (c == ':') {
         drawLetter(x, y, 1, COLON, color);
-    }
-    else if (c == '-')
-    {
+    } else if (c == '-') {
         drawLetter(x, y, 1, HYPHEN, color);
-    }
-    else if (c >= '0' && c <= ':')
-    { // Digits
+    } else if (c >= '0' && c <= ':') { // Digits
         int addr = LETTER_BASE + LETTER_OFFSET * (26 + (c - '0'));
         drawLetter(x, y, 1, addr, color);
-    }
-    else
-    { // Letters
+    } else { // Letters
         int addr = LETTER_BASE + LETTER_OFFSET * (c - 'a');
         drawLetter(x, y, 1, addr, color);
     }

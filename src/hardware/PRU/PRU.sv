@@ -8,6 +8,7 @@ module PRU (
     input logic [8:0] height_radius,     // Height of rectangle or radius of circle
 	input logic [31:0] pru_addr,
     input logic [31:0] pru_data,
+    input logic [31:0] bitmap_addr,
     input logic [1:0] shape_select,      // Shape selection: 00 for rectangle, 01 for circle
     input logic start,                   // Start signal
 	input logic subtract,
@@ -23,15 +24,15 @@ module PRU (
 	
     // Define FSM States
     typedef enum logic [2:0] {
-        IDLE, RESET_MAP, DRAW_RECT, DRAW_CIRCLE, DRAW_BITMAP, COMPLETE
+        IDLE, RESET_MAP, DRAW_RECT, DRAW_CIRCLE, DRAW_BITMAP, DRAW_LETTER, COMPLETE
     } state_t;
 
     state_t state, next_state;
     integer c, r;                        // Current row and column counters
 	logic [18:0] pixel_calculator;			 // Calculates position in 1D color_map array given row and column
-	logic [18:0] draw_bitmap_counter; // draw bitmap counter
+	logic [18:0] draw_bitmap_counter, draw_letter_counter; // draw bitmap counter
     logic pixel_in_circle;               // Flag to check if pixel is within circle bounds
-    logic rect_done, circle_done, bitmap_done;        // Flags for rectangle and circle completion
+    logic rect_done, circle_done, bitmap_done, letter_done;        // Flags for rectangle and circle completion
 	logic iwe;
     // Set busy signal when the drawing process is active
     
@@ -41,7 +42,7 @@ module PRU (
     logic [1:0] current_pixel, ird_data;	
 	
 	//bitmap rd data
-	logic ibitmaprd_data;
+	logic ibitmaprd_data, iletterrd_data;
 	
     logic fifo_full,fifo_empty,screen_reset;
 
@@ -56,6 +57,7 @@ module PRU (
         rect_done = (c >= col + width-1) && (r >= row + height_radius-1);
         circle_done = (c >= col + height_radius - 1) && (r >= row + height_radius - 1);
 		bitmap_done = (draw_bitmap_counter == 1023);
+        letter_done = (draw_letter_counter == 511);
         case (state)
 
             RESET_MAP: begin        
@@ -78,12 +80,17 @@ module PRU (
                     next_state = COMPLETE;
                 end
 			end
+            DRAW_LETTER: begin
+				if (letter_done) begin
+                    next_state = COMPLETE;
+                end
+			end
             COMPLETE: begin
                 if (!start) next_state = IDLE;
             end
             default: begin //IDLE
                 if (start) begin
-                    next_state = (shape_select == 2'b00) ? DRAW_RECT : (shape_select == 2'b01) ? DRAW_CIRCLE : DRAW_BITMAP;
+                    next_state = (shape_select == 2'b00) ? DRAW_RECT : (shape_select == 2'b01) ? DRAW_CIRCLE : (shape_select == 2'b10) ? DRAW_BITMAP : DRAW_LETTER;
                 end
             end
         endcase
@@ -97,8 +104,10 @@ module PRU (
             r <= 0;
             done <= 0;
 			draw_bitmap_counter <= 0; // Reset bitmap counter
-        pixel_calculator = 0; // calculates 1D location of 2D (row,column)x
-        pixel_in_circle = 0;
+            draw_letter_counter <= 0; // Reset bitmap counter
+
+        pixel_calculator <= 0; // calculates 1D location of 2D (row,column)x
+        pixel_in_circle <= 0;
         end
         else begin
             state <= next_state;
@@ -173,7 +182,7 @@ module PRU (
                     if (r < row) r <= row;
                     
                     // Draw rectangle sequentially within bounds
-                    if ((c >= col && c < col + height_radius && r >= row) && (r < row + height_radius)) begin //FIXME LOOK OVER THIS? for height_radius and width
+                    if ((c >= col && c < col + 32 && r >= row) && (r < row + 32)) begin //FIXME LOOK OVER THIS? for height_radius and width
 						draw_bitmap_counter <= draw_bitmap_counter + 1;
                         iwe <= ibitmaprd_data == 1'b1;
                     end
@@ -182,7 +191,31 @@ module PRU (
                     end
                     
                     // Update column and row counters
-                    if (r < row + height_radius - 1) begin
+                    if (r < row + 31) begin
+                        r <= r + 1;
+                    end else begin
+                        r <= row;  // Reset column to start of the rectangle
+                        c <= c + 1;  // Move to the next row
+                    end
+                end
+                DRAW_LETTER: begin
+				    
+                    // Initialize r and c to the start of the rectangle bounds
+					
+                    if (c < col) c <= col;
+                    if (r < row) r <= row;
+                    
+                    // Draw rectangle sequentially within bounds
+                    if ((c >= col && c < col + 16 && r >= row) && (r < row + 32)) begin //FIXME LOOK OVER THIS? for height_radius and width
+						draw_letter_counter <= draw_letter_counter + 1;
+                        iwe <= iletterrd_data == 1'b1;
+                    end
+                    else begin
+                        iwe <= 0;
+                    end
+                    
+                    // Update column and row counters
+                    if (r < row + 31) begin
                         r <= r + 1;
                     end else begin
                         r <= row;  // Reset column to start of the rectangle
@@ -199,6 +232,7 @@ module PRU (
                     // Reset counters and done flag in IDLE state
                     c <= 0;
                     r <= 0;
+                    draw_letter_counter <= 0;
 					draw_bitmap_counter <= 0;
                     done <= 0;
                     iwe <=0;
@@ -214,7 +248,9 @@ assign different_pixel = pixel_counter != prev_pixel_count;
 
 Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calculator),.we(iwe),.wrt_data(color),.rd_data(ird_data));
 
-Single_Port_PRU bitmaps (.clk(clk), .re_addr(draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
+Single_Port_PRU bitmaps (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
+
+Single_Port_PRU_l letters (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_letter_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(iletterrd_data));
 
 async_fifo 
 #(
@@ -242,11 +278,11 @@ always_ff @ (posedge clk, negedge rst_n) begin
         color_buffer[3] <= 30'h270F3F53;
     end
     else if (color_load) begin
-        if (pru_addr == 32'h4000)
+        if (pru_addr == 32'h4000010C)
             color_buffer[0] = pru_data[30:0];
-        else if (pru_addr == 32'h4004)
+        else if (pru_addr == 32'h40000110)
             color_buffer[1] = pru_data[30:0];
-        else if (pru_addr == 32'h4008)
+        else if (pru_addr == 32'h40000114)
             color_buffer[2] = pru_data[30:0];
         else
             color_buffer[3] = pru_data[30:0];
