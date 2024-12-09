@@ -161,7 +161,7 @@ int main()
                 Color c2 = {0xF0F, 0xFFF, hit};
                 setColor(3, c2);
              drawCircle(game_x_loc, game_y_loc, 20, 0);
-             hit = hit + 20;
+             hit = hit + 30;
              //drawScore(50, 300, hit, 2);
             //drawCircle(200, 200, 10, 2);
         }
@@ -174,7 +174,7 @@ int main()
         }
             prev_x = x;
             prev_y = y;
-            drawScore(50, 200, hit, 2);
+            drawScore(5, 30, hit, 2);
             drawRect(rect_x, rect_y, 48, 48, 0);
             drawCircle(x, y, 20, 3);
         }
@@ -260,7 +260,7 @@ void drawScore(int startX, int y, int score, color_t color)
     int xHundred = startX + 112;
     int xTen = startX + 128;
     int xOne = startX + 144;
-
+    drawRect(startX, y, xOne, 40, 0);
     char hundred;
     char ten;
     char one;
