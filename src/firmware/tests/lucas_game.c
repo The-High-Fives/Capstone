@@ -43,6 +43,7 @@ typedef struct
 } Color;
 
 void drawCircle(int x, int y, int radius, color_t color);
+void drawGameCircle(int x, int y, int o_radius, int i_radius, color_t color);
 void drawRect(int x, int y, int width, int height, color_t color);
 void drawSprite(int x, int y, int scale, int addr, color_t color);
 void drawChar(int x, int y, char c, color_t color);
@@ -73,6 +74,7 @@ int main()
     int rev_x;
     int y = 0;
     int rect_x;
+    int score = 0;
     int rect_y;
     bool present;
     bool valid;
@@ -84,7 +86,7 @@ int main()
     int game_x_upper;
     int game_y_upper;
     uint panic = 0;
-    int no_hit = 0;
+    int no_hit = 40;
     
     // Color c2 = {0xF0F, 0xFFF, 0x0F0};
     // setColor(2, c2);
@@ -133,22 +135,6 @@ int main()
 
         if (present && valid)
         {
-        //  if (x > 100 && x < 140 && y > 100 && y < 140)
-        // {
-        //         Color c2 = {0xF0F, 0xFFF, 0x0F0};
-        //         setColor(3, c2);
-        //     // drawCircle(120, 120, 20, 0);
-        //     // //hit = hit + 1;
-        //     // drawCircle(200, 200, 10, 2);
-        // }
-        // else
-        // {
-        //         Color c3 = {0x00F, 0x00F, 0x0FF};
-        //         setColor(3, c3);
-        //     // drawCircle(120, 120, 20, 1);
-        //     // //hit = hit + 1;
-        //     // drawCircle(200, 200, 10, 0);
-        // }
 
         game_x_lower = 60 + (hit);
         game_y_lower = 60 + (hit);
@@ -164,27 +150,34 @@ int main()
         {
                 Color c2 = {0xF0F, 0xFFF, hit};
                 setColor(3, c2);
-             drawCircle(game_x_loc, game_y_loc, 20, 0);
+            drawGameCircle(game_x_loc, game_y_loc, no_hit, 20, 0);
              hit = hit + 20;
+             score = score + 4;
+             no_hit = 40;
              //drawScore(50, 300, hit, 2);
             //drawCircle(200, 200, 10, 2);
         }
         else
         {
-                no_hit = no_hit + 39;
-                if (no_hit == 7098) {
-                    no_hit = 0;
+                no_hit = no_hit - 1;
+                if (no_hit == 20) {
+                    no_hit = 40;
+                    if (score != 0)
+                    {
+                    score = score -4;
+                    }
                 }
-                Color game_circle = {no_hit, no_hit >> 2, 0x0F0};
+                Color game_circle = {no_hit, no_hit << 5, 0xFF0};
                 setColor(1, game_circle);
-            //drawCircle(200, 200, 10, 0);
-             drawCircle(game_x_loc, game_y_loc, 20, 1);
+             //drawCircle(game_x_loc, game_y_loc, 20, 1);
+            drawGameCircle(game_x_loc, game_y_loc, no_hit, 20, 1);
         }
             prev_x = x;
             prev_y = y;
-            drawScore(1, 1, hit, 2);
+            drawScore(1, 1, score, 2);
             //drawScore(5, 65, panic, 2);
-            drawRect(rect_x, rect_y, 48, 48, 0);
+            drawRect(rect_x, rect_y, 45, 45, 0);
+            //drawCircle(x, y, 25, 0);
             drawCircle(x, y, 20, 3);
         }
     }
@@ -230,6 +223,14 @@ void drawCircle(int x, int y, int radius, color_t color)
     memSet = (int *)DRAW_CONTROL_ADDR;
     command = (1 << 31) | (radius & 0x7FFFF);
     *memSet = command;
+}
+
+void drawGameCircle(int x, int y, int o_radius, int i_radius, color_t color)
+{
+    drawCircle(x, y, (o_radius + 4), 0);
+    drawCircle(x, y, (o_radius + 2), color);
+    drawCircle(x, y, (o_radius), 0);
+    drawCircle(x, y, i_radius, color);
 }
 
 void drawSprite(int x, int y, int scale, int addr, color_t color)
