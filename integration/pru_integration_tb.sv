@@ -33,16 +33,18 @@ module pru_integration_tb;
         repeat (2) @ (posedge clk) begin
         rst_n = 1;
         end
-        // repeat (200)@ (posedge clk) begin 
-        // rst_n = 1;
-        // end
-        // repeat (10000)@ (posedge clk) begin 
-        // VGA_Read = 1;
-        // end
+        repeat (200)@ (posedge clk) begin 
+        rst_n = 1;
+        end
+        repeat (10000)@ (posedge clk) begin 
+        VGA_Read = 1;
+        end
 
 
         repeat (30000)@ (posedge clk);
-        display_color_map(0, 0, 125, 125);
+        display_color_map(0, 0, 125, 50);
+        display_color_map(125, 0, 200, 50);
+        display_color_map(0, 40, 125, 80);
         $display("Above is circle");
         $stop();
     end

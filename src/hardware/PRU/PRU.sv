@@ -250,7 +250,7 @@ Dual_Port_PRU color_map (.clk(clk),.re_addr(pixel_counter),.wr_addr(pixel_calcul
 
 Single_Port_PRU bitmaps (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_bitmap_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(ibitmaprd_data));
 
-Single_Port_PRU_l letters (.clk(clk), .re_addr(19'h00200 + draw_letter_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(iletterrd_data));
+Single_Port_PRU_l letters (.clk(clk), .re_addr(bitmap_addr[18:0] + draw_letter_counter),.wr_addr('0),.re(1'b1),.wrt_data('0), .rd_data(iletterrd_data));
 
 async_fifo 
 #(
