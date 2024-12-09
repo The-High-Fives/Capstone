@@ -22,6 +22,14 @@
 #define SPRITE_CODE 0b10
 #define LETTER_CODE 0b11
 
+#define LETTER_BASE 0
+#define LETTER_OFFSET 512
+
+#define EXCLAMATION 18432
+#define QUESTION 18944
+#define COLON 19456
+#define HYPHEN 19968
+
 #define color_t unsigned char
 #define bool unsigned char
 #define uint unsigned int
@@ -40,6 +48,8 @@ typedef struct
 void drawCircle(int x, int y, int radius, color_t color);
 void drawRect(int x, int y, int width, int height, color_t color);
 void drawSprite(int x, int y, int scale, int addr, color_t color);
+void drawChar(int x, int y, char c, color_t color);
+void drawScore(int startX, int y, int score, color_t color);
 void drawLetter(int x, int y, int scale, int addr, color_t color);
 void setColor(color_t addr, Color color);
 void setLED(bool value, int led, int *ledState);

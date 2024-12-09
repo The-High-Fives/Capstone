@@ -16,13 +16,15 @@ int main()
 
     int *handX;
     int *handY;
+    bool *present;
+    bool *valid;
 
     int *dt;
     char *SPART;
 
     while (!game->quitGame)
     {
-        getIO(dt, SPART, handX, handY);
+        getIO(dt, SPART, handX, handY, present, valid);
 
         if (game->onStartScreen)
         {
@@ -51,7 +53,7 @@ int main()
         }
         else
         {
-            step(game, *dt);
+            step(game, *dt, *handX, *handY);
             drawGameScreen(game);
         }
     }
