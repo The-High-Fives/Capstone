@@ -1,0 +1,357 @@
+#define LED_ADDR 0x40000000
+#define TIMER_ADDR 0x40000004
+#define SPART_READ_ADDR 0x4000001D
+#define SPART_WRITE_ADDR 0x4000001C
+
+// PRU Addresses
+#define DRAW_LOCATION_ADDR 0x40000100
+#define DRAW_CONTROL_ADDR 0x40000104
+#define SPRITE_ADDR 0x40000108
+#define COLOR_ADDR 0x4000010C
+
+// IPU Addresses
+#define DETECT_LOCATION_ADDR 0x40000200
+#define COLOR_LOCATED_ADDR 0x40000204
+
+#define RECT_CODE 0b00
+#define CIRCLE_CODE 0b01
+#define SPRITE_CODE 0b10
+#define LETTER_CODE 0b11
+
+#define LETTER_BASE 0
+#define LETTER_OFFSET 512
+
+#define EXCLAMATION 18432
+#define QUESTION 18944
+#define COLON 19456
+#define HYPHEN 19968
+
+#define color_t unsigned char
+#define bool unsigned char
+#define uint unsigned int
+
+#define NULL (void *)0
+#define true 1
+#define false 0
+
+typedef struct
+{
+    int r;
+    int g;
+    int b;
+} Color;
+
+void drawCircle(int x, int y, int radius, color_t color);
+void drawRect(int x, int y, int width, int height, color_t color);
+void drawSprite(int x, int y, int scale, int addr, color_t color);
+void drawChar(int x, int y, char c, color_t color);
+void drawScore(int startX, int y, int score, color_t color);
+void drawLetter(int x, int y, int scale, int addr, color_t color);
+void setColor(color_t addr, Color color);
+void setLED(bool value, int led, int *ledState);
+
+uint getTimerValue();
+bool checkLocationForColor(int x, int y, int radius);
+int getCursorLocation();
+char getSPART();
+void setSPART(char value);
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
+
+int main()
+{
+    drawRect(0, 0, 640, 480, 0);
+    // Color c1 = {0xFFF, 0xFFF, 0};
+    // Color c2 = {0xFFF, 0, 0};
+    // Color c3 = {0, 0, 0xFFF};
+    // Color c4 = {0xFFF, 0xFFF, 0xFFF};
+
+    // setColor(0, c1);
+    // setColor(1, c2);
+    // setColor(2, c3);
+    // setColor(3, c4);
+    
+drawLetter(0, 0, 1, 0, 1);
+drawLetter(25, 0, 1, 512, 1);
+drawLetter(50, 0, 1, 1024, 1);
+drawLetter(75, 0, 1, 1536, 1);
+drawLetter(100, 0, 1, 2048, 1);
+drawLetter(125, 0, 1, 2560, 1);
+drawLetter(150, 0, 1, 3072, 1);
+drawLetter(175, 0, 1, 3584, 1);
+drawLetter(200, 0, 1, 4096, 1);
+drawLetter(225, 0, 1, 4608, 1);
+drawLetter(250, 0, 1, 5120, 1);
+drawLetter(275, 0, 1, 5632, 1);
+drawLetter(300, 0, 1, 6144, 1);
+drawLetter(325, 0, 1, 6656, 1);
+drawLetter(350, 0, 1, 7168, 1);
+drawLetter(375, 0, 1, 7680, 1);
+drawLetter(400, 0, 1, 8192, 1);
+drawLetter(425, 0, 1, 8704, 1);
+drawLetter(450, 0, 1, 9216, 1);
+drawLetter(475, 0, 1, 9728, 1);
+drawLetter(500, 0, 1, 10240, 1);
+drawLetter(525, 0, 1, 10752, 1);
+drawLetter(550, 0, 1, 11264, 3);
+drawLetter(575, 0, 1, 11776, 3);
+drawLetter(0, 50, 1, 12288, 3);
+drawLetter(25, 50, 1, 12800, 3);
+drawLetter(50, 50, 1, 13312, 3);
+drawLetter(75, 50, 1, 13824, 1);
+drawLetter(100, 50, 1, 14336, 1);
+drawLetter(125, 50, 1, 14848, 1);
+drawLetter(150, 50, 1, 15360, 1);
+drawLetter(175, 50, 1, 15872, 1);
+drawLetter(200, 50, 1, 16384, 1);
+drawLetter(225, 50, 1, 16896, 1);
+drawLetter(250, 50, 1, 17408, 1);
+drawLetter(275, 50, 1, 17920, 1);
+drawLetter(300, 50, 1, 18432, 1);
+drawLetter(325, 50, 1, 18944, 1);
+drawLetter(350, 50, 1, 19456, 1);
+drawLetter(375, 50, 1, 19968, 1);
+
+int i = 0;
+int j = 0;
+
+for(i = 0; i < 26; i++) {
+    int x = 16 * i;
+    char c = 'a' + i;
+    drawChar(x, 100, c, 1);
+}
+
+for(j = 0; j < 10; j++) {
+    int x = 16 * j;
+    char c = '0' + j;
+    drawChar(x, 150, c, 1);
+}
+
+drawChar(0, 200, '!', 1);
+drawChar(16, 200, '?', 1);
+drawChar(32, 200, ':', 1);
+drawChar(48, 200, '-', 1);
+drawChar(64, 200, '9', 1);
+drawScore(0, 300, 294, 1);
+
+    end:
+        goto end;
+}
+
+void setColor(color_t addr, Color color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)(COLOR_ADDR + (addr & 3) * 4);
+
+    command = ((color.r & 0x3FF) << 20) | ((color.g & 0x3FF) << 10) | (color.b & 0x3FF);
+    *memSet = command;
+}
+
+void drawRect(int x, int y, int width, int height, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (RECT_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)DRAW_CONTROL_ADDR;
+    command = (1 << 31) | ((width & 0x3FF) << 9) | (height & 0x1FF);
+    *memSet = command;
+}
+
+void drawCircle(int x, int y, int radius, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (CIRCLE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)DRAW_CONTROL_ADDR;
+    command = (1 << 31) | (radius & 0x7FFFF);
+    *memSet = command;
+}
+
+void drawSprite(int x, int y, int scale, int addr, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (SPRITE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)SPRITE_ADDR;
+    command = addr;
+    *memSet = command;
+
+    // memSet = (int *)DRAW_CONTROL_ADDR;
+    // command = (1 << 31) | (scale & 0x7FFFF);
+    // *memSet = command;
+}
+
+void drawScore(int startX, int y, int score, color_t color) {
+    if (score > 0xFFF) {
+        score = 0xFFF;
+    }
+
+    int hundreds = (score >> 8) & 0xF;
+    int tens = (score >> 4) & 0xF;
+    int ones = score & 0xF;
+
+    int xC = startX + 16;
+    int xO = startX + 32;
+    int xR = startX + 48;
+    int xE = startX + 64;
+    int xColon = startX + 80;
+    int xHundred = startX + 112;
+    int xTen = startX + 128;
+    int xOne = startX + 144;
+
+
+    char hundred;
+    char ten;
+    char one;
+
+    if (hundreds > 9) {
+        hundred = 'a' + (hundreds - 10);
+    } else {
+        hundred = '0' + hundreds;
+    }
+
+    if (tens > 9) {
+        ten = 'a' + (tens - 10);
+    } else {
+        ten = '0' + tens;
+    }
+
+    if (ones > 9) {
+        one = 'a' + (ones - 10);
+    } else {
+        one = '0' + ones;
+    }
+
+    drawChar(startX, y, 's', color);
+    drawChar(xC, y, 'c', color);
+    drawChar(xO, y, 'o', color);
+    drawChar(xR, y, 'r', color);
+    drawChar(xE, y, 'e', color);
+    drawChar(xColon, y, ':', color);
+    drawChar(xHundred, y, hundred, color);
+    drawChar(xTen, y, ten, color);
+    drawChar(xOne, y, one, color);
+}
+
+void drawChar(int x, int y, char c, color_t color) {
+    if (c == '!') {
+        drawLetter(x, y, 1, EXCLAMATION, color);
+    } else if (c == '?') {
+        drawLetter(x, y, 1, QUESTION, color);
+    } else if (c == ':') {
+        drawLetter(x, y, 1, COLON, color);
+    } else if (c == '-') {
+        drawLetter(x, y, 1, HYPHEN, color);
+    } else if (c >= '0' && c <= ':') { // Digits
+        int addr = LETTER_BASE + LETTER_OFFSET * (26 + (c - '0'));
+        drawLetter(x, y, 1, addr, color);
+    } else { // Letters
+        int addr = LETTER_BASE + LETTER_OFFSET * (c - 'a');
+        drawLetter(x, y, 1, addr, color);
+    }
+}
+
+void drawLetter(int x, int y, int scale, int addr, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (LETTER_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)SPRITE_ADDR;
+    command = addr;
+    *memSet = command;
+
+    // memSet = (int *)DRAW_CONTROL_ADDR;
+    // command = (1 << 31) | (scale & 0x7FFFF);
+    // *memSet = command;
+}
+
+void setLED(bool value, int led, int *ledState)
+{
+    int *memSet;
+    int command;
+    bool val = value & 1;
+
+    memSet = (int *)LED_ADDR;
+
+    if (val)
+    {
+        command = (*ledState) | (1 << led);
+    }
+    else
+    {
+        command = (*ledState) & (~(1 << led));
+    }
+
+    *memSet = command;
+    *ledState = command;
+}
+
+uint getTimerValue()
+{
+    uint *memSet;
+
+    memSet = (uint *)TIMER_ADDR;
+    return *memSet;
+}
+
+bool checkLocationForColor(int x, int y, int radius)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DETECT_LOCATION_ADDR;
+    command = ((x & 0x3FF) << 19) | ((y & 0x1FF) << 10) | (radius & 0x3FF);
+    *memSet = command;
+
+    memSet = (int *)COLOR_LOCATED_ADDR;
+    return (*memSet) & 1;
+}
+
+int getCursorLocation()
+{
+    int *memSet;
+    memSet = (int *)DETECT_LOCATION_ADDR;
+
+    return *memSet;
+}
+
+char getSPART()
+{
+    char *memSet;
+
+    memSet = (char *)SPART_READ_ADDR;
+    return *memSet;
+}
+
+void setSPART(char value)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)SPART_WRITE_ADDR;
+    command = (value & 0xFF);
+    *memSet = command;
+}
+
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid)
+{
+    *timer = getTimerValue();
+    *SPART = getSPART();
+}
