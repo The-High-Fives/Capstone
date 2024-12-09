@@ -221,3 +221,126 @@ void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid)
     *timer = getTimerValue();
     *SPART = getSPART();
 }
+
+int abs(int a)
+{
+    if (a < 0)
+    {
+        return 0 - a;
+    }
+    return a;
+}
+
+int sign(int a)
+{
+    if (a < 0)
+    {
+        return -1;
+    }
+    return 1;
+}
+
+int multiply(int a, int b)
+{
+    int abs_a = abs(a);
+    int abs_b = abs(b);
+
+    int result = 0;
+    int i;
+
+    if (!a || !b)
+    {
+        return 0;
+    }
+
+    if (abs_a <= abs_b)
+    {
+        if (a < 0)
+        {
+            a = 0 - a;
+            b = 0 - b;
+        }
+
+        for (i = 0; i < a; i++)
+        {
+            result += b;
+        }
+
+        return result;
+    }
+    else
+    {
+        if (b < 0)
+        {
+            a = 0 - a;
+            b = 0 - b;
+        }
+
+        for (i = 0; i < b; i++)
+        {
+            result += a;
+        }
+    }
+}
+
+int divide(int a, int b)
+{
+    if (!a || !b)
+    {
+        return 0;
+    }
+
+    int sign_a = sign(a);
+    int sign_b = sign(b);
+    int abs_a = abs(a);
+    int abs_b = abs(b);
+
+    int result = 0;
+    if (abs_a >= abs_b)
+    {
+        while (abs_a >= abs_b)
+        {
+            abs_a -= abs_b;
+            result++;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+
+    if (sign_a != sign_b)
+    {
+        result = 0 - result;
+    }
+
+    return result;
+}
+
+int remainder(int a, int b)
+{
+    if (!a || !b)
+    {
+        return 0;
+    }
+
+    int sign_a = sign(a);
+    int sign_b = sign(b);
+    int abs_a = abs(a);
+    int abs_b = abs(b);
+
+    if (abs_a >= abs_b)
+    {
+        while (abs_a >= abs_b)
+        {
+            abs_a -= abs_b;
+        }
+    }
+
+    if (sign_a != sign_b)
+    {
+        abs_a = 0 - abs_a;
+    }
+
+    return abs_a;
+}

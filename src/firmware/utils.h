@@ -61,4 +61,10 @@ char getSPART();
 void setSPART(char value);
 void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
 
+int abs(int a);
+int sign(int a);
+int multiply(int a, int b);
+int divide(int a, int b);
+int remainder(int a, int b);
+
 #endif
