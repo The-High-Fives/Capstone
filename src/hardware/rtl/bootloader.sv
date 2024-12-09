@@ -1,6 +1,7 @@
 module bootloader (
     input clk,
     input rst_n,
+    input DISABLE, // from switch, disables bootloader so CPU starts running immediately
 
     // bus
     inout write_o,
@@ -170,11 +171,16 @@ always_comb begin
 
     case (state)
         INIT1: begin // displays char 'B'
-            b_addr = spart_offset;
-            b_write = 1;
-            b_data = 32'h00000042;
-            if (ack_i)
-                next_state = INIT2;
+            if (DISABLE) begin
+                next_state = STOP;
+            end
+            else begin
+                b_addr = spart_offset;
+                b_write = 1;
+                b_data = 32'h00000042;
+                if (ack_i)
+                    next_state = INIT2;
+            end
         end
 
         INIT2: begin // gets instruction count

@@ -115,6 +115,7 @@ Reset_Delay	u2	(
 bootloader u_bootloader (
     .clk          (CLOCK_50),
     .rst_n        (sys_rst_n),
+    .DISABLE      (SW[1]),
     // bus
     .write_o      (bus_write),
     .read_o       (bus_read),
