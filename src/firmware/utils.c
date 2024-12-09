@@ -54,9 +54,81 @@ void drawSprite(int x, int y, int scale, int addr, color_t color)
     command = addr;
     *memSet = command;
 
-    memSet = (int *)DRAW_CONTROL_ADDR;
-    command = (1 << 31) | (scale & 0x7FFFF);
-    *memSet = command;
+    // memSet = (int *)DRAW_CONTROL_ADDR;
+    // command = (1 << 31) | (scale & 0x7FFFF);
+    // *memSet = command;
+}
+
+void drawScore(int startX, int y, int score, color_t color) {
+    drawRect(startX, y, 160, 32, 0);
+
+    if (score > 0xFFF) {
+        score = 0xFFF;
+    }
+
+    int hundreds = (score >> 8) & 0xF;
+    int tens = (score >> 4) & 0xF;
+    int ones = score & 0xF;
+
+    int xC = startX + 16;
+    int xO = startX + 32;
+    int xR = startX + 48;
+    int xE = startX + 64;
+    int xColon = startX + 80;
+    int xHundred = startX + 112;
+    int xTen = startX + 128;
+    int xOne = startX + 144;
+
+
+    char hundred;
+    char ten;
+    char one;
+
+    if (hundreds > 9) {
+        hundred = 'a' + (hundreds - 10);
+    } else {
+        hundred = '0' + hundreds;
+    }
+
+    if (tens > 9) {
+        ten = 'a' + (tens - 10);
+    } else {
+        ten = '0' + tens;
+    }
+
+    if (ones > 9) {
+        one = 'a' + (ones - 10);
+    } else {
+        one = '0' + ones;
+    }
+
+    drawChar(startX, y, 's', color);
+    drawChar(xC, y, 'c', color);
+    drawChar(xO, y, 'o', color);
+    drawChar(xR, y, 'r', color);
+    drawChar(xE, y, 'e', color);
+    drawChar(xColon, y, ':', color);
+    drawChar(xHundred, y, hundred, color);
+    drawChar(xTen, y, ten, color);
+    drawChar(xOne, y, one, color);
+}
+
+void drawChar(int x, int y, char c, color_t color) {
+    if (c == '!') {
+        drawLetter(x, y, 1, EXCLAMATION, color);
+    } else if (c == '?') {
+        drawLetter(x, y, 1, QUESTION, color);
+    } else if (c == ':') {
+        drawLetter(x, y, 1, COLON, color);
+    } else if (c == '-') {
+        drawLetter(x, y, 1, HYPHEN, color);
+    } else if (c >= '0' && c <= ':') { // Digits
+        int addr = LETTER_BASE + LETTER_OFFSET * (26 + (c - '0'));
+        drawLetter(x, y, 1, addr, color);
+    } else { // Letters
+        int addr = LETTER_BASE + LETTER_OFFSET * (c - 'a');
+        drawLetter(x, y, 1, addr, color);
+    }
 }
 
 void drawLetter(int x, int y, int scale, int addr, color_t color)
@@ -72,9 +144,9 @@ void drawLetter(int x, int y, int scale, int addr, color_t color)
     command = addr;
     *memSet = command;
 
-    memSet = (int *)DRAW_CONTROL_ADDR;
-    command = (1 << 31) | (scale & 0x7FFFF);
-    *memSet = command;
+    // memSet = (int *)DRAW_CONTROL_ADDR;
+    // command = (1 << 31) | (scale & 0x7FFFF);
+    // *memSet = command;
 }
 
 void setLED(bool value, int led, int *ledState)
