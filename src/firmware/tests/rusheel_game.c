@@ -106,6 +106,7 @@ int main()
     int game_draw_x = 0;
     int game_draw_y = 0;
     int outer_rad = 0;
+    int dot_count = 0;
     color_t game_color = 0;
 
     // Color c2 = {0xF0F, 0xFFF, 0x0F0};
@@ -184,29 +185,44 @@ int main()
 
                 score = score + 4;
                 no_hit = 40;
+                dot_count++;
                 // drawScore(50, 300, hit, 2);
                 // drawCircle(200, 200, 10, 2);
                 setSPART('a');
             }
             else
             {
+                outer_rad = no_hit;
+                game_color = 1;
+                game_draw_x = game_x_loc;
+                game_draw_y = game_y_loc;
+
                 no_hit = no_hit - 1;
                 if (no_hit == 20)
                 {
+                    outer_rad = no_hit;
+                    game_color = 0;
+                    game_draw_x = game_x_loc;
+                    game_draw_y = game_y_loc;
+
+                    game_x_loc = *(game_y_addr + 1);
+                    game_x_lower = game_x_loc - 40;
+                    game_x_upper = game_x_loc + 40;
+                    game_y_loc = *game_y_addr;
+                    game_y_lower = game_y_loc - 40;
+                    game_y_upper = game_y_loc + 40;
 
                     no_hit = 40;
                     if (score != 0)
                     {
                         score = score - 4;
                     }
+
+                    dot_count++;
                 }
                 Color game_circle = {no_hit, no_hit << 5, 0xFF0};
                 setColor(1, game_circle);
                 // drawCircle(game_x_loc, game_y_loc, 20, 1);
-                outer_rad = no_hit;
-                game_color = 1;
-                game_draw_x = game_x_loc;
-                game_draw_y = game_y_loc;
                 // drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 1);
             }
             prev_x = x;

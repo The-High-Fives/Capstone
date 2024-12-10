@@ -89,17 +89,18 @@ sw   a5,76(a0)
         addi    s0,sp,176
         sw      zero,-20(s0)
         sw      zero,-24(s0)
-        sw      zero,-68(s0)
         sw      zero,-72(s0)
-        sw      zero,-28(s0)
         sw      zero,-76(s0)
+        sw      zero,-28(s0)
         sw      zero,-80(s0)
+        sw      zero,-84(s0)
         li      a5,40
         sw      a5,-48(s0)
         sw      zero,-52(s0)
         sw      zero,-56(s0)
         sw      zero,-60(s0)
-        sb      zero,-61(s0)
+        sw      zero,-64(s0)
+        sb      zero,-65(s0)
         li      a4,0
         li      a3,480
         li      a2,640
@@ -113,10 +114,10 @@ sw   a5,76(a0)
         sw      a5,-40(s0)
         lw      a5,-40(s0)
         addi    a5,a5,-40
-        sw      a5,-84(s0)
+        sw      a5,-88(s0)
         lw      a5,-40(s0)
         addi    a5,a5,40
-        sw      a5,-88(s0)
+        sw      a5,-92(s0)
         li      a5,80
         sw      a5,-36(s0)
         lw      a5,-36(s0)
@@ -124,59 +125,59 @@ sw   a5,76(a0)
         sw      a5,-44(s0)
         lw      a5,-44(s0)
         addi    a5,a5,-40
-        sw      a5,-92(s0)
+        sw      a5,-96(s0)
         lw      a5,-44(s0)
         addi    a5,a5,40
-        sw      a5,-96(s0)
-.L6:
+        sw      a5,-100(s0)
+.L7:
         call    getCursorLocation
-        sw      a0,-100(s0)
-        lw      a5,-100(s0)
+        sw      a0,-104(s0)
+        lw      a5,-104(s0)
         srai    a5,a5,1
-        sw      a5,-104(s0)
-        lw      a5,-100(s0)
-        srai    a5,a5,2
         sw      a5,-108(s0)
-        lw      a5,-100(s0)
-        srai    a5,a5,12
+        lw      a5,-104(s0)
+        srai    a5,a5,2
         sw      a5,-112(s0)
+        lw      a5,-104(s0)
+        srai    a5,a5,12
+        sw      a5,-116(s0)
+        lw      a5,-108(s0)
+        andi    a5,a5,0xff
+        andi    a5,a5,1
+        sb      a5,-117(s0)
         lw      a5,-104(s0)
         andi    a5,a5,0xff
         andi    a5,a5,1
-        sb      a5,-113(s0)
-        lw      a5,-100(s0)
-        andi    a5,a5,0xff
-        andi    a5,a5,1
-        sb      a5,-114(s0)
+        sb      a5,-118(s0)
         lw      a5,-20(s0)
         addi    a5,a5,-12
-        sw      a5,-120(s0)
+        sw      a5,-124(s0)
         lw      a5,-24(s0)
         addi    a5,a5,-12
-        sw      a5,-124(s0)
-        lw      a5,-108(s0)
-        andi    a5,a5,1023
         sw      a5,-128(s0)
-        li      a4,640
-        lw      a5,-128(s0)
-        sub     a5,a4,a5
-        sw      a5,-68(s0)
         lw      a5,-112(s0)
-        andi    a5,a5,511
+        andi    a5,a5,1023
+        sw      a5,-132(s0)
+        li      a4,640
+        lw      a5,-132(s0)
+        sub     a5,a4,a5
         sw      a5,-72(s0)
-        lbu     a5,-113(s0)
-        beqz    a5,.L6
-        lbu     a5,-114(s0)
-        beqz    a5,.L6
+        lw      a5,-116(s0)
+        andi    a5,a5,511
+        sw      a5,-76(s0)
+        lbu     a5,-117(s0)
+        beqz    a5,.L7
+        lbu     a5,-118(s0)
+        beqz    a5,.L7
         li      a4,20
         lw      a3,-44(s0)
         lw      a2,-40(s0)
-        lw      a1,-72(s0)
-        lw      a0,-68(s0)
+        lw      a1,-76(s0)
+        lw      a0,-72(s0)
         call    inBounds
         mv      a5,a0
-        sb      a5,-129(s0)
-        lbu     a5,-129(s0)
+        sb      a5,-133(s0)
+        lbu     a5,-133(s0)
         beqz    a5,.L3
         lw      a5,-32(s0)
         addi    a5,a5,4
@@ -186,17 +187,17 @@ sw   a5,76(a0)
         sw      a5,-36(s0)
         li      a5,4096
         addi    a5,a5,-241
-        sw      a5,-144(s0)
+        sw      a5,-148(s0)
         li      a5,4096
         addi    a5,a5,-1
+        sw      a5,-144(s0)
+        lw      a5,-80(s0)
         sw      a5,-140(s0)
-        lw      a5,-76(s0)
-        sw      a5,-136(s0)
-        lw      a5,-144(s0)
+        lw      a5,-148(s0)
         sw      a5,-176(s0)
-        lw      a5,-140(s0)
+        lw      a5,-144(s0)
         sw      a5,-172(s0)
-        lw      a5,-136(s0)
+        lw      a5,-140(s0)
         sw      a5,-168(s0)
         addi    a5,s0,-176
         mv      a1,a5
@@ -204,7 +205,7 @@ sw   a5,76(a0)
         call    setColor
         lw      a5,-48(s0)
         sw      a5,-60(s0)
-        sb      zero,-61(s0)
+        sb      zero,-65(s0)
         lw      a5,-40(s0)
         sw      a5,-52(s0)
         lw      a5,-44(s0)
@@ -214,80 +215,112 @@ sw   a5,76(a0)
         sw      a5,-40(s0)
         lw      a5,-40(s0)
         addi    a5,a5,-40
-        sw      a5,-84(s0)
+        sw      a5,-88(s0)
         lw      a5,-40(s0)
         addi    a5,a5,40
-        sw      a5,-88(s0)
+        sw      a5,-92(s0)
         lw      a5,-36(s0)
         lw      a5,0(a5)
         sw      a5,-44(s0)
         lw      a5,-44(s0)
         addi    a5,a5,-40
-        sw      a5,-92(s0)
+        sw      a5,-96(s0)
         lw      a5,-44(s0)
         addi    a5,a5,40
-        sw      a5,-96(s0)
+        sw      a5,-100(s0)
         lw      a5,-28(s0)
         addi    a5,a5,4
         sw      a5,-28(s0)
         li      a5,40
         sw      a5,-48(s0)
+        lw      a5,-64(s0)
+        addi    a5,a5,1
+        sw      a5,-64(s0)
         li      a0,97
         call    setSPART
         j       .L4
 .L3:
+        lw      a5,-48(s0)
+        sw      a5,-60(s0)
+        li      a5,1
+        sb      a5,-65(s0)
+        lw      a5,-40(s0)
+        sw      a5,-52(s0)
+        lw      a5,-44(s0)
+        sw      a5,-56(s0)
         lw      a5,-48(s0)
         addi    a5,a5,-1
         sw      a5,-48(s0)
         lw      a4,-48(s0)
         li      a5,20
         bne     a4,a5,.L5
+        lw      a5,-48(s0)
+        sw      a5,-60(s0)
+        sb      zero,-65(s0)
+        lw      a5,-40(s0)
+        sw      a5,-52(s0)
+        lw      a5,-44(s0)
+        sw      a5,-56(s0)
+        lw      a5,-36(s0)
+        lw      a5,4(a5)
+        sw      a5,-40(s0)
+        lw      a5,-40(s0)
+        addi    a5,a5,-40
+        sw      a5,-88(s0)
+        lw      a5,-40(s0)
+        addi    a5,a5,40
+        sw      a5,-92(s0)
+        lw      a5,-36(s0)
+        lw      a5,0(a5)
+        sw      a5,-44(s0)
+        lw      a5,-44(s0)
+        addi    a5,a5,-40
+        sw      a5,-96(s0)
+        lw      a5,-44(s0)
+        addi    a5,a5,40
+        sw      a5,-100(s0)
         li      a5,40
         sw      a5,-48(s0)
         lw      a5,-28(s0)
-        beqz    a5,.L5
+        beqz    a5,.L6
         lw      a5,-28(s0)
         addi    a5,a5,-4
         sw      a5,-28(s0)
+.L6:
+        lw      a5,-64(s0)
+        addi    a5,a5,1
+        sw      a5,-64(s0)
 .L5:
         lw      a5,-48(s0)
-        sw      a5,-156(s0)
+        sw      a5,-160(s0)
         lw      a5,-48(s0)
         slli    a5,a5,5
-        sw      a5,-152(s0)
+        sw      a5,-156(s0)
         li      a5,4096
         addi    a5,a5,-16
-        sw      a5,-148(s0)
-        lw      a5,-156(s0)
+        sw      a5,-152(s0)
+        lw      a5,-160(s0)
         sw      a5,-176(s0)
-        lw      a5,-152(s0)
+        lw      a5,-156(s0)
         sw      a5,-172(s0)
-        lw      a5,-148(s0)
+        lw      a5,-152(s0)
         sw      a5,-168(s0)
         addi    a5,s0,-176
         mv      a1,a5
         li      a0,1
         call    setColor
-        lw      a5,-48(s0)
-        sw      a5,-60(s0)
-        li      a5,1
-        sb      a5,-61(s0)
-        lw      a5,-40(s0)
-        sw      a5,-52(s0)
-        lw      a5,-44(s0)
-        sw      a5,-56(s0)
 .L4:
-        lw      a5,-68(s0)
-        sw      a5,-20(s0)
         lw      a5,-72(s0)
+        sw      a5,-20(s0)
+        lw      a5,-76(s0)
         sw      a5,-24(s0)
         li      a4,0
         li      a3,24
         li      a2,24
-        lw      a1,-124(s0)
-        lw      a0,-120(s0)
+        lw      a1,-128(s0)
+        lw      a0,-124(s0)
         call    drawRect
-        lbu     a5,-61(s0)
+        lbu     a5,-65(s0)
         mv      a4,a5
         li      a3,20
         lw      a2,-60(s0)
@@ -301,10 +334,10 @@ sw   a5,76(a0)
         call    drawScore
         li      a3,3
         li      a2,10
-        lw      a1,-72(s0)
-        lw      a0,-68(s0)
+        lw      a1,-76(s0)
+        lw      a0,-72(s0)
         call    drawCircle
-        j       .L6
+        j       .L7
 inBounds:
         addi    sp,sp,-80
         sw      s0,76(sp)
@@ -341,14 +374,14 @@ inBounds:
         andi    a5,a5,0xff
         sb      a5,-34(s0)
         lbu     a5,-33(s0)
-        beqz    a5,.L8
+        beqz    a5,.L9
         lbu     a5,-34(s0)
-        beqz    a5,.L8
+        beqz    a5,.L9
         li      a5,1
-        j       .L9
-.L8:
-        li      a5,0
+        j       .L10
 .L9:
+        li      a5,0
+.L10:
         sb      a5,-35(s0)
         lw      a4,-56(s0)
         lw      a5,-28(s0)
@@ -361,24 +394,24 @@ inBounds:
         andi    a5,a5,0xff
         sb      a5,-37(s0)
         lbu     a5,-36(s0)
-        beqz    a5,.L10
+        beqz    a5,.L11
         lbu     a5,-37(s0)
-        beqz    a5,.L10
+        beqz    a5,.L11
         li      a5,1
-        j       .L11
-.L10:
-        li      a5,0
+        j       .L12
 .L11:
+        li      a5,0
+.L12:
         sb      a5,-38(s0)
         lbu     a5,-35(s0)
-        beqz    a5,.L12
+        beqz    a5,.L13
         lbu     a5,-38(s0)
-        beqz    a5,.L12
+        beqz    a5,.L13
         li      a5,1
-        j       .L13
-.L12:
-        li      a5,0
+        j       .L14
 .L13:
+        li      a5,0
+.L14:
         sb      a5,-39(s0)
         lbu     a5,-39(s0)
         mv      a0,a5
@@ -624,7 +657,7 @@ drawScore:
         sw      zero,-28(s0)
         lw      a4,-92(s0)
         li      a5,99
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,1
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -632,7 +665,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,199
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,2
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -640,7 +673,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,299
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,3
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -648,7 +681,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,399
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,4
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -656,7 +689,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,499
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,5
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -664,7 +697,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,599
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,6
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -672,7 +705,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,699
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,7
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -680,7 +713,7 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,799
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,8
         sw      a5,-20(s0)
         lw      a5,-32(s0)
@@ -688,18 +721,18 @@ drawScore:
         sw      a5,-32(s0)
         lw      a4,-92(s0)
         li      a5,899
-        ble     a4,a5,.L21
+        ble     a4,a5,.L22
         li      a5,9
         sw      a5,-20(s0)
         lw      a5,-32(s0)
         addi    a5,a5,-100
         sw      a5,-32(s0)
-.L21:
+.L22:
         lw      a5,-32(s0)
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,9
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,1
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -707,7 +740,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,19
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,2
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -715,7 +748,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,29
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,3
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -723,7 +756,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,39
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,4
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -731,7 +764,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,49
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,5
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -739,7 +772,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,59
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,6
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -747,7 +780,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,69
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,7
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -755,7 +788,7 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,79
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,8
         sw      a5,-24(s0)
         lw      a5,-36(s0)
@@ -763,58 +796,58 @@ drawScore:
         sw      a5,-36(s0)
         lw      a4,-32(s0)
         li      a5,89
-        ble     a4,a5,.L22
+        ble     a4,a5,.L23
         li      a5,9
         sw      a5,-24(s0)
         lw      a5,-36(s0)
         addi    a5,a5,-10
         sw      a5,-36(s0)
-.L22:
+.L23:
         lw      a5,-36(s0)
-        blez    a5,.L23
+        blez    a5,.L24
         li      a5,1
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,1
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,2
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,2
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,3
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,3
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,4
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,4
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,5
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,5
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,6
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,6
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,7
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,7
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,8
         sw      a5,-28(s0)
         lw      a4,-36(s0)
         li      a5,8
-        ble     a4,a5,.L23
+        ble     a4,a5,.L24
         li      a5,9
         sw      a5,-28(s0)
-.L23:
+.L24:
         lw      a5,-84(s0)
         addi    a5,a5,16
         sw      a5,-40(s0)
@@ -935,7 +968,7 @@ drawChar:
         sb      a5,-42(s0)
         lbu     a4,-41(s0)
         li      a5,33
-        bne     a4,a5,.L25
+        bne     a4,a5,.L26
         lbu     a5,-42(s0)
         mv      a4,a5
         li      a5,20480
@@ -944,11 +977,11 @@ drawChar:
         lw      a1,-40(s0)
         lw      a0,-36(s0)
         call    drawLetter
-        j       .L31
-.L25:
+        j       .L32
+.L26:
         lbu     a4,-41(s0)
         li      a5,63
-        bne     a4,a5,.L27
+        bne     a4,a5,.L28
         lbu     a5,-42(s0)
         mv      a4,a5
         li      a5,20480
@@ -957,11 +990,11 @@ drawChar:
         lw      a1,-40(s0)
         lw      a0,-36(s0)
         call    drawLetter
-        j       .L31
-.L27:
+        j       .L32
+.L28:
         lbu     a4,-41(s0)
         li      a5,58
-        bne     a4,a5,.L28
+        bne     a4,a5,.L29
         lbu     a5,-42(s0)
         mv      a4,a5
         li      a5,20480
@@ -970,11 +1003,11 @@ drawChar:
         lw      a1,-40(s0)
         lw      a0,-36(s0)
         call    drawLetter
-        j       .L31
-.L28:
+        j       .L32
+.L29:
         lbu     a4,-41(s0)
         li      a5,45
-        bne     a4,a5,.L29
+        bne     a4,a5,.L30
         lbu     a5,-42(s0)
         mv      a4,a5
         li      a5,20480
@@ -983,14 +1016,14 @@ drawChar:
         lw      a1,-40(s0)
         lw      a0,-36(s0)
         call    drawLetter
-        j       .L31
-.L29:
+        j       .L32
+.L30:
         lbu     a4,-41(s0)
         li      a5,47
-        bleu    a4,a5,.L30
+        bleu    a4,a5,.L31
         lbu     a4,-41(s0)
         li      a5,58
-        bgtu    a4,a5,.L30
+        bgtu    a4,a5,.L31
         lbu     a5,-41(s0)
         addi    a5,a5,-22
         slli    a5,a5,9
@@ -1003,8 +1036,8 @@ drawChar:
         lw      a0,-36(s0)
         call    drawLetter
         nop
-        j       .L31
-.L30:
+        j       .L32
+.L31:
         lbu     a5,-41(s0)
         addi    a5,a5,-97
         slli    a5,a5,9
@@ -1016,7 +1049,7 @@ drawChar:
         lw      a1,-40(s0)
         lw      a0,-36(s0)
         call    drawLetter
-.L31:
+.L32:
         nop
         lw      ra,44(sp)
         lw      s0,40(sp)
@@ -1080,7 +1113,7 @@ setLED:
         li      a5,1073741824
         sw      a5,-28(s0)
         lbu     a5,-21(s0)
-        beqz    a5,.L34
+        beqz    a5,.L35
         lw      a5,-44(s0)
         lw      a4,0(a5)
         lw      a5,-40(s0)
@@ -1088,8 +1121,8 @@ setLED:
         sll     a5,a3,a5
         or      a5,a4,a5
         sw      a5,-20(s0)
-        j       .L35
-.L34:
+        j       .L36
+.L35:
         lw      a5,-44(s0)
         lw      a4,0(a5)
         lw      a5,-40(s0)
@@ -1098,7 +1131,7 @@ setLED:
         not     a5,a5
         and     a5,a4,a5
         sw      a5,-20(s0)
-.L35:
+.L36:
         lw      a5,-28(s0)
         lw      a4,-20(s0)
         sw      a4,0(a5)
@@ -1237,13 +1270,13 @@ absolute:
         addi    s0,sp,32
         sw      a0,-20(s0)
         lw      a5,-20(s0)
-        bgez    a5,.L47
+        bgez    a5,.L48
         lw      a5,-20(s0)
         sub     a5,zero,a5
-        j       .L48
-.L47:
-        lw      a5,-20(s0)
+        j       .L49
 .L48:
+        lw      a5,-20(s0)
+.L49:
         mv      a0,a5
         lw      s0,28(sp)
         addi    sp,sp,32
@@ -1254,12 +1287,12 @@ sign:
         addi    s0,sp,32
         sw      a0,-20(s0)
         lw      a5,-20(s0)
-        bgez    a5,.L50
+        bgez    a5,.L51
         li      a5,-1
-        j       .L51
-.L50:
-        li      a5,1
+        j       .L52
 .L51:
+        li      a5,1
+.L52:
         mv      a0,a5
         lw      s0,28(sp)
         addi    sp,sp,32
@@ -1279,54 +1312,54 @@ multiply:
         sw      a0,-32(s0)
         sw      zero,-20(s0)
         lw      a5,-36(s0)
-        beqz    a5,.L53
+        beqz    a5,.L54
         lw      a5,-40(s0)
-        bnez    a5,.L54
-.L53:
-        li      a5,0
-        j       .L52
+        bnez    a5,.L55
 .L54:
+        li      a5,0
+        j       .L53
+.L55:
         lw      a4,-28(s0)
         lw      a5,-32(s0)
-        bgt     a4,a5,.L56
+        bgt     a4,a5,.L57
         lw      a5,-36(s0)
-        bgez    a5,.L57
+        bgez    a5,.L58
         lw      a5,-36(s0)
         sub     a5,zero,a5
         sw      a5,-36(s0)
         lw      a5,-40(s0)
         sub     a5,zero,a5
         sw      a5,-40(s0)
-.L57:
-        sw      zero,-24(s0)
-        j       .L58
-.L59:
-        lw      a4,-20(s0)
-        lw      a5,-40(s0)
-        add     a5,a4,a5
-        sw      a5,-20(s0)
-        lw      a5,-24(s0)
-        addi    a5,a5,1
-        sw      a5,-24(s0)
 .L58:
+        sw      zero,-24(s0)
+        j       .L59
+.L60:
+        lw      a4,-20(s0)
+        lw      a5,-40(s0)
+        add     a5,a4,a5
+        sw      a5,-20(s0)
+        lw      a5,-24(s0)
+        addi    a5,a5,1
+        sw      a5,-24(s0)
+.L59:
         lw      a4,-24(s0)
         lw      a5,-36(s0)
-        blt     a4,a5,.L59
+        blt     a4,a5,.L60
         lw      a5,-20(s0)
-        j       .L52
-.L56:
+        j       .L53
+.L57:
         lw      a5,-40(s0)
-        bgez    a5,.L60
+        bgez    a5,.L61
         lw      a5,-36(s0)
         sub     a5,zero,a5
         sw      a5,-36(s0)
         lw      a5,-40(s0)
         sub     a5,zero,a5
         sw      a5,-40(s0)
-.L60:
+.L61:
         sw      zero,-24(s0)
-        j       .L61
-.L62:
+        j       .L62
+.L63:
         lw      a4,-20(s0)
         lw      a5,-36(s0)
         add     a5,a4,a5
@@ -1334,11 +1367,11 @@ multiply:
         lw      a5,-24(s0)
         addi    a5,a5,1
         sw      a5,-24(s0)
-.L61:
+.L62:
         lw      a4,-24(s0)
         lw      a5,-40(s0)
-        blt     a4,a5,.L62
-.L52:
+        blt     a4,a5,.L63
+.L53:
         mv      a0,a5
         lw      ra,44(sp)
         lw      s0,40(sp)
@@ -1353,13 +1386,13 @@ divide:
         sw      zero,-20(s0)
         lw      a4,-36(s0)
         lw      a5,-40(s0)
-        blt     a4,a5,.L64
+        blt     a4,a5,.L65
         lw      a5,-36(s0)
-        beqz    a5,.L64
+        beqz    a5,.L65
         lw      a5,-40(s0)
-        beqz    a5,.L64
-        j       .L65
-.L66:
+        beqz    a5,.L65
+        j       .L66
+.L67:
         lw      a4,-36(s0)
         lw      a5,-40(s0)
         sub     a5,a4,a5
@@ -1367,11 +1400,11 @@ divide:
         lw      a5,-20(s0)
         addi    a5,a5,1
         sw      a5,-20(s0)
-.L65:
+.L66:
         lw      a4,-36(s0)
         lw      a5,-40(s0)
-        bge     a4,a5,.L66
-.L64:
+        bge     a4,a5,.L67
+.L65:
         lw      a5,-20(s0)
         mv      a0,a5
         lw      s0,44(sp)
@@ -1385,13 +1418,13 @@ modulo:
         sw      a0,-36(s0)
         sw      a1,-40(s0)
         lw      a5,-36(s0)
-        beqz    a5,.L69
+        beqz    a5,.L70
         lw      a5,-40(s0)
-        bnez    a5,.L70
-.L69:
-        li      a5,0
-        j       .L71
+        bnez    a5,.L71
 .L70:
+        li      a5,0
+        j       .L72
+.L71:
         lw      a0,-36(s0)
         call    sign
         sw      a0,-24(s0)
@@ -1406,27 +1439,27 @@ modulo:
         sw      a0,-32(s0)
         lw      a4,-20(s0)
         lw      a5,-32(s0)
-        blt     a4,a5,.L72
-        j       .L73
-.L74:
+        blt     a4,a5,.L73
+        j       .L74
+.L75:
         lw      a4,-20(s0)
         lw      a5,-32(s0)
         sub     a5,a4,a5
         sw      a5,-20(s0)
-.L73:
+.L74:
         lw      a4,-20(s0)
         lw      a5,-32(s0)
-        bge     a4,a5,.L74
-.L72:
+        bge     a4,a5,.L75
+.L73:
         lw      a4,-24(s0)
         lw      a5,-28(s0)
-        beq     a4,a5,.L75
+        beq     a4,a5,.L76
         lw      a5,-20(s0)
         sub     a5,zero,a5
         sw      a5,-20(s0)
-.L75:
+.L76:
         lw      a5,-20(s0)
-.L71:
+.L72:
         mv      a0,a5
         lw      ra,44(sp)
         lw      s0,40(sp)
@@ -1463,46 +1496,46 @@ drawNumber:
         sw      a5,-44(s0)
         lw      a4,-24(s0)
         li      a5,9
-        ble     a4,a5,.L77
+        ble     a4,a5,.L78
         lw      a5,-24(s0)
         andi    a5,a5,0xff
         addi    a5,a5,87
         sb      a5,-17(s0)
-        j       .L78
-.L77:
+        j       .L79
+.L78:
         lw      a5,-24(s0)
         andi    a5,a5,0xff
         addi    a5,a5,48
         sb      a5,-17(s0)
-.L78:
+.L79:
         lw      a4,-28(s0)
         li      a5,9
-        ble     a4,a5,.L79
+        ble     a4,a5,.L80
         lw      a5,-28(s0)
         andi    a5,a5,0xff
         addi    a5,a5,87
         sb      a5,-18(s0)
-        j       .L80
-.L79:
+        j       .L81
+.L80:
         lw      a5,-28(s0)
         andi    a5,a5,0xff
         addi    a5,a5,48
         sb      a5,-18(s0)
-.L80:
+.L81:
         lw      a4,-32(s0)
         li      a5,9
-        ble     a4,a5,.L81
+        ble     a4,a5,.L82
         lw      a5,-32(s0)
         andi    a5,a5,0xff
         addi    a5,a5,87
         sb      a5,-19(s0)
-        j       .L82
-.L81:
+        j       .L83
+.L82:
         lw      a5,-32(s0)
         andi    a5,a5,0xff
         addi    a5,a5,48
         sb      a5,-19(s0)
-.L82:
+.L83:
         lbu     a4,-61(s0)
         lbu     a5,-17(s0)
         mv      a3,a4
