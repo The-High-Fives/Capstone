@@ -1,6 +1,236 @@
-#pragma once
+// Peripheral Addresses
+#define LED_ADDR 0x40000000
+#define TIMER_ADDR 0x40000004
+#define SPART_READ_ADDR 0x4000001D
+#define SPART_WRITE_ADDR 0x4000001C
 
-#include "utils.h"
+// PRU Addresses
+#define DRAW_LOCATION_ADDR 0x40000100
+#define DRAW_CONTROL_ADDR 0x40000104
+#define SPRITE_ADDR 0x40000108
+#define COLOR_ADDR 0x4000010C
+
+// IPU Addresses
+#define DETECT_LOCATION_ADDR 0x40000200
+#define COLOR_LOCATED_ADDR 0x40000204
+
+#define RECT_CODE 0b00
+#define CIRCLE_CODE 0b01
+#define SPRITE_CODE 0b10
+#define LETTER_CODE 0b11
+
+#define LETTER_BASE 0
+#define LETTER_OFFSET 512
+
+#define EXCLAMATION 18432
+#define QUESTION 18944
+#define COLON 19456
+#define HYPHEN 19968
+
+#define color_t unsigned char
+#define bool unsigned char
+#define uint unsigned int
+
+#define NULL (void *)0
+#define true 1
+#define false 0
+
+typedef struct
+{
+    int r;
+    int g;
+    int b;
+} Color;
+
+void drawCircle(int x, int y, int radius, color_t color);
+void drawGameCircle(int x, int y, int o_radius, int i_radius, color_t color);
+void drawRect(int x, int y, int width, int height, color_t color);
+void drawSprite(int x, int y, int scale, int addr, color_t color);
+void drawChar(int x, int y, char c, color_t color);
+void drawScore(int startX, int y, int score, color_t color);
+void drawNumber(int x, int y, int number, color_t color);
+void drawLetter(int x, int y, int scale, int addr, color_t color);
+void setColor(color_t addr, Color color);
+void setLED(bool value, int led, int *ledState);
+
+uint getTimerValue();
+bool checkLocationForColor(int x, int y, int radius);
+int getCursorLocation();
+char getSPART();
+void setSPART(char value);
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
+
+int absolute(int a);
+int sign(int a);
+int multiply(int a, int b);
+int divide(int a, int b);
+int modulo(int a, int b);
+
+uint rand(uint lfsr);
+
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
+typedef struct
+{
+    int x;
+    int y;
+    int noHit;
+} Dot;
+
+// ================================================================================================
+
+#define CURSOR_RADIUS 10
+#define CIRCLE_RADIUS 20
+#define CIRCLE_RADIUS_SQ 400
+
+int main()
+{
+    drawRect(0, 0, 640, 480, 0);
+
+    int loc;
+    int sh1;
+    int sh2;
+    int sh3;
+    int prev_x = 0;
+    int prev_y = 0;
+    int x = 0;
+    int rev_x;
+    int y = 0;
+    int rect_x;
+    int score = 0;
+    int rect_y;
+    bool present;
+    bool valid;
+    int hit = 0;
+    int game_x_lower;
+    int game_y_lower;
+    int game_x_loc;
+    int game_y_loc;
+    int game_x_upper;
+    int game_y_upper;
+    uint panic = 0;
+    int no_hit = 40;
+
+    int i = 0;
+    int c_x = 0;
+    int c_y = 0;
+    int x_diff = 0;
+    int y_diff = 0;
+    int x_diff_sq = 0;
+    int y_diff_sq = 0;
+    int circle_diff = 0;
+    uint lfsr = 0xACE1u;
+
+    int dotsX[3];
+    int dotsY[3];
+    int dotsNoHit[3];
+
+    lfsr = rand(lfsr);
+    dotsX[0] = modulo(lfsr, SCREEN_WIDTH + 1);
+
+    lfsr = rand(lfsr);
+    dotsY[0] = modulo(lfsr, SCREEN_HEIGHT + 1);
+    dotsNoHit[0] = 40;
+
+    lfsr = rand(lfsr);
+    dotsX[1] = modulo(lfsr, SCREEN_WIDTH + 1);
+
+    lfsr = rand(lfsr);
+    dotsY[1] = modulo(lfsr, SCREEN_HEIGHT + 1);
+    dotsNoHit[1] = 40;
+
+    lfsr = rand(lfsr);
+    dotsX[2] = modulo(lfsr, SCREEN_WIDTH + 1);
+
+    lfsr = rand(lfsr);
+    dotsY[2] = modulo(lfsr, SCREEN_HEIGHT + 1);
+    dotsNoHit[2] = 40;
+
+    do
+    {
+        loc = getCursorLocation();
+        sh1 = loc >> 1;
+        sh2 = loc >> 2;
+        sh3 = loc >> 12;
+        present = sh1 & 1;
+        valid = loc & 1;
+        rect_x = prev_x - 12;
+        rect_y = prev_y - 12;
+        rev_x = sh2 & 0x3FF;
+        x = 640 - rev_x;
+        y = sh3 & 0x1FF;
+
+        if (present && valid)
+        {
+            drawRect(rect_x, rect_y, 24, 24, 0);
+            drawScore(1, 1, score, 2);
+
+            for (i = 0; i < 3; i++)
+            {
+                c_x = dotsX[i];
+                c_y = dotsY[i];
+                no_hit = dotsNoHit[i];
+                drawNumber(500, 0, i, 2);
+                drawNumber(500, 36, c_x, 2);
+                drawNumber(500, 72, c_y, 2);
+                drawNumber(500, 108, no_hit, 2);
+
+                x_diff = c_x - x;
+                y_diff = c_y - y;
+
+                x_diff_sq = multiply(x_diff, x_diff);
+                y_diff_sq = multiply(y_diff, y_diff);
+
+                circle_diff = x_diff_sq + y_diff_sq;
+
+                if (circle_diff < CIRCLE_RADIUS_SQ)
+                {
+                    Color c2 = {0xF0F, 0xFFF, hit};
+                    setColor(3, c2);
+                    drawGameCircle(c_x, c_y, no_hit, CIRCLE_RADIUS, 0);
+                    score = score + 4;
+                    no_hit = 40;
+
+                    lfsr = rand(lfsr);
+                    c_x = modulo(lfsr, SCREEN_WIDTH + 1);
+
+                    lfsr = rand(lfsr);
+                    c_y = modulo(lfsr, SCREEN_HEIGHT + 1);
+                }
+                else
+                {
+                    no_hit = no_hit - 1;
+                    if (no_hit == 20)
+                    {
+                        no_hit = 40;
+                        if (score != 0)
+                        {
+                            score = score - 4;
+                        }
+                    }
+                    Color game_circle = {no_hit, no_hit << 5, 0xFF0};
+                    setColor(1, game_circle);
+                    drawGameCircle(c_x, c_y, no_hit, CIRCLE_RADIUS, 1);
+                }
+
+                dotsX[i] = c_x;
+                dotsY[i] = c_y;
+                dotsNoHit[i] = no_hit;
+            }
+
+            prev_x = x;
+            prev_y = y;
+            drawCircle(x, y, CURSOR_RADIUS, 3);
+        }
+    } while (1);
+
+end:
+    goto end;
+    return 0;
+}
+
+// ================================================================================================
 
 void setColor(color_t addr, Color color)
 {
@@ -132,6 +362,8 @@ void drawScore(int startX, int y, int score, color_t color)
 
 void drawNumber(int x, int y, int number, color_t color)
 {
+    drawRect(x, y, 48, 32, 0);
+
     int hundreds = (number >> 8) & 0xF;
     int tens = (number >> 4) & 0xF;
     int ones = number & 0xF;
@@ -423,7 +655,8 @@ int modulo(int a, int b)
 
 uint rand(uint lfsr)
 {
-    uint bit = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
+    uint bit;
+    bit = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
     lfsr = (lfsr >> 1) | (bit << 15);
     return lfsr;
 }

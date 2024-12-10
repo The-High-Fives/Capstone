@@ -46,10 +46,12 @@ typedef struct
 } Color;
 
 void drawCircle(int x, int y, int radius, color_t color);
+void drawGameCircle(int x, int y, int o_radius, int i_radius, color_t color);
 void drawRect(int x, int y, int width, int height, color_t color);
 void drawSprite(int x, int y, int scale, int addr, color_t color);
 void drawChar(int x, int y, char c, color_t color);
 void drawScore(int startX, int y, int score, color_t color);
+void drawNumber(int x, int y, int number, color_t color);
 void drawLetter(int x, int y, int scale, int addr, color_t color);
 void setColor(color_t addr, Color color);
 void setLED(bool value, int led, int *ledState);
@@ -61,10 +63,12 @@ char getSPART();
 void setSPART(char value);
 void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
 
-int abs(int a);
+int absolute(int a);
 int sign(int a);
 int multiply(int a, int b);
 int divide(int a, int b);
-int remainder(int a, int b);
+int modulo(int a, int b);
+
+uint rand(uint lfsr);
 
 #endif
