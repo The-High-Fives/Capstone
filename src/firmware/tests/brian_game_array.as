@@ -83,19 +83,23 @@ li   a5, 246
 sw   a5,76(a0)
 
         lui     sp, 16
-        addi    sp,sp,-160
-        sw      ra,156(sp)
-        sw      s0,152(sp)
-        addi    s0,sp,160
+        addi    sp,sp,-176
+        sw      ra,172(sp)
+        sw      s0,168(sp)
+        addi    s0,sp,176
         sw      zero,-20(s0)
         sw      zero,-24(s0)
-        sw      zero,-52(s0)
-        sw      zero,-56(s0)
+        sw      zero,-68(s0)
+        sw      zero,-72(s0)
         sw      zero,-28(s0)
-        sw      zero,-60(s0)
-        sw      zero,-64(s0)
+        sw      zero,-76(s0)
+        sw      zero,-80(s0)
         li      a5,40
         sw      a5,-48(s0)
+        sw      zero,-52(s0)
+        sw      zero,-56(s0)
+        sw      zero,-60(s0)
+        sb      zero,-61(s0)
         li      a4,0
         li      a3,480
         li      a2,640
@@ -109,10 +113,10 @@ sw   a5,76(a0)
         sw      a5,-40(s0)
         lw      a5,-40(s0)
         addi    a5,a5,-40
-        sw      a5,-68(s0)
+        sw      a5,-84(s0)
         lw      a5,-40(s0)
         addi    a5,a5,40
-        sw      a5,-72(s0)
+        sw      a5,-88(s0)
         li      a5,80
         sw      a5,-36(s0)
         lw      a5,-36(s0)
@@ -120,59 +124,59 @@ sw   a5,76(a0)
         sw      a5,-44(s0)
         lw      a5,-44(s0)
         addi    a5,a5,-40
-        sw      a5,-76(s0)
+        sw      a5,-92(s0)
         lw      a5,-44(s0)
         addi    a5,a5,40
-        sw      a5,-80(s0)
+        sw      a5,-96(s0)
 .L6:
         call    getCursorLocation
-        sw      a0,-84(s0)
-        lw      a5,-84(s0)
+        sw      a0,-100(s0)
+        lw      a5,-100(s0)
         srai    a5,a5,1
-        sw      a5,-88(s0)
-        lw      a5,-84(s0)
+        sw      a5,-104(s0)
+        lw      a5,-100(s0)
         srai    a5,a5,2
-        sw      a5,-92(s0)
-        lw      a5,-84(s0)
+        sw      a5,-108(s0)
+        lw      a5,-100(s0)
         srai    a5,a5,12
-        sw      a5,-96(s0)
-        lw      a5,-88(s0)
+        sw      a5,-112(s0)
+        lw      a5,-104(s0)
         andi    a5,a5,0xff
         andi    a5,a5,1
-        sb      a5,-97(s0)
-        lw      a5,-84(s0)
+        sb      a5,-113(s0)
+        lw      a5,-100(s0)
         andi    a5,a5,0xff
         andi    a5,a5,1
-        sb      a5,-98(s0)
+        sb      a5,-114(s0)
         lw      a5,-20(s0)
         addi    a5,a5,-12
-        sw      a5,-104(s0)
+        sw      a5,-120(s0)
         lw      a5,-24(s0)
         addi    a5,a5,-12
-        sw      a5,-108(s0)
-        lw      a5,-92(s0)
+        sw      a5,-124(s0)
+        lw      a5,-108(s0)
         andi    a5,a5,1023
-        sw      a5,-112(s0)
+        sw      a5,-128(s0)
         li      a4,640
-        lw      a5,-112(s0)
+        lw      a5,-128(s0)
         sub     a5,a4,a5
-        sw      a5,-52(s0)
-        lw      a5,-96(s0)
+        sw      a5,-68(s0)
+        lw      a5,-112(s0)
         andi    a5,a5,511
-        sw      a5,-56(s0)
-        lbu     a5,-97(s0)
+        sw      a5,-72(s0)
+        lbu     a5,-113(s0)
         beqz    a5,.L6
-        lbu     a5,-98(s0)
+        lbu     a5,-114(s0)
         beqz    a5,.L6
         li      a4,20
         lw      a3,-44(s0)
         lw      a2,-40(s0)
-        lw      a1,-56(s0)
-        lw      a0,-52(s0)
+        lw      a1,-72(s0)
+        lw      a0,-68(s0)
         call    inBounds
         mv      a5,a0
-        sb      a5,-113(s0)
-        lbu     a5,-113(s0)
+        sb      a5,-129(s0)
+        lbu     a5,-129(s0)
         beqz    a5,.L3
         lw      a5,-32(s0)
         addi    a5,a5,4
@@ -182,46 +186,47 @@ sw   a5,76(a0)
         sw      a5,-36(s0)
         li      a5,4096
         addi    a5,a5,-241
-        sw      a5,-128(s0)
+        sw      a5,-144(s0)
         li      a5,4096
         addi    a5,a5,-1
-        sw      a5,-124(s0)
-        lw      a5,-60(s0)
-        sw      a5,-120(s0)
-        lw      a5,-128(s0)
-        sw      a5,-160(s0)
-        lw      a5,-124(s0)
-        sw      a5,-156(s0)
-        lw      a5,-120(s0)
-        sw      a5,-152(s0)
-        addi    a5,s0,-160
+        sw      a5,-140(s0)
+        lw      a5,-76(s0)
+        sw      a5,-136(s0)
+        lw      a5,-144(s0)
+        sw      a5,-176(s0)
+        lw      a5,-140(s0)
+        sw      a5,-172(s0)
+        lw      a5,-136(s0)
+        sw      a5,-168(s0)
+        addi    a5,s0,-176
         mv      a1,a5
         li      a0,3
         call    setColor
-        li      a4,0
-        li      a3,20
-        lw      a2,-48(s0)
-        lw      a1,-44(s0)
-        lw      a0,-40(s0)
-        call    drawGameCircle
+        lw      a5,-48(s0)
+        sw      a5,-60(s0)
+        sb      zero,-61(s0)
+        lw      a5,-40(s0)
+        sw      a5,-52(s0)
+        lw      a5,-44(s0)
+        sw      a5,-56(s0)
         lw      a5,-36(s0)
         lw      a5,4(a5)
         sw      a5,-40(s0)
         lw      a5,-40(s0)
         addi    a5,a5,-40
-        sw      a5,-68(s0)
+        sw      a5,-84(s0)
         lw      a5,-40(s0)
         addi    a5,a5,40
-        sw      a5,-72(s0)
+        sw      a5,-88(s0)
         lw      a5,-36(s0)
         lw      a5,0(a5)
         sw      a5,-44(s0)
         lw      a5,-44(s0)
         addi    a5,a5,-40
-        sw      a5,-76(s0)
+        sw      a5,-92(s0)
         lw      a5,-44(s0)
         addi    a5,a5,40
-        sw      a5,-80(s0)
+        sw      a5,-96(s0)
         lw      a5,-28(s0)
         addi    a5,a5,4
         sw      a5,-28(s0)
@@ -246,40 +251,49 @@ sw   a5,76(a0)
         sw      a5,-28(s0)
 .L5:
         lw      a5,-48(s0)
-        sw      a5,-140(s0)
+        sw      a5,-156(s0)
         lw      a5,-48(s0)
         slli    a5,a5,5
-        sw      a5,-136(s0)
+        sw      a5,-152(s0)
         li      a5,4096
         addi    a5,a5,-16
-        sw      a5,-132(s0)
-        lw      a5,-140(s0)
-        sw      a5,-160(s0)
-        lw      a5,-136(s0)
-        sw      a5,-156(s0)
-        lw      a5,-132(s0)
-        sw      a5,-152(s0)
-        addi    a5,s0,-160
+        sw      a5,-148(s0)
+        lw      a5,-156(s0)
+        sw      a5,-176(s0)
+        lw      a5,-152(s0)
+        sw      a5,-172(s0)
+        lw      a5,-148(s0)
+        sw      a5,-168(s0)
+        addi    a5,s0,-176
         mv      a1,a5
         li      a0,1
         call    setColor
-        li      a4,1
-        li      a3,20
-        lw      a2,-48(s0)
-        lw      a1,-44(s0)
-        lw      a0,-40(s0)
-        call    drawGameCircle
+        lw      a5,-48(s0)
+        sw      a5,-60(s0)
+        li      a5,1
+        sb      a5,-61(s0)
+        lw      a5,-40(s0)
+        sw      a5,-52(s0)
+        lw      a5,-44(s0)
+        sw      a5,-56(s0)
 .L4:
-        lw      a5,-52(s0)
+        lw      a5,-68(s0)
         sw      a5,-20(s0)
-        lw      a5,-56(s0)
+        lw      a5,-72(s0)
         sw      a5,-24(s0)
         li      a4,0
         li      a3,24
         li      a2,24
-        lw      a1,-108(s0)
-        lw      a0,-104(s0)
+        lw      a1,-124(s0)
+        lw      a0,-120(s0)
         call    drawRect
+        lbu     a5,-61(s0)
+        mv      a4,a5
+        li      a3,20
+        lw      a2,-60(s0)
+        lw      a1,-56(s0)
+        lw      a0,-52(s0)
+        call    drawGameCircle
         li      a3,2
         lw      a2,-28(s0)
         li      a1,1
@@ -287,8 +301,8 @@ sw   a5,76(a0)
         call    drawScore
         li      a3,3
         li      a2,10
-        lw      a1,-56(s0)
-        lw      a0,-52(s0)
+        lw      a1,-72(s0)
+        lw      a0,-68(s0)
         call    drawCircle
         j       .L6
 inBounds:

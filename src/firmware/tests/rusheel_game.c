@@ -103,6 +103,10 @@ int main()
     int game_y_upper;
     uint panic = 0;
     int no_hit = 40;
+    int game_draw_x = 0;
+    int game_draw_y = 0;
+    int outer_rad = 0;
+    color_t game_color = 0;
 
     // Color c2 = {0xF0F, 0xFFF, 0x0F0};
     // setColor(2, c2);
@@ -165,7 +169,11 @@ int main()
 
                 Color c2 = {0xF0F, 0xFFF, hit};
                 setColor(3, c2);
-                drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 0);
+                outer_rad = no_hit;
+                game_color = 0;
+                game_draw_x = game_x_loc;
+                game_draw_y = game_y_loc;
+                // drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 0);
 
                 game_x_loc = *(game_y_addr + 1);
                 game_x_lower = game_x_loc - 40;
@@ -195,12 +203,17 @@ int main()
                 Color game_circle = {no_hit, no_hit << 5, 0xFF0};
                 setColor(1, game_circle);
                 // drawCircle(game_x_loc, game_y_loc, 20, 1);
-                drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 1);
+                outer_rad = no_hit;
+                game_color = 1;
+                game_draw_x = game_x_loc;
+                game_draw_y = game_y_loc;
+                // drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 1);
             }
             prev_x = x;
             prev_y = y;
             // drawCircle(x, y, 25, 0);
             drawRect(rect_x, rect_y, 24, 24, 0);
+            drawGameCircle(game_draw_x, game_draw_y, outer_rad, CIRCLE_RADIUS, game_color);
             drawScore(1, 1, score, 2);
 
             drawCircle(x, y, CURSOR_RADIUS, 3);
