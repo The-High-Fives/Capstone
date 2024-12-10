@@ -1,82 +1,82 @@
-li   a0,0
-li   a5, 590
+li  a0, 300
+li   a5, 157
 sw   a5,0(a0)
-li   a5, 462
+li   a5, 100
 sw   a5,4(a0)
-li   a5, 238
+li   a5, 269
 sw   a5,8(a0)
-li   a5, 367
+li   a5, 174
 sw   a5,12(a0)
-li   a5, 285
+li   a5, 101
 sw   a5,16(a0)
-li   a5, 509
+li   a5, 582
 sw   a5,20(a0)
-li   a5, 99
+li   a5, 106
 sw   a5,24(a0)
-li   a5, 436
+li   a5, 274
 sw   a5,28(a0)
-li   a5, 182
+li   a5, 218
 sw   a5,32(a0)
-li   a5, 71
+li   a5, 448
 sw   a5,36(a0)
-li   a5, 114
+li   a5, 170
 sw   a5,40(a0)
-li   a5, 598
+li   a5, 589
 sw   a5,44(a0)
-li   a5, 598
+li   a5, 544
 sw   a5,48(a0)
-li   a5, 488
+li   a5, 322
 sw   a5,52(a0)
-li   a5, 205
+li   a5, 53
 sw   a5,56(a0)
-li   a5, 481
+li   a5, 318
 sw   a5,60(a0)
-li   a5, 525
+li   a5, 260
 sw   a5,64(a0)
-li   a5, 78
+li   a5, 519
 sw   a5,68(a0)
-li   a5, 326
+li   a5, 442
 sw   a5,72(a0)
-li   a5, 445
+li   a5, 103
 sw   a5,76(a0)
 li  a0,80
-li   a5, 283
+li   a5, 131
 sw   a5,0(a0)
-li   a5, 83
+li   a5, 220
 sw   a5,4(a0)
-li   a5, 205
+li   a5, 239
 sw   a5,8(a0)
-li   a5, 187
+li   a5, 163
 sw   a5,12(a0)
-li   a5, 47
+li   a5, 284
 sw   a5,16(a0)
-li   a5, 60
+li   a5, 249
 sw   a5,20(a0)
-li   a5, 334
+li   a5, 356
 sw   a5,24(a0)
-li   a5, 53
+li   a5, 269
 sw   a5,28(a0)
-li   a5, 261
+li   a5, 349
 sw   a5,32(a0)
-li   a5, 343
+li   a5, 412
 sw   a5,36(a0)
-li   a5, 328
+li   a5, 85
 sw   a5,40(a0)
-li   a5, 72
+li   a5, 291
 sw   a5,44(a0)
-li   a5, 433
+li   a5, 313
 sw   a5,48(a0)
-li   a5, 361
+li   a5, 106
 sw   a5,52(a0)
-li   a5, 262
+li   a5, 260
 sw   a5,56(a0)
-li   a5, 173
+li   a5, 373
 sw   a5,60(a0)
-li   a5, 227
+li   a5, 152
 sw   a5,64(a0)
-li   a5, 374
+li   a5, 188
 sw   a5,68(a0)
-li   a5, 192
+li   a5, 351
 sw   a5,72(a0)
-li   a5, 409
+li   a5, 246
 sw   a5,76(a0)
