@@ -15,10 +15,8 @@ def main():
             print(f"{port} is available")
 
             music_player = pyglet.media.Player()
-            music = pyglet.media.StaticSource(pyglet.media.load("music.wav", streaming=False))
+            music = pyglet.media.StaticSource(pyglet.media.load("music.mp3", streaming=False))
 
-            sf_player = pyglet.media.Player()
-            soundeffect = pyglet.media.StaticSource(pyglet.media.load("gameover.wav", streaming=False))
             while True:
                 c = ser.read()
                 
@@ -28,9 +26,13 @@ def main():
                         music_player.queue(music)
                         music_player.play()
                         
-                    case b'h':
+                    case b's':
                         print("Stopping music")
                         music_player.pause()
+                        gameover = pyglet.media.Player()
+                        gameover_sf = pyglet.media.StaticSource(pyglet.media.load("gameover.wav", streaming=False))
+                        gameover.queue(gameover_sf)
+                        gameover.play
                         
                     case b'r':
                         print("Resuming music")
@@ -38,6 +40,8 @@ def main():
                     case b'q':
                         print("Exiting")
                     case b'a':
+                        sf_player = pyglet.media.Player()
+                        soundeffect = pyglet.media.StaticSource(pyglet.media.load("click.wav", streaming=False))
                         sf_player.queue(soundeffect)
                         sf_player.play()
                     case _:
