@@ -113,6 +113,9 @@ sw   a5,76(a0)
         lw      a5,4(a5)
         sw      a5,-40(s0)
         lw      a5,-40(s0)
+        addi    a5,a5,60
+        sw      a5,-40(s0)
+        lw      a5,-40(s0)
         addi    a5,a5,-40
         sw      a5,-88(s0)
         lw      a5,-40(s0)
@@ -214,6 +217,9 @@ sw   a5,76(a0)
         lw      a5,4(a5)
         sw      a5,-40(s0)
         lw      a5,-40(s0)
+        addi    a5,a5,60
+        sw      a5,-40(s0)
+        lw      a5,-40(s0)
         addi    a5,a5,-40
         sw      a5,-88(s0)
         lw      a5,-40(s0)
@@ -254,6 +260,12 @@ sw   a5,76(a0)
         lw      a4,-48(s0)
         li      a5,20
         bne     a4,a5,.L5
+        lw      a5,-32(s0)
+        addi    a5,a5,4
+        sw      a5,-32(s0)
+        lw      a5,-36(s0)
+        addi    a5,a5,4
+        sw      a5,-36(s0)
         lw      a5,-48(s0)
         sw      a5,-60(s0)
         sb      zero,-65(s0)
@@ -263,6 +275,9 @@ sw   a5,76(a0)
         sw      a5,-56(s0)
         lw      a5,-36(s0)
         lw      a5,4(a5)
+        sw      a5,-40(s0)
+        lw      a5,-40(s0)
+        addi    a5,a5,60
         sw      a5,-40(s0)
         lw      a5,-40(s0)
         addi    a5,a5,-40

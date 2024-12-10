@@ -133,6 +133,7 @@ int main()
 
     game_x_addr = (int *)(Y_ARRAY_START);
     game_x_loc = *(game_y_addr + 1);
+    game_x_loc += 60;
     game_x_lower = game_x_loc - 40;
     game_x_upper = game_x_loc + 40;
     game_y_addr = (int *)(Y_ARRAY_START);
@@ -177,6 +178,7 @@ int main()
                 // drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 0);
 
                 game_x_loc = *(game_y_addr + 1);
+                game_x_loc += 60;
                 game_x_lower = game_x_loc - 40;
                 game_x_upper = game_x_loc + 40;
                 game_y_loc = *game_y_addr;
@@ -206,6 +208,7 @@ int main()
                     game_draw_y = game_y_loc;
 
                     game_x_loc = *(game_y_addr + 1);
+                    game_x_loc += 60;
                     game_x_lower = game_x_loc - 40;
                     game_x_upper = game_x_loc + 40;
                     game_y_loc = *game_y_addr;
