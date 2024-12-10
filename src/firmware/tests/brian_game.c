@@ -91,38 +91,18 @@ int main()
     int game_y_loc;
     int game_x_upper;
     int game_y_upper;
+    int modifier = 0;
     uint panic = 0;
     int no_hit = 40;
 
-    // Color c2 = {0xF0F, 0xFFF, 0x0F0};
-    // setColor(2, c2);
     drawRect(0, 0, 640, 480, 0);
-    // drawScore(50, 300, 5, 2);
-    // //drawScore(10, 200, 7, 2);
-    // if (x > 100 && x < 140 && y > 100 && y < 140)
-    // {
-    //         Color c2 = {0xF0F, 0xFFF, 0x0F0};
-    //         setColor(3, c2);
-    //     // drawCircle(120, 120, 20, 0);
-    //     // //hit = hit + 1;
-    //     // drawCircle(200, 200, 10, 2);
-    // }
-    // else
-    // {
-    //         Color c3 = {0x00F, 0x00F, 0x0FF};
-    //         setColor(3, c3);
-    //     // drawCircle(120, 120, 20, 1);
-    //     // //hit = hit + 1;
-    //     // drawCircle(200, 200, 10, 0);
-    // }
     while (1)
     {
         loc = getCursorLocation();
         sh1 = loc >> 1;
         sh2 = loc >> 2;
         sh3 = loc >> 12;
-        // panic = getTimerValue();
-        // panic = panic >> 8;
+
         present = sh1 & 1;
         valid = loc & 1;
         rect_x = prev_x - 24;
@@ -131,36 +111,46 @@ int main()
         x = 640 - rev_x;
         y = sh3 & 0x1FF;
 
-        // game_x_lower = 40 + hit << 5;
-        // game_y_lower = 40 + hit << 3;
-        // game_x_upper = 70 + hit << 5;
-        // game_y_upper = 70 + hit << 3;
-        // game_x_loc = 60 + hit << 5;
-        // game_y_loc = 60 + hit << 3;
+
 
         if (present && valid)
         {
 
-            game_x_lower = 60 + (hit);
-            game_y_lower = 60 + (hit);
-            game_x_upper = 140 + (hit);
-            game_y_upper = 140 + (hit);
-            game_x_loc = 90 + (hit);
-            game_y_loc = 90 + (hit);
-            // if (!(hit ^ 4))
-            // {
-            //     hit = 0;
-            // }
+            game_x_lower = 60 + (modifier);
+            game_y_lower = 60 + (modifier);
+            game_x_upper = 140 + (modifier);
+            game_y_upper = 140 + (modifier);
+            game_x_loc = 90 + (modifier);
+            game_y_loc = 90 + (modifier);
+
             if (x > game_x_lower && x < game_x_upper && y > game_y_lower && y < game_y_upper)
             {
                 Color c2 = {0xF0F, 0xFFF, hit};
                 setColor(3, c2);
                 drawGameCircle(game_x_loc, game_y_loc, no_hit, 20, 0);
-                hit = hit + 20;
+                    hit = hit + 1;
+                    if (hit > -1) {
+                        modifier = 40;
+                            if (hit > 0) {
+                                modifier = -20;
+                                if (hit > 1) {
+                                modifier = 100;
+                                    if (hit > 2) {
+                                    modifier = -32;
+                                        if (hit > 3) {
+                                        modifier = 200;
+                                            if (hit > 4) {
+                                            modifier = 300;
+                                            hit = 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                    }
                 score = score + 4;
                 no_hit = 40;
-                // drawScore(50, 300, hit, 2);
-                // drawCircle(200, 200, 10, 2);
+
             }
             else
             {
