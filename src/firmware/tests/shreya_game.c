@@ -393,3 +393,49 @@ void setSPART(char value) {
 //     *timer = getTimerValue();
 //     *SPART = getSPART();
 // }
+
+// void startScreen()
+// {
+//     int startX = 200;
+//     color_t color = 3;
+//     color_t color_s = 1;
+//     int y = 150;
+//     int y_s = 200;
+//     int xC = startX + 16;
+//     int xO = startX + 32;
+//     int xR = startX + 48;
+//     int xE = startX + 64;
+//     int second_x = xE - 32;
+//     int xColon = startX + 80;
+//     int xHundred = startX + 112;
+//     int xTen = startX + 128;
+//     int xOne = startX + 144;
+//     drawRect(startX, y, (xOne + 24), 38, 0);
+//     char hundred;
+//     char ten;
+//     char one;
+
+//     drawChar(startX, y, 'h', color);
+//     drawChar(xC, y, 'i', color);
+//     drawChar(xO, y, 'g', color);
+//     drawChar(xR, y, 'h', color);
+//     drawChar(xE, y, '-', color);
+//     drawChar(xE + 16, y, 'f', color);
+//     drawChar(xE + 32, y, 'i', color);
+//     drawChar(xE + 48, y, 'v', color);
+//     drawChar(xE + 64, y, 'e', color);
+//     drawChar(xE + 96, y, 'h', color);
+//     drawChar(xE + 112, y, 'i', color);
+//     drawChar(xE + 128, y, 't', color);
+//     drawChar(xE + 144, y, 's', color);
+//     drawChar(xE + 160, y, ':', color);
+
+//     drawChar(second_x + 16, y_s, 't', color_s);
+//     drawChar(second_x + 32, y_s, 'h', color_s);
+//     drawChar(second_x + 48, y_s, 'e', color_s);
+//     drawChar(second_x + 80, y_s, 'g', color_s);
+//     drawChar(second_x + 96, y_s, 'a', color_s);
+//     drawChar(second_x + 112, y_s, 'm', color_s);
+//     drawChar(second_x + 128, y_s, 'e', color_s);
+//     drawChar(second_x + 144, y_s, '!', color_s);
+}
