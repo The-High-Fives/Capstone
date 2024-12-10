@@ -1,8 +1,80 @@
-#include "../utils.h"
+// Peripheral Addresses
+#define LED_ADDR 0x40000000
+#define TIMER_ADDR 0x40000004
+#define SPART_READ_ADDR 0x4000001D
+#define SPART_WRITE_ADDR 0x4000001C
 
-#define CURSOR_RADIUS 5
+// PRU Addresses
+#define DRAW_LOCATION_ADDR 0x40000100
+#define DRAW_CONTROL_ADDR 0x40000104
+#define SPRITE_ADDR 0x40000108
+#define COLOR_ADDR 0x4000010C
+
+// IPU Addresses
+#define DETECT_LOCATION_ADDR 0x40000200
+#define COLOR_LOCATED_ADDR 0x40000204
+
+// x,y locations
+#define X_ARRAY_START 0x00000000
+#define Y_ARRAY_START 0x00000050
+
+#define RECT_CODE 0b00
+#define CIRCLE_CODE 0b01
+#define SPRITE_CODE 0b10
+#define LETTER_CODE 0b11
+
+#define LETTER_BASE 0
+#define LETTER_OFFSET 512
+
+#define EXCLAMATION 18432
+#define QUESTION 18944
+#define COLON 19456
+#define HYPHEN 19968
+
+#define color_t unsigned char
+#define bool unsigned char
+#define uint unsigned int
+
+#define NULL (void *)0
+#define true 1
+#define false 0
+
+typedef struct
+{
+    int r;
+    int g;
+    int b;
+} Color;
+
+void drawCircle(int x, int y, int radius, color_t color);
+void drawGameCircle(int x, int y, int o_radius, int i_radius, color_t color);
+void drawRect(int x, int y, int width, int height, color_t color);
+void drawSprite(int x, int y, int scale, int addr, color_t color);
+void drawChar(int x, int y, char c, color_t color);
+void drawScore(int startX, int y, int score, color_t color);
+void drawLetter(int x, int y, int scale, int addr, color_t color);
+void setColor(color_t addr, Color color);
+void setLED(bool value, int led, int *ledState);
+void drawNumber(int x, int y, int number, color_t color);
+
+uint getTimerValue();
+bool checkLocationForColor(int x, int y, int radius);
+int getCursorLocation();
+char getSPART();
+void setSPART(char value);
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid);
+
+int absolute(int a);
+int sign(int a);
+int multiply(int a, int b);
+int divide(int a, int b);
+int modulo(int a, int b);
+
+// ================================================================================================
+#define CURSOR_RADIUS 10
 #define CIRCLE_RADIUS 20
-#define CIRCLE_RADIUS_SQ 400
+
+bool inBounds(int x, int y, int targetX, int targetY, int radius);
 
 int main()
 {
@@ -10,191 +82,671 @@ int main()
     int sh1;
     int sh2;
     int sh3;
-
     int prev_x = 0;
     int prev_y = 0;
-
     int x = 0;
     int rev_x;
     int y = 0;
     int rect_x;
+    int score = 0;
     int rect_y;
-    int rect_size;
-
-    int rect2_x;
-    int rect2_y;
-    int rect2_size;
-
     bool present;
     bool valid;
+    int hit = 0;
+    int game_x_lower;
+    int game_y_lower;
+    int *game_x_addr;
+    int *game_y_addr;
+    int game_x_loc;
+    int game_y_loc;
+    int game_x_upper;
+    int game_y_upper;
+    uint panic = 0;
+    int no_hit = 40;
 
-    int base_circle_x = 20;
-    int base_circle_y = 20;
-
-    int circle_x_inc = 150;
-    int circle_y_inc = 110;
-
-    int circle_x = 0;
-    int circle_y = 0;
-
-    int circle_x_diff = 0;
-    int circle_y_diff = 0;
-    int circle_diff = 0;
-
-    int row = 0;
-    int col = 0;
-
-    int r = 0;
-    int g = 0;
-    int b = 0;
-
-    int i = 0;
-    int j = 0;
-    int k = 0;
-    int state = 0;
-    int x_inc_acc;
-    int y_inc_acc;
-    int x_diff_sq;
-    int y_diff_sq;
-
-    Color c0 = {0x3FF, 0x3FF, 0x3FF};
-    Color c1 = {0, 0, 0};
-    Color c2 = {0, 0x3FF, 0};
-    Color c3 = {0x3FF, 0, 0};
-
+    // Color c2 = {0xF0F, 0xFFF, 0x0F0};
+    // setColor(2, c2);
     drawRect(0, 0, 640, 480, 0);
-    setColor(0, c0);
-    setColor(1, c1);
-    setColor(2, c2);
-    setColor(3, c3);
+    // drawScore(50, 300, 5, 2);
+    // //drawScore(10, 200, 7, 2);
+    // if (x > 100 && x < 140 && y > 100 && y < 140)
+    // {
+    //         Color c2 = {0xF0F, 0xFFF, 0x0F0};
+    //         setColor(3, c2);
+    //     // drawCircle(120, 120, 20, 0);
+    //     // //hit = hit + 1;
+    //     // drawCircle(200, 200, 10, 2);
+    // }
+    // else
+    // {
+    //         Color c3 = {0x00F, 0x00F, 0x0FF};
+    //         setColor(3, c3);
+    //     // drawCircle(120, 120, 20, 1);
+    //     // //hit = hit + 1;
+    //     // drawCircle(200, 200, 10, 0);
+    // }
+
+    game_x_addr = (int *)(Y_ARRAY_START);
+    game_x_loc = *(game_y_addr + 1);
+    game_x_lower = game_x_loc - 40;
+    game_x_upper = game_x_loc + 40;
+    game_y_addr = (int *)(Y_ARRAY_START);
+    game_y_loc = *game_y_addr;
+    game_y_lower = game_y_loc - 40;
+    game_y_upper = game_y_loc + 40;
 
     while (1)
     {
-        for (j = 0; j < 16; j++)
-        {
-            int c_r = j >> 2;
-            int c_c = j & 3;
-
-            int c_x_inc = 0;
-            int c_y_inc = 0;
-
-            for (k = 0; k < c_r; k++)
-            {
-                c_x_inc += circle_x_inc;
-            }
-            for (k = 0; k < c_c; k++)
-            {
-                c_y_inc += circle_y_inc;
-            }
-
-            int c_x = base_circle_x + c_x_inc;
-            int c_y = base_circle_y + c_y_inc;
-
-            drawCircle(c_x, c_y, 2, 2);
-        }
-        row = state >> 2;
-        col = state & 3;
-
-        x_inc_acc = 0;
-        for (j = 0; j < row; j++)
-        {
-            x_inc_acc += circle_x_inc;
-        }
-
-        y_inc_acc = 0;
-        for (j = 0; j < col; j++)
-        {
-            y_inc_acc += circle_y_inc;
-        }
-
-        circle_x = base_circle_x + x_inc_acc;
-        circle_y = base_circle_y + y_inc_acc;
-
         loc = getCursorLocation();
         sh1 = loc >> 1;
         sh2 = loc >> 2;
         sh3 = loc >> 12;
-
+        // panic = getTimerValue();
+        // panic = panic >> 8;
         present = sh1 & 1;
         valid = loc & 1;
-
-        rect_x = prev_x - CURSOR_RADIUS - 3;
-        rect_y = prev_y - CURSOR_RADIUS - 3;
-        rect_size = CURSOR_RADIUS + CURSOR_RADIUS + 6;
-
-        rect2_x = circle_x - CIRCLE_RADIUS - 3;
-        rect2_y = circle_y - CIRCLE_RADIUS - 3;
-        rect2_size = CIRCLE_RADIUS + CURSOR_RADIUS + 6;
-
+        rect_x = prev_x - 12;
+        rect_y = prev_y - 12;
         rev_x = sh2 & 0x3FF;
         x = 640 - rev_x;
         y = sh3 & 0x1FF;
 
-        circle_x_diff = circle_x - x;
-
-        x_diff_sq = 0;
-        for (j = 0; j < circle_x_diff; j++)
+        if (present && valid)
         {
-            x_diff_sq += circle_x_diff;
-        }
-
-        circle_y_diff = circle_y - y;
-
-        y_diff_sq = 0;
-        for (j = 0; j < circle_y_diff; j++)
-        {
-            y_diff_sq += circle_y_diff;
-        }
-
-        circle_diff = x_diff_sq + y_diff_sq;
-
-        if (valid)
-        {
-            if (i >= 500)
+            // if (!(hit ^ 4))
+            // {
+            //     hit = 0;
+            // }
+            bool in = inBounds(x, y, game_x_loc, game_y_loc, CIRCLE_RADIUS);
+            if (in)
             {
-                i = 0;
+                game_x_addr += 1;
+                game_y_addr += 1;
 
-                if (b < 0x3FF)
-                {
-                    b++;
-                }
-                else
-                {
-                    b = 0;
-                }
+                Color c2 = {0xF0F, 0xFFF, hit};
+                setColor(3, c2);
+                drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 0);
 
-                Color c = {r, g, b};
+                game_x_loc = *(game_y_addr + 1);
+                game_x_lower = game_x_loc - 40;
+                game_x_upper = game_x_loc + 40;
+                game_y_loc = *game_y_addr;
+                game_y_lower = game_y_loc - 40;
+                game_y_upper = game_y_loc + 40;
 
-                setColor(1, c);
+                score = score + 4;
+                no_hit = 40;
+                // drawScore(50, 300, hit, 2);
+                // drawCircle(200, 200, 10, 2);
+                setSPART('a');
             }
-            i++;
-        }
-
-        if (valid & present)
-        {
-
-            if (circle_diff < CIRCLE_RADIUS_SQ)
+            else
             {
-                drawRect(rect2_x, rect2_y, rect2_size, rect2_size, 0);
+                no_hit = no_hit - 1;
+                if (no_hit == 20)
+                {
 
-                state = (state + 1) & 15;
+                    no_hit = 40;
+                    if (score != 0)
+                    {
+                        score = score - 4;
+                    }
+                }
+                Color game_circle = {no_hit, no_hit << 5, 0xFF0};
+                setColor(1, game_circle);
+                // drawCircle(game_x_loc, game_y_loc, 20, 1);
+                drawGameCircle(game_x_loc, game_y_loc, no_hit, CIRCLE_RADIUS, 1);
             }
-
-            drawCircle(circle_x, circle_y, CIRCLE_RADIUS, 1);
-
             prev_x = x;
             prev_y = y;
+            // drawCircle(x, y, 25, 0);
+            drawRect(rect_x, rect_y, 24, 24, 0);
+            drawScore(1, 1, score, 2);
 
-            drawRect(rect_x, rect_y, rect_size, rect_size, 0);
             drawCircle(x, y, CURSOR_RADIUS, 3);
         }
-        else if (valid)
-        {
-            drawCircle(circle_x, circle_y, CIRCLE_RADIUS, 1);
-        }
     }
-
 end:
     goto end;
     return 0;
+}
+
+bool inBounds(int x, int y, int targetX, int targetY, int radius)
+{
+    int belowX = targetX - radius;
+    int aboveX = targetX + radius;
+    int belowY = targetY - radius;
+    int aboveY = targetY + radius;
+
+    bool xGreater = x > belowX;
+    bool xLess = x < aboveX;
+    bool xIn = xGreater && xLess;
+    bool yGreater = y > belowY;
+    bool yLess = y < aboveY;
+    bool yIn = yGreater && yLess;
+    bool in = xIn && yIn;
+
+    return in;
+}
+
+void setColor(color_t addr, Color color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)(COLOR_ADDR + (addr & 3) * 4);
+
+    command = ((color.r & 0x3FF) << 20) | ((color.g & 0x3FF) << 10) | (color.b & 0x3FF);
+    *memSet = command;
+}
+
+void drawRect(int x, int y, int width, int height, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (RECT_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)DRAW_CONTROL_ADDR;
+    command = (1 << 31) | ((width & 0x3FF) << 9) | (height & 0x1FF);
+    *memSet = command;
+}
+
+void drawCircle(int x, int y, int radius, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (CIRCLE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)DRAW_CONTROL_ADDR;
+    command = (1 << 31) | (radius & 0x7FFFF);
+    *memSet = command;
+}
+
+void drawGameCircle(int x, int y, int o_radius, int i_radius, color_t color)
+{
+    drawCircle(x, y, (o_radius + 4), 0);
+    drawCircle(x, y, (o_radius + 2), color);
+    drawCircle(x, y, (o_radius), 0);
+    drawCircle(x, y, i_radius, color);
+}
+
+void drawSprite(int x, int y, int scale, int addr, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (SPRITE_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)SPRITE_ADDR;
+    command = addr;
+    *memSet = command;
+
+    // memSet = (int *)DRAW_CONTROL_ADDR;
+    // command = (1 << 31) | (scale & 0x7FFFF);
+    // *memSet = command;
+}
+
+void drawScore(int startX, int y, int score, color_t color)
+{
+    // if (score > 999)
+    // {
+    //     score = 999;
+    // }
+
+    int hundreds;
+    int tens;
+    int ones;
+    int temp;
+    int temp2;
+
+    temp = score;
+
+    hundreds = 0;
+    tens = 0;
+    ones = 0;
+
+    if (score >= 100)
+    {
+        hundreds = 1;
+        temp -= 100;
+        if (score >= 200)
+        {
+            hundreds = 2;
+            temp -= 100;
+            if (score >= 300)
+            {
+                hundreds = 3;
+                temp -= 100;
+                if (score >= 400)
+                {
+                    hundreds = 4;
+                    temp -= 100;
+                    if (score >= 500)
+                    {
+                        hundreds = 5;
+                        temp -= 100;
+                        if (score >= 600)
+                        {
+                            hundreds = 6;
+                            temp -= 100;
+                            if (score >= 700)
+                            {
+                                hundreds = 7;
+                                temp -= 100;
+                                if (score >= 800)
+                                {
+                                    hundreds = 8;
+                                    temp -= 100;
+                                    if (score >= 900)
+                                    {
+                                        hundreds = 9;
+                                        temp -= 100;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    temp2 = temp;
+
+    if (temp >= 10)
+    {
+        tens = 1;
+        temp2 -= 10;
+        if (temp >= 20)
+        {
+            tens = 2;
+            temp2 -= 10;
+            if (temp >= 30)
+            {
+                tens = 3;
+                temp2 -= 10;
+                if (temp >= 40)
+                {
+                    tens = 4;
+                    temp2 -= 10;
+                    if (temp >= 50)
+                    {
+                        tens = 5;
+                        temp2 -= 10;
+                        if (temp >= 60)
+                        {
+                            tens = 6;
+                            temp2 -= 10;
+                            if (temp >= 70)
+                            {
+                                tens = 7;
+                                temp2 -= 10;
+                                if (temp >= 80)
+                                {
+                                    tens = 8;
+                                    temp2 -= 10;
+                                    if (temp >= 90)
+                                    {
+                                        tens = 9;
+                                        temp2 -= 10;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (temp2 >= 1)
+    {
+        ones = 1;
+        if (temp2 >= 2)
+        {
+            ones = 2;
+            if (temp2 >= 3)
+            {
+                ones = 3;
+                if (temp2 >= 4)
+                {
+                    ones = 4;
+                    if (temp2 >= 5)
+                    {
+                        ones = 5;
+                        if (temp2 >= 6)
+                        {
+                            ones = 6;
+                            if (temp2 >= 7)
+                            {
+                                ones = 7;
+                                if (temp2 >= 8)
+                                {
+                                    ones = 8;
+                                    if (temp2 >= 9)
+                                    {
+                                        ones = 9;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    int xC = startX + 16;
+    int xO = startX + 32;
+    int xR = startX + 48;
+    int xE = startX + 64;
+    int xColon = startX + 80;
+    int xHundred = startX + 112;
+    int xTen = startX + 128;
+    int xOne = startX + 144;
+
+    drawRect(startX, y, (xOne + 24), 38, 0);
+    char hundred;
+    char ten;
+    char one;
+
+    hundred = '0' + hundreds;
+    ten = '0' + tens;
+    one = '0' + ones;
+
+    drawChar(startX, y, 's', color);
+    drawChar(xC, y, 'c', color);
+    drawChar(xO, y, 'o', color);
+    drawChar(xR, y, 'r', color);
+    drawChar(xE, y, 'e', color);
+    drawChar(xColon, y, ':', color);
+    drawChar(xHundred, y, hundred, color);
+    drawChar(xTen, y, ten, color);
+    drawChar(xOne, y, one, color);
+}
+
+void drawChar(int x, int y, char c, color_t color)
+{
+    if (c == '!')
+    {
+        drawLetter(x, y, 1, EXCLAMATION, color);
+    }
+    else if (c == '?')
+    {
+        drawLetter(x, y, 1, QUESTION, color);
+    }
+    else if (c == ':')
+    {
+        drawLetter(x, y, 1, COLON, color);
+    }
+    else if (c == '-')
+    {
+        drawLetter(x, y, 1, HYPHEN, color);
+    }
+    else if (c >= '0' && c <= ':')
+    { // Digits
+        int addr = LETTER_BASE + LETTER_OFFSET * (26 + (c - '0'));
+        drawLetter(x, y, 1, addr, color);
+    }
+    else
+    { // Letters
+        int addr = LETTER_BASE + LETTER_OFFSET * (c - 'a');
+        drawLetter(x, y, 1, addr, color);
+    }
+}
+
+void drawLetter(int x, int y, int scale, int addr, color_t color)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DRAW_LOCATION_ADDR;
+    command = (LETTER_CODE << 21) | ((color & 3) << 19) | ((x & 0x3FF) << 9) | (y & 0x1FF);
+    *memSet = command;
+
+    memSet = (int *)SPRITE_ADDR;
+    command = addr;
+    *memSet = command;
+
+    // memSet = (int *)DRAW_CONTROL_ADDR;
+    // command = (1 << 31) | (scale & 0x7FFFF);
+    // *memSet = command;
+}
+
+void setLED(bool value, int led, int *ledState)
+{
+    int *memSet;
+    int command;
+    bool val = value & 1;
+
+    memSet = (int *)LED_ADDR;
+
+    if (val)
+    {
+        command = (*ledState) | (1 << led);
+    }
+    else
+    {
+        command = (*ledState) & (~(1 << led));
+    }
+
+    *memSet = command;
+    *ledState = command;
+}
+
+uint getTimerValue()
+{
+    uint *memSet;
+
+    memSet = (uint *)TIMER_ADDR;
+    return *memSet;
+}
+
+bool checkLocationForColor(int x, int y, int radius)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)DETECT_LOCATION_ADDR;
+    command = ((x & 0x3FF) << 19) | ((y & 0x1FF) << 10) | (radius & 0x3FF);
+    *memSet = command;
+
+    memSet = (int *)COLOR_LOCATED_ADDR;
+    return (*memSet) & 1;
+}
+
+int getCursorLocation()
+{
+    int *memSet;
+    memSet = (int *)DETECT_LOCATION_ADDR;
+
+    return *memSet;
+}
+
+char getSPART()
+{
+    char *memSet;
+
+    memSet = (char *)SPART_READ_ADDR;
+    return *memSet;
+}
+
+void setSPART(char value)
+{
+    int *memSet;
+    int command;
+
+    memSet = (int *)SPART_WRITE_ADDR;
+    command = (value & 0xFF);
+    *memSet = command;
+}
+
+void getIO(int *timer, char *SPART, int *x, int *y, bool *present, bool *valid)
+{
+    *timer = getTimerValue();
+    *SPART = getSPART();
+}
+
+int absolute(int a)
+{
+    if (a < 0)
+    {
+        return 0 - a;
+    }
+    return a;
+}
+
+int sign(int a)
+{
+    if (a < 0)
+    {
+        return -1;
+    }
+    return 1;
+}
+
+int multiply(int a, int b)
+{
+    int abs_a = absolute(a);
+    int abs_b = absolute(b);
+
+    int result = 0;
+    int i;
+
+    if (!a || !b)
+    {
+        return 0;
+    }
+
+    if (abs_a <= abs_b)
+    {
+        if (a < 0)
+        {
+            a = 0 - a;
+            b = 0 - b;
+        }
+
+        for (i = 0; i < a; i++)
+        {
+            result += b;
+        }
+
+        return result;
+    }
+    else
+    {
+        if (b < 0)
+        {
+            a = 0 - a;
+            b = 0 - b;
+        }
+
+        for (i = 0; i < b; i++)
+        {
+            result += a;
+        }
+    }
+}
+
+int divide(int a, int b)
+{
+    // int sign_a = sign(a);
+    // int sign_b = sign(b);
+    // int abs_a = absolute(a);
+    // int abs_b = absolute(b);
+
+    int result;
+    result = 0;
+    if (a >= b && (a != 0) && (b != 0))
+    {
+        while (a >= b)
+        {
+            a -= b;
+            result++;
+        }
+    }
+
+    return result;
+}
+
+int modulo(int a, int b)
+{
+    if (!a || !b)
+    {
+        return 0;
+    }
+
+    int sign_a = sign(a);
+    int sign_b = sign(b);
+    int abs_a = absolute(a);
+    int abs_b = absolute(b);
+
+    if (abs_a >= abs_b)
+    {
+        while (abs_a >= abs_b)
+        {
+            abs_a -= abs_b;
+        }
+    }
+
+    if (sign_a != sign_b)
+    {
+        abs_a = 0 - abs_a;
+    }
+
+    return abs_a;
+}
+
+void drawNumber(int x, int y, int number, color_t color)
+{
+    int hundreds = (number >> 8) & 0xF;
+    int tens = (number >> 4) & 0xF;
+    int ones = number & 0xF;
+
+    int xHundred = x;
+    int xTen = x + 16;
+    int xOne = x + 32;
+
+    char hundred;
+    char ten;
+    char one;
+
+    if (hundreds > 9)
+    {
+        hundred = 'a' + (hundreds - 10);
+    }
+    else
+    {
+        hundred = '0' + hundreds;
+    }
+
+    if (tens > 9)
+    {
+        ten = 'a' + (tens - 10);
+    }
+    else
+    {
+        ten = '0' + tens;
+    }
+
+    if (ones > 9)
+    {
+        one = 'a' + (ones - 10);
+    }
+    else
+    {
+        one = '0' + ones;
+    }
+
+    drawChar(xHundred, y, hundred, color);
+    drawChar(xTen, y, ten, color);
+    drawChar(xOne, y, one, color);
 }

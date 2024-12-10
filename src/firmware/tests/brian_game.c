@@ -161,6 +161,7 @@ int main()
                 no_hit = 40;
                 // drawScore(50, 300, hit, 2);
                 // drawCircle(200, 200, 10, 2);
+                setSPART('a');
             }
             else
             {

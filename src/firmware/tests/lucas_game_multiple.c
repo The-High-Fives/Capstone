@@ -168,6 +168,7 @@ int main()
 
             for (i = 0; i < 3; i++)
             {
+                drawScore(201, 201, score, 2);
                 c_x = dotsX[i];
                 c_y = dotsY[i];
                 no_hit = dotsNoHit[i];

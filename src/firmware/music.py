@@ -37,7 +37,7 @@ def main():
                         music_player.play()
                     case b'q':
                         print("Exiting")
-                    case b'b':
+                    case b'a':
                         sf_player.queue(soundeffect)
                         sf_player.play()
                     case _:
