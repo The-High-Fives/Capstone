@@ -1,0 +1,402 @@
+    li   a0,0
+    li   a5, 434
+    sw   a5,0(a0)
+    li   a5, 466
+    sw   a5,4(a0)
+    li   a5, 256
+    sw   a5,8(a0)
+    li   a5, 260
+    sw   a5,12(a0)
+    li   a5, 249
+    sw   a5,16(a0)
+    li   a5, 77
+    sw   a5,20(a0)
+    li   a5, 60
+    sw   a5,24(a0)
+    li   a5, 96
+    sw   a5,28(a0)
+    li   a5, 45
+    sw   a5,32(a0)
+    li   a5, 610
+    sw   a5,36(a0)
+    li   a5, 108
+    sw   a5,40(a0)
+    li   a5, 242
+    sw   a5,44(a0)
+    li   a5, 188
+    sw   a5,48(a0)
+    li   a5, 412
+    sw   a5,52(a0)
+    li   a5, 576
+    sw   a5,56(a0)
+    li   a5, 117
+    sw   a5,60(a0)
+    li   a5, 355
+    sw   a5,64(a0)
+    li   a5, 404
+    sw   a5,68(a0)
+    li   a5, 266
+    sw   a5,72(a0)
+    li   a5, 393
+    sw   a5,76(a0)
+    li   a5, 530
+    sw   a5,80(a0)
+    li   a5, 407
+    sw   a5,84(a0)
+    li   a5, 331
+    sw   a5,88(a0)
+    li   a5, 242
+    sw   a5,92(a0)
+    li   a5, 498
+    sw   a5,96(a0)
+    li   a5, 22
+    sw   a5,100(a0)
+    li   a5, 363
+    sw   a5,104(a0)
+    li   a5, 201
+    sw   a5,108(a0)
+    li   a5, 166
+    sw   a5,112(a0)
+    li   a5, 141
+    sw   a5,116(a0)
+    li   a5, 602
+    sw   a5,120(a0)
+    li   a5, 552
+    sw   a5,124(a0)
+    li   a5, 54
+    sw   a5,128(a0)
+    li   a5, 237
+    sw   a5,132(a0)
+    li   a5, 222
+    sw   a5,136(a0)
+    li   a5, 124
+    sw   a5,140(a0)
+    li   a5, 58
+    sw   a5,144(a0)
+    li   a5, 613
+    sw   a5,148(a0)
+    li   a5, 567
+    sw   a5,152(a0)
+    li   a5, 539
+    sw   a5,156(a0)
+    li   a5, 546
+    sw   a5,160(a0)
+    li   a5, 95
+    sw   a5,164(a0)
+    li   a5, 32
+    sw   a5,168(a0)
+    li   a5, 297
+    sw   a5,172(a0)
+    li   a5, 325
+    sw   a5,176(a0)
+    li   a5, 407
+    sw   a5,180(a0)
+    li   a5, 368
+    sw   a5,184(a0)
+    li   a5, 564
+    sw   a5,188(a0)
+    li   a5, 563
+    sw   a5,192(a0)
+    li   a5, 574
+    sw   a5,196(a0)
+    li   a5, 497
+    sw   a5,200(a0)
+    li   a5, 195
+    sw   a5,204(a0)
+    li   a5, 364
+    sw   a5,208(a0)
+    li   a5, 140
+    sw   a5,212(a0)
+    li   a5, 199
+    sw   a5,216(a0)
+    li   a5, 389
+    sw   a5,220(a0)
+    li   a5, 48
+    sw   a5,224(a0)
+    li   a5, 131
+    sw   a5,228(a0)
+    li   a5, 333
+    sw   a5,232(a0)
+    li   a5, 247
+    sw   a5,236(a0)
+    li   a5, 455
+    sw   a5,240(a0)
+    li   a5, 19
+    sw   a5,244(a0)
+    li   a5, 9
+    sw   a5,248(a0)
+    li   a5, 159
+    sw   a5,252(a0)
+    li   a5, 200
+    sw   a5,256(a0)
+    li   a5, 458
+    sw   a5,260(a0)
+    li   a5, 609
+    sw   a5,264(a0)
+    li   a5, 376
+    sw   a5,268(a0)
+    li   a5, 368
+    sw   a5,272(a0)
+    li   a5, 326
+    sw   a5,276(a0)
+    li   a5, 187
+    sw   a5,280(a0)
+    li   a5, 339
+    sw   a5,284(a0)
+    li   a5, 220
+    sw   a5,288(a0)
+    li   a5, 350
+    sw   a5,292(a0)
+    li   a5, 372
+    sw   a5,296(a0)
+    li   a5, 615
+    sw   a5,300(a0)
+    li   a5, 209
+    sw   a5,304(a0)
+    li   a5, 586
+    sw   a5,308(a0)
+    li   a5, 421
+    sw   a5,312(a0)
+    li   a5, 519
+    sw   a5,316(a0)
+    li   a5, 140
+    sw   a5,320(a0)
+    li   a5, 223
+    sw   a5,324(a0)
+    li   a5, 130
+    sw   a5,328(a0)
+    li   a5, 448
+    sw   a5,332(a0)
+    li   a5, 137
+    sw   a5,336(a0)
+    li   a5, 493
+    sw   a5,340(a0)
+    li   a5, 279
+    sw   a5,344(a0)
+    li   a5, 221
+    sw   a5,348(a0)
+    li   a5, 547
+    sw   a5,352(a0)
+    li   a5, 126
+    sw   a5,356(a0)
+    li   a5, 573
+    sw   a5,360(a0)
+    li   a5, 309
+    sw   a5,364(a0)
+    li   a5, 226
+    sw   a5,368(a0)
+    li   a5, 387
+    sw   a5,372(a0)
+    li   a5, 27
+    sw   a5,376(a0)
+    li   a5, 499
+    sw   a5,380(a0)
+    li   a5, 191
+    sw   a5,384(a0)
+    li   a5, 637
+    sw   a5,388(a0)
+    li   a5, 322
+    sw   a5,392(a0)
+    li   a5, 588
+    sw   a5,396(a0)
+    li   a0,400
+    li   a5, 359
+    sw   a5,0(a0)
+    li   a5, 155
+    sw   a5,4(a0)
+    li   a5, 1
+    sw   a5,8(a0)
+    li   a5, 460
+    sw   a5,12(a0)
+    li   a5, 154
+    sw   a5,16(a0)
+    li   a5, 244
+    sw   a5,20(a0)
+    li   a5, 354
+    sw   a5,24(a0)
+    li   a5, 39
+    sw   a5,28(a0)
+    li   a5, 422
+    sw   a5,32(a0)
+    li   a5, 320
+    sw   a5,36(a0)
+    li   a5, 345
+    sw   a5,40(a0)
+    li   a5, 108
+    sw   a5,44(a0)
+    li   a5, 183
+    sw   a5,48(a0)
+    li   a5, 212
+    sw   a5,52(a0)
+    li   a5, 66
+    sw   a5,56(a0)
+    li   a5, 56
+    sw   a5,60(a0)
+    li   a5, 92
+    sw   a5,64(a0)
+    li   a5, 78
+    sw   a5,68(a0)
+    li   a5, 199
+    sw   a5,72(a0)
+    li   a5, 372
+    sw   a5,76(a0)
+    li   a5, 315
+    sw   a5,80(a0)
+    li   a5, 173
+    sw   a5,84(a0)
+    li   a5, 326
+    sw   a5,88(a0)
+    li   a5, 169
+    sw   a5,92(a0)
+    li   a5, 328
+    sw   a5,96(a0)
+    li   a5, 146
+    sw   a5,100(a0)
+    li   a5, 144
+    sw   a5,104(a0)
+    li   a5, 180
+    sw   a5,108(a0)
+    li   a5, 14
+    sw   a5,112(a0)
+    li   a5, 58
+    sw   a5,116(a0)
+    li   a5, 370
+    sw   a5,120(a0)
+    li   a5, 256
+    sw   a5,124(a0)
+    li   a5, 340
+    sw   a5,128(a0)
+    li   a5, 453
+    sw   a5,132(a0)
+    li   a5, 402
+    sw   a5,136(a0)
+    li   a5, 407
+    sw   a5,140(a0)
+    li   a5, 271
+    sw   a5,144(a0)
+    li   a5, 422
+    sw   a5,148(a0)
+    li   a5, 238
+    sw   a5,152(a0)
+    li   a5, 358
+    sw   a5,156(a0)
+    li   a5, 448
+    sw   a5,160(a0)
+    li   a5, 359
+    sw   a5,164(a0)
+    li   a5, 439
+    sw   a5,168(a0)
+    li   a5, 431
+    sw   a5,172(a0)
+    li   a5, 252
+    sw   a5,176(a0)
+    li   a5, 370
+    sw   a5,180(a0)
+    li   a5, 11
+    sw   a5,184(a0)
+    li   a5, 203
+    sw   a5,188(a0)
+    li   a5, 230
+    sw   a5,192(a0)
+    li   a5, 356
+    sw   a5,196(a0)
+    li   a5, 320
+    sw   a5,200(a0)
+    li   a5, 329
+    sw   a5,204(a0)
+    li   a5, 304
+    sw   a5,208(a0)
+    li   a5, 120
+    sw   a5,212(a0)
+    li   a5, 442
+    sw   a5,216(a0)
+    li   a5, 323
+    sw   a5,220(a0)
+    li   a5, 196
+    sw   a5,224(a0)
+    li   a5, 463
+    sw   a5,228(a0)
+    li   a5, 167
+    sw   a5,232(a0)
+    li   a5, 141
+    sw   a5,236(a0)
+    li   a5, 190
+    sw   a5,240(a0)
+    li   a5, 445
+    sw   a5,244(a0)
+    li   a5, 165
+    sw   a5,248(a0)
+    li   a5, 412
+    sw   a5,252(a0)
+    li   a5, 388
+    sw   a5,256(a0)
+    li   a5, 24
+    sw   a5,260(a0)
+    li   a5, 231
+    sw   a5,264(a0)
+    li   a5, 63
+    sw   a5,268(a0)
+    li   a5, 471
+    sw   a5,272(a0)
+    li   a5, 89
+    sw   a5,276(a0)
+    li   a5, 479
+    sw   a5,280(a0)
+    li   a5, 451
+    sw   a5,284(a0)
+    li   a5, 158
+    sw   a5,288(a0)
+    li   a5, 357
+    sw   a5,292(a0)
+    li   a5, 330
+    sw   a5,296(a0)
+    li   a5, 99
+    sw   a5,300(a0)
+    li   a5, 24
+    sw   a5,304(a0)
+    li   a5, 135
+    sw   a5,308(a0)
+    li   a5, 458
+    sw   a5,312(a0)
+    li   a5, 18
+    sw   a5,316(a0)
+    li   a5, 178
+    sw   a5,320(a0)
+    li   a5, 473
+    sw   a5,324(a0)
+    li   a5, 59
+    sw   a5,328(a0)
+    li   a5, 275
+    sw   a5,332(a0)
+    li   a5, 207
+    sw   a5,336(a0)
+    li   a5, 219
+    sw   a5,340(a0)
+    li   a5, 271
+    sw   a5,344(a0)
+    li   a5, 352
+    sw   a5,348(a0)
+    li   a5, 464
+    sw   a5,352(a0)
+    li   a5, 472
+    sw   a5,356(a0)
+    li   a5, 136
+    sw   a5,360(a0)
+    li   a5, 404
+    sw   a5,364(a0)
+    li   a5, 190
+    sw   a5,368(a0)
+    li   a5, 343
+    sw   a5,372(a0)
+    li   a5, 11
+    sw   a5,376(a0)
+    li   a5, 282
+    sw   a5,380(a0)
+    li   a5, 205
+    sw   a5,384(a0)
+    li   a5, 84
+    sw   a5,388(a0)
+    li   a5, 328
+    sw   a5,392(a0)
+    li   a5, 390
+    sw   a5,396(a0)
