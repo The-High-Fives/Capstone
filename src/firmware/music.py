@@ -14,38 +14,31 @@ def main():
                                 stopbits = serial.STOPBITS_ONE, parity = serial.PARITY_NONE)
             print(f"{port} is available")
 
-            music_player = pyglet.media.Player()
-            music = pyglet.media.StaticSource(pyglet.media.load("music.mp3", streaming=False))
-
             while True:
-                c = ser.read()
-                
-                match c:
-                    case b'p':
-                        print("Playing music")
-                        music_player.queue(music)
-                        music_player.play()
+                music_player = pyglet.media.Player()
+                music = pyglet.media.StaticSource(pyglet.media.load("music.mp3", streaming=False))
+                music_player.queue(music)
+                while True:
+                    c = ser.read()
+                    
+                    match c:
+                        case b's':
+                            print("Stopping music")
+                            gameover = pyglet.media.Player()
+                            gameover_sf = pyglet.media.StaticSource(pyglet.media.load("gameover.wav", streaming=False))
+                            gameover.queue(gameover_sf)
+                            gameover.play()
+                            break
+
+                        case b'a':
+                            sf_player = pyglet.media.Player()
+                            soundeffect = pyglet.media.StaticSource(pyglet.media.load("click.wav", streaming=False))
+                            sf_player.queue(soundeffect)
+                            sf_player.play()
+                        case _:
+                            print("Playing music")
+                            music_player.play()
                         
-                    case b's':
-                        print("Stopping music")
-                        music_player.pause()
-                        gameover = pyglet.media.Player()
-                        gameover_sf = pyglet.media.StaticSource(pyglet.media.load("gameover.wav", streaming=False))
-                        gameover.queue(gameover_sf)
-                        gameover.play
-                        
-                    case b'r':
-                        print("Resuming music")
-                        music_player.play()
-                    case b'q':
-                        print("Exiting")
-                    case b'a':
-                        sf_player = pyglet.media.Player()
-                        soundeffect = pyglet.media.StaticSource(pyglet.media.load("click.wav", streaming=False))
-                        sf_player.queue(soundeffect)
-                        sf_player.play()
-                    case _:
-                        print("Invalid command")
         except serial.SerialException:
             print(f"Error: Could not open port {port}")
         finally:
